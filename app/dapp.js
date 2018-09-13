@@ -31,7 +31,7 @@ class App extends React.Component {
         this._setAccounts();
       }
       web3.eth.net.getId((err, netId) => {
-        if (netId !== MAINNET) this.setState({ web3Provider: false})
+        if (netId !== MAINNET && netId < 5) this.setState({ web3Provider: false})
       })
       fetchIdeas().then(ideaSites => { this.setState({ ideaSites })});
     })
