@@ -3,13 +3,12 @@
 Usage: 
  ```
  npm install -g embark
- git clone https://github.com/status-im/contracts.git
+ git clone https://github.com/status-im/snt-voting.git
  cd contracts
  npm install
  embark simulator
- embark test
- embark run
  ```
+ While running `embark simulator` open another terminal and enter `embark run` in the project directory to start the dapp
 
 
 ## Deployment Details
