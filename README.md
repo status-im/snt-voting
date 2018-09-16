@@ -9,6 +9,11 @@ Usage:
  embark simulator
  ```
  While running `embark simulator` open another terminal and enter `embark run` in the project directory to start the dapp
+ 
+To test the voting dapp on a local enviroment, for ease of use open localhost:8000 in google chrome incognito mode to use embark's local test wallet. To test the application you may mint test tokens by clicking on the hidden test menu button in the header to access a menu where you can mint test tokens. 
+
+![Test menu button](https://user-images.githubusercontent.com/7915365/45599938-6f911680-b9ec-11e8-85cd-e7d06156254f.png)
+![Mint Test SNT](https://user-images.githubusercontent.com/7915365/45599951-c39bfb00-b9ec-11e8-8236-a466e8ebb591.png)
 
 
 ## Deployment Details
