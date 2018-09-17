@@ -7,6 +7,12 @@ import "../token/MiniMeToken.sol";
 
 contract PollManager is Controlled {
 
+    struct Ballot {
+      // consider using bytes32 instead or string compression for description on FE to reduce gas
+      string description;
+      mapping(address => uint) votes;
+    }
+
     struct Poll {
         uint startBlock;
         uint endBlock;
@@ -14,7 +20,7 @@ contract PollManager is Controlled {
         bool canceled;
         uint voters;
         string description;
-        mapping(address => uint) votes;
+        Ballot[] ballots;
         uint results;
         uint qvResults;
     }
@@ -53,6 +59,7 @@ contract PollManager is Controlled {
         p.voters = 0;
         p.description = _description;
 
+        //TODO remove tokenFactory
         p.token = tokenFactory.createCloneToken(
             address(token),
             block.number - 1,
@@ -63,6 +70,8 @@ contract PollManager is Controlled {
 
         emit PollCreated(_idPoll); 
     }
+
+    //TODO add function addBallot or add ballots param to addPoll
 
     function cancelPoll(uint _idPoll) 
         onlyController
@@ -103,7 +112,7 @@ contract PollManager is Controlled {
         }
     }
 
-    function vote(uint _idPoll) public {
+    function vote(uint _idPoll, unit[] _ballots) public {
         require(_idPoll < _polls.length);
 
         Poll storage p = _polls[_idPoll];
@@ -112,14 +121,13 @@ contract PollManager is Controlled {
 
         unvote(_idPoll);
 
-        uint amount = MiniMeToken(p.token).balanceOf(msg.sender);
+        uint amount = snt.balanceOfAt(msg.sender, p.startBlock);
 
         require(amount != 0);
-        require(MiniMeToken(p.token).transferFrom(msg.sender, address(this), amount));
 
         p.votes[msg.sender] = amount;
         p.voters++;
-        
+        //TODO iterate through _ballots and allocate to p.Ballot[i] while decrementing from amount
         p.results += amount;
         p.qvResults += sqrt(amount / 1 ether);
 
