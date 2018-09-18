@@ -13,68 +13,60 @@ contract PollManager is Controlled {
         address token;
         bool canceled;
         uint voters;
-        string description;
-        mapping(address => uint) votes;
-        uint results;
-        uint qvResults;
+        bytes description;
+        uint8 numBallots;
+        mapping(uint8 => mapping(address => uint)) ballots;
+        mapping(uint8 => uint) qvResults;
+        mapping(uint8 => uint) results;
     }
 
     Poll[] _polls;
 
-    MiniMeTokenFactory public tokenFactory;
     MiniMeToken public token;
 
-    constructor(address _tokenFactory, address _token) 
+    constructor(address _token) 
         public {
-        tokenFactory = MiniMeTokenFactory(_tokenFactory);
         token = MiniMeToken(_token);
     }
 
     modifier onlySNTHolder {
         // TODO: require min number of tokens?
-        require(token.balanceOf(msg.sender) > 0); 
+        require(token.balanceOf(msg.sender) > 0, "SNT Balance is required to perform this operation"); 
         _; 
     }
 
     function addPoll(
         uint _endBlock,
-        string _description)
+        bytes _description,
+        uint8 _numBallots)
         public
         onlySNTHolder
         returns (uint _idPoll)
     {
-        require(_endBlock > block.number);
-
+        require(_endBlock > block.number, "End block must be greater than current block");
         _idPoll = _polls.length;
         _polls.length ++;
-        Poll storage p = _polls[ _idPoll ];
+        Poll storage p = _polls[_idPoll];
         p.startBlock = block.number;
         p.endBlock = _endBlock;
         p.voters = 0;
+        p.numBallots = _numBallots;
         p.description = _description;
-
-        p.token = tokenFactory.createCloneToken(
-            address(token),
-            block.number - 1,
-            "SNT Voting Token",
-            token.decimals(),
-            "SVT",
-            true);
 
         emit PollCreated(_idPoll); 
     }
 
     function cancelPoll(uint _idPoll) 
-        onlyController
-        public 
-    {
-        require(_idPoll < _polls.length);
+        public
+        onlyController {
+        require(_idPoll < _polls.length, "Invalid _idPoll");
 
         Poll storage p = _polls[_idPoll];
 
-        require(p.endBlock < block.number);
+        require(p.endBlock < block.number, "Only active polls can be canceled");
 
         p.canceled = true;
+
         emit PollCanceled(_idPoll);
     }
 
@@ -86,13 +78,11 @@ contract PollManager is Controlled {
         if(_idPoll >= _polls.length) return false;
 
         Poll storage p = _polls[_idPoll];
-        uint balance = MiniMeToken(p.token).balanceOfAt(msg.sender, p.startBlock - 1);
+        uint balance = token.balanceOfAt(msg.sender, p.startBlock);
         
-        return block.number >= p.startBlock && 
-                block.number <= p.endBlock && 
-               !p.canceled && 
-               balance != 0;
+        return block.number >= p.startBlock && block.number <= p.endBlock && !p.canceled && balance != 0;
     }
+    
 
     function sqrt(uint256 x) public pure returns (uint256 y) {
         uint256 z = (x + 1) / 2;
@@ -103,76 +93,64 @@ contract PollManager is Controlled {
         }
     }
 
-    function vote(uint _idPoll) public {
-        require(_idPoll < _polls.length);
+    function vote(uint _idPoll, uint[] _ballots) public {
+        require(_idPoll < _polls.length, "Invalid _idPoll");
 
         Poll storage p = _polls[_idPoll];
 
-        require(block.number >= p.startBlock && block.number < p.endBlock && !p.canceled);
+        require(block.number >= p.startBlock && block.number < p.endBlock && !p.canceled, "Poll is inactive");
+        require(_ballots.length == p.numBallots, "Number of ballots is incorrect");
 
         unvote(_idPoll);
 
-        uint amount = MiniMeToken(p.token).balanceOf(msg.sender);
+        uint amount = token.balanceOfAt(msg.sender, p.startBlock);
+        require(amount != 0, "No SNT balance available at start block of poll");
 
-        require(amount != 0);
-        require(MiniMeToken(p.token).transferFrom(msg.sender, address(this), amount));
-
-        p.votes[msg.sender] = amount;
-        p.voters++;
-        
-        p.results += amount;
-        p.qvResults += sqrt(amount / 1 ether);
-
-        emit Vote(_idPoll, msg.sender, amount);
-    }
-
-    function customVote(uint _idPoll, uint _amount) public {
-        require(_idPoll < _polls.length);
-
-        Poll storage p = _polls[_idPoll];
-
-        require(block.number >= p.startBlock && block.number < p.endBlock && !p.canceled);
-
-        unvote(_idPoll);
-
-        uint balance = MiniMeToken(p.token).balanceOf(msg.sender);
-
-        require(balance != 0 && balance >= _amount && _amount != 0);
-        require(MiniMeToken(p.token).transferFrom(msg.sender, address(this), _amount));
-
-        p.votes[msg.sender] = _amount;
         p.voters++;
 
-        p.results += _amount;
-        p.qvResults += sqrt(_amount / 1 ether);
+        uint totalBallots = 0;
+        for(uint8 i = 0; i < _ballots.length; i++){
+            totalBallots += _ballots[i];
 
-        emit Vote(_idPoll, msg.sender, _amount);
+            p.ballots[i][msg.sender] = _ballots[i];
+
+            if(_ballots[i] != 0){
+                p.qvResults[i] += sqrt(_ballots[i] / 1 ether);
+                p.results[i] += _ballots[i];
+            }
+        }
+
+        require(totalBallots <= amount, "Total ballots must be less than the SNT balance at poll start block");
+
+        emit Vote(_idPoll, msg.sender, _ballots);
     }
 
     function unvote(uint _idPoll) public {
-        require(_idPoll < _polls.length);
+        require(_idPoll < _polls.length, "Invalid _idPoll");
+
         Poll storage p = _polls[_idPoll];
         
-        require(block.number >= p.startBlock && block.number < p.endBlock && !p.canceled);
+        require(block.number >= p.startBlock && block.number < p.endBlock && !p.canceled, "Poll is inactive");
 
-        uint amount = p.votes[msg.sender];
-        if (amount == 0) return;
-
-        assert(p.voters != 0);
-        assert(amount <= p.results);
-
-        p.votes[msg.sender] = 0;
+        if(p.voters == 0) return;
 
         p.voters--;
-        p.results -= amount; 
-        p.qvResults -= sqrt(amount / 1 ether);
 
-        require(MiniMeToken(p.token).transferFrom(address(this), msg.sender, amount));
+        for(uint8 i = 0; i < p.numBallots; i++){
+            uint ballotAmount = p.ballots[i][msg.sender];
 
-        emit Unvote(_idPoll, msg.sender, amount);
+            p.ballots[i][msg.sender] = 0;
+
+            if(ballotAmount != 0){
+                p.qvResults[i] -= sqrt(ballotAmount / 1 ether);
+                p.results[i] -= ballotAmount;
+            }
+        }
+
+        emit Unvote(_idPoll, msg.sender);
     }
 
-// Constant Helper Function
+    // Constant Helper Function
 
     function nPolls()
         public
@@ -191,15 +169,13 @@ contract PollManager is Controlled {
         bool _canVote,
         address _token,
         bool _canceled,
-        string _description,
+        bytes _description,
+        uint8 _numBallots,
         bool _finalized,
-        uint _totalCensus,
-        uint _voters,
-        uint _results,
-        uint _qvResults
+        uint _voters
     )
     {
-        require(_idPoll < _polls.length);
+        require(_idPoll < _polls.length, "Invalid _idPoll");
 
         Poll storage p = _polls[_idPoll];
 
@@ -209,48 +185,43 @@ contract PollManager is Controlled {
         _canceled = p.canceled;
         _canVote = canVote(_idPoll);
         _description = p.description;
+        _numBallots = p.numBallots;
         _finalized = (!p.canceled) && (block.number >= _endBlock);
-        _totalCensus = MiniMeToken(p.token).totalSupply();
         _voters = p.voters;
-        _results = p.results;
-        _qvResults = p.qvResults;
     }
 
-    function getVote(uint _idPoll, address _voter) 
-        public 
-        view 
-        returns (uint)
-    {
-        require(_idPoll < _polls.length);
+
+    function pollResults(uint _idPoll, uint8 ballot)
+        public
+        view
+        returns (uint tokenTotal, uint quadraticVotes) {
+        require(_idPoll < _polls.length, "Invalid _idPoll");
 
         Poll storage p = _polls[_idPoll];
-        return p.votes[_voter];
+
+        require(ballot < p.numBallots, "Invalid ballot");
+
+        tokenTotal = p.results[ballot];
+        quadraticVotes = p.qvResults[ballot]; 
     }
 
-    function proxyPayment(address ) 
-        payable 
-        returns(bool) {
-        return false;
-    }
 
-
-    function onTransfer(address , address , uint ) 
-        public
-        pure
-        returns(bool) 
-    {
-        return true;
-    }
-
-    function onApprove(address , address , uint ) 
+    function getVote(uint _idPoll, address _voter, uint8 ballot) 
         public 
-        pure
-        returns(bool) {
-        return true;
+        view 
+        returns (uint tokenTotal)
+    {
+        require(_idPoll < _polls.length, "Invalid _idPoll");
+
+        Poll storage p = _polls[_idPoll];
+
+        require(ballot < p.numBallots, "Invalid ballot");
+
+        return  p.ballots[ballot][_voter];
     }
 
-    event Vote(uint indexed idPoll, address indexed _voter, uint amount);
-    event Unvote(uint indexed idPoll, address indexed _voter, uint amount);
+    event Vote(uint indexed idPoll, address indexed _voter, uint[] ballots);
+    event Unvote(uint indexed idPoll, address indexed _voter);
     event PollCanceled(uint indexed idPoll);
     event PollCreated(uint indexed idPoll);
 }

@@ -27,7 +27,7 @@ config({
     },
     "PollManager": {
         "deploy": true,
-        "args": ["$MiniMeTokenFactory", "$SNT"]
+        "args": ["$SNT"]
     }
   }
 });
@@ -41,7 +41,7 @@ describe("VotingDapp", function () {
         
         web3.eth.getAccounts().then((acc) => { 
             accounts = acc; 
-            return SNT.methods.generateTokens(accounts[0], 6).send()
+            return SNT.methods.generateTokens(accounts[0], 12).send()
         }).then((receipt) => { 
             return SNT.methods.generateTokens(accounts[1], 12).send()
         }).then((receipt) => { 
@@ -56,7 +56,8 @@ describe("VotingDapp", function () {
     it("Test", async () => {
 
         const blockNumber = await web3.eth.getBlockNumber();
-        const question =  "Move from Slack to Status Desktop";
+        const description =  web3.utils.toHex("Move from Slack to Status Desktop|Option1|Option2|Option3");
+        const numBallots = 3;
         let receipt;
         
 
@@ -65,7 +66,8 @@ describe("VotingDapp", function () {
         try {
             receipt = await PollManager.methods.addPoll(
                 blockNumber + 10, 
-                question)
+                description,
+                numBallots)
                 .send({from: accounts[8]});
             assert.fail('should have reverted before');
         } catch(error) {
@@ -75,17 +77,19 @@ describe("VotingDapp", function () {
         
         // ===================================================
         // Creating a proposal as a SNT holder
-        
         receipt = await PollManager.methods.addPoll(
-                                blockNumber + 10, 
-                                question)
+                                blockNumber + 10,
+                                description,
+                                numBallots)
                                 .send({from: accounts[0]});
 
-        assert.equal(!!receipt.events.PollCreated, true, "PollCreated not triggered");
+        assert(!!receipt.events.PollCreated, "PollCreated not triggered");
 
         const pollId = receipt.events.PollCreated.returnValues.idPoll;
-        let poll = await PollManager.methods.poll(pollId).call();
-   
+       let poll = await PollManager.methods.poll(pollId).call();
+
+        console.log("  - Gas used during poll creation: " + receipt.gasUsed);
+
 
         // ===================================================
         // Determining if I can vote por a proposal
@@ -93,26 +97,29 @@ describe("VotingDapp", function () {
         assert.equal(canVote, true, "User should be able to vote");
 
 
-        // ===================================================
-        // Voting
-        receipt = await PollManager.methods.vote(pollId).send({from: accounts[0]});
-        assert.equal(!!receipt.events.Vote, true, "Vote not triggered");
-        
-        receipt = await PollManager.methods.customVote(pollId, 12).send({from: accounts[1]});
-        assert.equal(!!receipt.events.Vote, true, "Vote not triggered");
-        
+        // TODO: Voter has SNT, but ballots total is greater than balance
 
+
+        // ===================================================
+        // Valid Vote
+        receipt = await PollManager.methods.vote(pollId, [9, 1, 2]).send({from: accounts[0]});
+        assert(!!receipt.events.Vote, "Vote not triggered");
+        console.log("  - Gas used during voting: " + receipt.gasUsed);
+
+
+        /* TODO:
         // ===================================================
         // Getting what option the voter selected
         let myVote = await PollManager.methods.getVote(pollId, accounts[0]).call();
         const balance = await SNT.methods.balanceOf(accounts[0]).call();
         assert.equal(myVote, balance, "Vote is different from selected");
+            */
 
-
+        
         // ===================================================
         // Voting when you're not a SNT holder SHOULD FAIL!
         try {
-            receipt = await PollManager.methods.vote(pollId)
+            receipt = await PollManager.methods.vote(pollId, [1, 2, 3])
                             .send({from: accounts[8]});
             assert.fail('should have reverted before');
         } catch(error) {
@@ -122,7 +129,7 @@ describe("VotingDapp", function () {
 
         // ===================================================
         // Getting proposal information
-        poll = await PollManager.methods.poll(pollId).call();
+        /*poll = await PollManager.methods.poll(pollId).call();
         let tokenVotes = poll._results;
         let quadraticVotes = poll._qvResults;
         let voters = poll._voters;
@@ -139,10 +146,16 @@ describe("VotingDapp", function () {
         // Contains how many votes
         // console.log(tokenVotes); 
 
+        */
+
+
         // ===================================================
         // Unvote
         receipt = await PollManager.methods.unvote(pollId).send({from: accounts[0]});
-        assert.equal(!!receipt.events.Unvote, true, "Unvote not triggered");
+        assert(!!receipt.events.Unvote, "Unvote not triggered");
+
+
+        console.log("\n");
     });
 
 });
