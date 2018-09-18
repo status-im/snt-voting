@@ -2,7 +2,7 @@ pragma solidity ^0.4.23;
 
 import "../common/Controlled.sol";
 import "../token/MiniMeToken.sol";
-
+import "../rlp/Helper.sol";
 
 
 contract PollManager is Controlled {
@@ -24,9 +24,12 @@ contract PollManager is Controlled {
 
     MiniMeToken public token;
 
+    Helper public rlpHelper;
+
     constructor(address _token) 
         public {
         token = MiniMeToken(_token);
+        rlpHelper = new Helper();
     }
 
     modifier onlySNTHolder {
@@ -188,6 +191,20 @@ contract PollManager is Controlled {
         _numBallots = p.numBallots;
         _finalized = (!p.canceled) && (block.number >= _endBlock);
         _voters = p.voters;
+    }
+
+    function pollTitle(uint _idPoll) public view returns (string){
+        require(_idPoll < _polls.length, "Invalid _idPoll");
+        Poll memory p = _polls[_idPoll];
+
+        return rlpHelper.pollTitle(p.description);
+    }
+
+    function pollBallot(uint _idPoll, uint ballotNum) public view returns (string){
+        require(_idPoll < _polls.length, "Invalid _idPoll");
+        Poll memory p = _polls[_idPoll];
+
+        return rlpHelper.pollBallot(p.description, ballotNum);
     }
 
 

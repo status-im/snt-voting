@@ -56,30 +56,31 @@ describe("VotingDapp", function () {
     it("Test", async () => {
 
         const blockNumber = await web3.eth.getBlockNumber();
-        const description =  web3.utils.toHex("Move from Slack to Status Desktop|Option1|Option2|Option3");
+        let description = ["Should we ditch Slack for Status.im Desktop?", ["What are we waiting for?", "Let's wait for Windows version first", "Yes, as long as _____ feature is implemented"]];
         const numBallots = 3;
         let receipt;
-        
 
-        // ===================================================
+        const encodedDesc = "0x" + rlp.encode(description).toString('hex');
+
+     /*   // ===================================================
         // Creating a proposal without holding SNT SHOULD FAIL!
         try {
             receipt = await PollManager.methods.addPoll(
                 blockNumber + 10, 
-                description,
+                encodedDesc,
                 numBallots)
                 .send({from: accounts[8]});
             assert.fail('should have reverted before');
         } catch(error) {
             utils.assertJump(error);
-        }
+        }*/
         
         
         // ===================================================
         // Creating a proposal as a SNT holder
         receipt = await PollManager.methods.addPoll(
                                 blockNumber + 10,
-                                description,
+                                encodedDesc,
                                 numBallots)
                                 .send({from: accounts[0]});
 
@@ -128,9 +129,21 @@ describe("VotingDapp", function () {
 
 
         // ===================================================
+        // Getting poll data
+        console.log("  - Decoding poll title: " + (await PollManager.methods.pollTitle(pollId).call()));
+        console.log("  - Decoding poll ballot 1: " + (await PollManager.methods.pollBallot(pollId, 0).call()));
+        console.log("  - Decoding poll ballot 2: " + (await PollManager.methods.pollBallot(pollId, 1).call()));
+
+
+
+
+        // ===================================================
         // Getting proposal information
-        /*poll = await PollManager.methods.poll(pollId).call();
-        let tokenVotes = poll._results;
+        // poll = await PollManager.methods.poll(pollId).call();
+        
+
+
+        /*let tokenVotes = poll._results;
         let quadraticVotes = poll._qvResults;
         let voters = poll._voters;
 
