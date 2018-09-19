@@ -10,7 +10,6 @@ contract PollManager is Controlled {
     struct Poll {
         uint startBlock;
         uint endBlock;
-        address token;
         bool canceled;
         uint voters;
         bytes description;
@@ -33,7 +32,6 @@ contract PollManager is Controlled {
     }
 
     modifier onlySNTHolder {
-        // TODO: require min number of tokens?
         require(token.balanceOf(msg.sender) > 0, "SNT Balance is required to perform this operation"); 
         _; 
     }
@@ -82,8 +80,7 @@ contract PollManager is Controlled {
 
         Poll storage p = _polls[_idPoll];
         uint balance = token.balanceOfAt(msg.sender, p.startBlock);
-        
-        return block.number >= p.startBlock && block.number <= p.endBlock && !p.canceled && balance != 0;
+        return block.number >= p.startBlock && block.number < p.endBlock && !p.canceled && balance != 0;
     }
     
 
@@ -170,7 +167,6 @@ contract PollManager is Controlled {
         uint _startBlock,
         uint _endBlock,
         bool _canVote,
-        address _token,
         bool _canceled,
         bytes _description,
         uint8 _numBallots,
@@ -184,7 +180,6 @@ contract PollManager is Controlled {
 
         _startBlock = p.startBlock;
         _endBlock = p.endBlock;
-        _token = p.token;
         _canceled = p.canceled;
         _canVote = canVote(_idPoll);
         _description = p.description;

@@ -4,6 +4,9 @@ const BN = web3.utils.BN;
 var _ = require('lodash');
 var rlp = require('rlp');
 
+
+const decimals = (amount) => web3.utils.toWei(amount.toString(), "ether");
+
 config({
   contracts: {
     "MiniMeTokenFactory": {
@@ -32,40 +35,40 @@ config({
   }
 });
 
+
 describe("VotingDapp", function () {
     this.timeout(0);
 
     let accounts;
+    let blockNumber;
     
     before(function(done) {
-        
         web3.eth.getAccounts().then((acc) => { 
             accounts = acc; 
-            return SNT.methods.generateTokens(accounts[0], 12).send()
-        }).then((receipt) => { 
-            return SNT.methods.generateTokens(accounts[1], 12).send()
-        }).then((receipt) => { 
-            return SNT.methods.generateTokens(accounts[2], 10).send()
-        }).then((receipt) => { 
-            return SNT.methods.generateTokens(accounts[3], 7).send()
-        }).then((receipt) => {
+            return SNT.methods.generateTokens(accounts[0], decimals(12)).send();
+        }).then(() => { 
+            return SNT.methods.generateTokens(accounts[1], decimals(10)).send();
+        }).then(() => { 
+            return SNT.methods.generateTokens(accounts[2], decimals(12)).send();
+        }).then(() => { 
+            return SNT.methods.generateTokens(accounts[3], decimals(7)).send();
+        }).then(() => {
+            return web3.eth.getBlockNumber();
+        }).then((block) => {
+            blockNumber = block;
             done(); 
         });
     });
 
-    it("Test", async () => {
+    const description = ["Should we ditch Slack for Status.im Desktop?", ["What are we waiting for?", "Let's wait for Windows version first", "Yes, as long as _____ feature is implemented"]];
+    const numBallots = 3;
+    const encodedDesc = "0x" + rlp.encode(description).toString('hex');
 
-        const blockNumber = await web3.eth.getBlockNumber();
-        let description = ["Should we ditch Slack for Status.im Desktop?", ["What are we waiting for?", "Let's wait for Windows version first", "Yes, as long as _____ feature is implemented"]];
-        const numBallots = 3;
-        let receipt;
+    let pollId;
 
-        const encodedDesc = "0x" + rlp.encode(description).toString('hex');
-
-     /*   // ===================================================
-        // Creating a proposal without holding SNT SHOULD FAIL!
+    it("Creating a proposal without holding SNT should fail", async () => {
         try {
-            receipt = await PollManager.methods.addPoll(
+            const receipt = await PollManager.methods.addPoll(
                 blockNumber + 10, 
                 encodedDesc,
                 numBallots)
@@ -73,12 +76,11 @@ describe("VotingDapp", function () {
             assert.fail('should have reverted before');
         } catch(error) {
             utils.assertJump(error);
-        }*/
-        
-        
-        // ===================================================
-        // Creating a proposal as a SNT holder
-        receipt = await PollManager.methods.addPoll(
+        }
+    });
+
+    it("A SNT holder can create polls", async () => {
+        const receipt = await PollManager.methods.addPoll(
                                 blockNumber + 10,
                                 encodedDesc,
                                 numBallots)
@@ -86,89 +88,97 @@ describe("VotingDapp", function () {
 
         assert(!!receipt.events.PollCreated, "PollCreated not triggered");
 
-        const pollId = receipt.events.PollCreated.returnValues.idPoll;
-       let poll = await PollManager.methods.poll(pollId).call();
+        pollId = receipt.events.PollCreated.returnValues.idPoll;
 
-        console.log("  - Gas used during poll creation: " + receipt.gasUsed);
+        console.log("    - Gas used during poll creation: " + receipt.gasUsed);
+    });
 
-
-        // ===================================================
-        // Determining if I can vote por a proposal
-        let canVote = await PollManager.methods.canVote(pollId).call({from: accounts[0]});
+    it("A user should be able to determine if he can vote", async () => {
+        const canVote = await PollManager.methods.canVote(pollId).call({from: accounts[0]});
         assert.equal(canVote, true, "User should be able to vote");
+    });
 
-
-        // TODO: Voter has SNT, but ballots total is greater than balance
-
-
-        // ===================================================
-        // Valid Vote
-        receipt = await PollManager.methods.vote(pollId, [9, 1, 2]).send({from: accounts[0]});
-        assert(!!receipt.events.Vote, "Vote not triggered");
-        console.log("  - Gas used during voting: " + receipt.gasUsed);
-
-
-        /* TODO:
-        // ===================================================
-        // Getting what option the voter selected
-        let myVote = await PollManager.methods.getVote(pollId, accounts[0]).call();
-        const balance = await SNT.methods.balanceOf(accounts[0]).call();
-        assert.equal(myVote, balance, "Vote is different from selected");
-            */
-
-        
-        // ===================================================
-        // Voting when you're not a SNT holder SHOULD FAIL!
+    it("A SNT holder cannot vote if ballots total is greater than current balance", async () => {
         try {
-            receipt = await PollManager.methods.vote(pollId, [1, 2, 3])
+            const receipt = await PollManager.methods.vote(pollId, [decimals(11), decimals(12), decimals(12)]).send({from: accounts[0]});
+            assert.fail('should have reverted before');
+        } catch(error) {
+            utils.assertJump(error);
+        }
+    });
+
+    it("A user should be able to vote if the ballots contain the correct amount", async () => {
+        const ballots = [decimals(9), decimals(0), decimals(1)];
+        const receipt = await PollManager.methods.vote(pollId, ballots).send({from: accounts[0]});
+        assert(!!receipt.events.Vote, "Vote not triggered");
+        console.log("    - Gas used during voting: " + receipt.gasUsed);
+    });
+
+    it("The option the voter selected must be stored correctly", async() => {
+        const ballots = [decimals(9), decimals(0), decimals(1)];
+
+        const ballot1 = await PollManager.methods.getVote(pollId, accounts[0], 0).call();
+        const ballot2 = await PollManager.methods.getVote(pollId, accounts[0], 1).call();
+        const ballot3 = await PollManager.methods.getVote(pollId, accounts[0], 2).call();
+        
+        assert.equal(ballot1, ballots[0], "Ballot1 value is incorrect");
+        assert.equal(ballot2, ballots[1], "Ballot2 value is incorrect");
+        assert.equal(ballot3, ballots[2], "Ballot3 value is incorrect");
+    });
+
+    it("More than 1 user should be able to vote", async() => {
+        const receipt = await PollManager.methods.vote(pollId, [decimals(4), decimals(4), decimals(1)]).send({from: accounts[2]});
+        assert(!!receipt.events.Vote, "Vote not triggered");
+    });
+
+    it("Voting when you're not a SNT holder SHOULD FAIL!", async () => {
+        try {
+            const receipt = await PollManager.methods.vote(pollId, [decimals(1), decimals(2), decimals(3)])
                             .send({from: accounts[8]});
             assert.fail('should have reverted before');
         } catch(error) {
             utils.assertJump(error);
         }
+    });
 
+    it("Getting poll information", async () => {
+        console.log("    - Decoding poll title: " + (await PollManager.methods.pollTitle(pollId).call()));
+        console.log("    - Decoding poll ballot 1: " + (await PollManager.methods.pollBallot(pollId, 0).call()));
+        console.log("    - Decoding poll ballot 2: " + (await PollManager.methods.pollBallot(pollId, 1).call()));
+        console.log("    - Decoding poll ballot 3: " + (await PollManager.methods.pollBallot(pollId, 2).call()));
 
-        // ===================================================
-        // Getting poll data
-        console.log("  - Decoding poll title: " + (await PollManager.methods.pollTitle(pollId).call()));
-        console.log("  - Decoding poll ballot 1: " + (await PollManager.methods.pollBallot(pollId, 0).call()));
-        console.log("  - Decoding poll ballot 2: " + (await PollManager.methods.pollBallot(pollId, 1).call()));
+        const poll = await PollManager.methods.poll(pollId).call();
 
+        const voters = poll._voters;
+        const resultsB1 = await PollManager.methods.pollResults(pollId, 0).call();
+        const resultsB2 = await PollManager.methods.pollResults(pollId, 1).call();
+        const resultsB3 = await PollManager.methods.pollResults(pollId, 2).call();
 
+        // TODO: add tests with voters, and resultsB*
+    });
 
+    it("User can unvote", async () => {
+        const poll = await PollManager.methods.poll(pollId).call();
 
-        // ===================================================
-        // Getting proposal information
-        // poll = await PollManager.methods.poll(pollId).call();
-        
-
-
-        /*let tokenVotes = poll._results;
-        let quadraticVotes = poll._qvResults;
-        let voters = poll._voters;
-
-        // Will contain state of the poll
-        // console.dir(poll);
-
-        // Contains how many voters
-        // console.log(voters); 
-
-        // Contains how many votes using quadratic voting
-        // console.log(quadraticVotes);
-
-        // Contains how many votes
-        // console.log(tokenVotes); 
-
-        */
-
-
-        // ===================================================
-        // Unvote
-        receipt = await PollManager.methods.unvote(pollId).send({from: accounts[0]});
+        const receipt = await PollManager.methods.unvote(pollId).send({from: accounts[0]});
         assert(!!receipt.events.Unvote, "Unvote not triggered");
 
+        const ballot1 = await PollManager.methods.getVote(pollId, accounts[0], 0).call();
+        const ballot2 = await PollManager.methods.getVote(pollId, accounts[0], 1).call();
+        const ballot3 = await PollManager.methods.getVote(pollId, accounts[0], 2).call();
 
-        console.log("\n");
+        assert.equal(ballot1, 0, "Ballot1 value is incorrect");
+        assert.equal(ballot2, 0, "Ballot2 value is incorrect");
+        assert.equal(ballot3, 0, "Ballot3 value is incorrect");
+
+        const updatedPoll = await PollManager.methods.poll(pollId).call();
+        assert.equal(updatedPoll._voters, poll._voters -1, "Number of voters is incorrect")
+    });
+
+    it("User can vote again", async () => {
+        const ballots = [9, 2, 1];
+        const receipt = await PollManager.methods.vote(pollId, ballots).send({from: accounts[0]});
+        assert(!!receipt.events.Vote, "Vote not triggered");
     });
 
 });
