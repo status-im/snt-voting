@@ -107,7 +107,7 @@ describe("VotingDapp", function () {
         }
     });
 
-    it("A user should be able to vote if the ballots contain the correct amount", async () => {
+    it("Should be able to vote if the ballots contain the correct amount", async () => {
         const ballots = [decimals(9), decimals(0), decimals(1)];
         const receipt = await PollManager.methods.vote(pollId, ballots).send({from: accounts[0]});
         assert(!!receipt.events.Vote, "Vote not triggered");
