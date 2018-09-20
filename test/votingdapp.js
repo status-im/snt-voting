@@ -69,6 +69,7 @@ describe("VotingDapp", function () {
     it("Creating a proposal without holding SNT should fail", async () => {
         try {
             const receipt = await PollManager.methods.addPoll(
+                blockNumber,
                 blockNumber + 10, 
                 encodedDesc,
                 numBallots)
@@ -80,7 +81,10 @@ describe("VotingDapp", function () {
     });
 
     it("A SNT holder can create polls", async () => {
+        const blockNumber = (await web3.eth.getBlockNumber()) + 1;
+
         const receipt = await PollManager.methods.addPoll(
+                                blockNumber,
                                 blockNumber + 10,
                                 encodedDesc,
                                 numBallots)

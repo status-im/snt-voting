@@ -17,6 +17,7 @@ contract PollManager is Controlled {
         mapping(uint8 => mapping(address => uint)) ballots;
         mapping(uint8 => uint) qvResults;
         mapping(uint8 => uint) results;
+        address author;
     }
 
     Poll[] _polls;
@@ -37,6 +38,7 @@ contract PollManager is Controlled {
     }
 
     function addPoll(
+        uint _startBlock,
         uint _endBlock,
         bytes _description,
         uint8 _numBallots)
@@ -45,16 +47,36 @@ contract PollManager is Controlled {
         returns (uint _idPoll)
     {
         require(_endBlock > block.number, "End block must be greater than current block");
+        require(_startBlock >= block.number && _startBlock < _endBlock, "Start block must not be in the past, and should be less than the end block" );
+        
         _idPoll = _polls.length;
         _polls.length ++;
         Poll storage p = _polls[_idPoll];
-        p.startBlock = block.number;
+        p.startBlock = _startBlock;
         p.endBlock = _endBlock;
         p.voters = 0;
         p.numBallots = _numBallots;
         p.description = _description;
+        p.author = msg.sender;
 
         emit PollCreated(_idPoll); 
+    }
+
+    function updatePollDescription(
+        uint _idPoll, 
+        bytes _description,
+        uint8 _numBallots)
+        public
+    {
+        require(_idPoll < _polls.length, "Invalid _idPoll");
+
+        Poll storage p = _polls[_idPoll];
+        require(p.startBlock > block.number, "You cannot modify an active poll");
+        require(p.author == msg.sender || msg.sender == controller, "Only the owner can modify the poll");
+
+        p.numBallots = _numBallots;
+        p.description = _description;
+        p.author = msg.sender;
     }
 
     function cancelPoll(uint _idPoll) 
