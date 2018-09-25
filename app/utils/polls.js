@@ -1,6 +1,7 @@
 import web3 from "Embark/web3"
 import MiniMeTokenInterface from 'Embark/contracts/MiniMeTokenInterface';
 import PollManager from 'Embark/contracts/PollManager';
+import SNT from 'Embark/contracts/SNT';
 
 const excluded = {
   PROPER_LIGHT_CLIENT_SUPPORT : 3,
@@ -8,14 +9,12 @@ const excluded = {
   SHIP_1_0 : 16
 };
 
-export const getBalance = async (idPoll, token, startBlock) => {
+export const getBalance = async (startBlock) => {
   const { fromWei } = web3.utils;
-  const { balanceOfAt } = MiniMeTokenInterface.methods;
-  MiniMeTokenInterface.options.address = token;
+  const { balanceOfAt } = SNT.methods;
   const balance = await balanceOfAt(web3.eth.defaultAccount, startBlock - 1).call();
   return fromWei(balance);
 }
-
 export const getVote = async(idPoll) => {
   const { fromWei } = web3.utils;
   const votes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();
@@ -24,9 +23,10 @@ export const getVote = async(idPoll) => {
 
 const fetchPollData = async (index, pollMethod) => {
   const poll = await pollMethod(index).call();
-  const balance = await getBalance(index, poll._token, poll._startBlock);
-  const votes = await getVote(index);
-  return { ...poll, idPoll: index, balance, votes };
+  const balance = await getBalance(poll._startBlock);
+
+  //const votes = await getVote(index);
+  return { ...poll, idPoll: index, balance, votes: "0" };
 }
 
 export const getPolls = (number, pollMethod) => {

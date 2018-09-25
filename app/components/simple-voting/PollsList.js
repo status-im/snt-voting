@@ -17,6 +17,7 @@ import web3 from "Embark/web3"
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { VotingContext } from '../../context';
+import rlp from 'rlp';
 
 const styles = {
   card: {
@@ -111,23 +112,32 @@ class Poll extends PureComponent {
       _canVote,
       balance,
       classes,
-      ideaSites
+      ideaSites,
+      _numBallots,
     } = this.props;
     const { value, originalValue, isSubmitting, error } = this.state;
     const cantVote = balance == 0 || !_canVote;
     const disableVote = cantVote || isSubmitting;
-    const { fromWei } = web3.utils;
+    const fromWei  = (m) => m;
     const maxValue = Math.floor(Math.sqrt(balance));
     const buttonText = originalValue != 0 && value != originalValue ? 'Change Vote' : 'Vote';
     const idea = getIdeaFromStr(_description)
     const ideaSite = ideaSites && ideaSites.filter(site => site.includes(idea));
+
+    const decodedDesc = rlp.decode(_description);
+    const title = decodedDesc[0].toString();
+    const ballots = decodedDesc[1];
+
     return (
       <Card>
         <CardContent>
-          <Typography variant="headline">{_description}</Typography>
+          <Typography variant="headline">{title}</Typography>
           <Typography variant="subheading" color="textSecondary">
             <b>Total:</b> {_voters} voters. {_qvResults} votes ({fromWei(_results)} SNT)
           </Typography>
+
+          { _numBallots > 0 && ballots.map((opt, i) => <p key={i}>{opt.toString()}</p>) }
+
           <Typography variant="subheading" color="textSecondary">
             <b>Your vote:</b> {value} votes ({value * value} SNT)
           </Typography>
@@ -184,7 +194,7 @@ const PollsList = ({ classes }) => (
       <Fragment>
         {rawPolls
           .sort(sortingFn[pollOrder])
-          .map((poll) => <Poll key={poll._token} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} ideaSites={ideaSites} {...poll} />)}
+          .map((poll) => <Poll key={poll.idPoll} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} ideaSites={ideaSites} {...poll} />)}
       </Fragment>
     }
   </VotingContext.Consumer>

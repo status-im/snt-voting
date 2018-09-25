@@ -44,7 +44,7 @@
         ]
       },
       "PollManager": {
-        "args": ["$MiniMeTokenFactory", "$SNT"]
+        "args": ["$SNT"]
       }
     }
   },

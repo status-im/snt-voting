@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import PollManager from 'Embark/contracts/PollManager';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import rlp from 'rlp';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { withFormik } from 'formik';
@@ -51,14 +51,14 @@ const InnerForm = ({
     <CardContent>
       <form onSubmit={handleSubmit} className={classes.form}>
         <TextField
-          id="description"
-          label="Enter your proposal description"
+          id="title"
+          label="Enter your proposal title"
           className={classes.textField}
-          value={values.description}
+          value={values.title}
           onChange={handleChange}
           margin="normal"
           fullWidth
-          error={!!errors.description}
+          error={!!errors.title}
           InputProps={{
             classes: {
               input: classes.textFieldInput
@@ -67,8 +67,30 @@ const InnerForm = ({
           InputLabelProps={{
             className: classes.textFieldFormLabel
           }}
-          helperText={errors.description}
+          helperText={errors.title}
         />
+
+        <TextField
+          id="ballots"
+          label="Enter the proposal options, separated by '|' (optional)"
+          className={classes.textField}
+          value={values.ballots}
+          onChange={handleChange}
+          margin="normal"
+          fullWidth
+          error={!!errors.ballots}
+          InputProps={{
+            classes: {
+              input: classes.textFieldInput
+            },
+          }}
+          InputLabelProps={{
+            className: classes.textFieldFormLabel
+          }}
+          helperText={errors.ballots}
+        />
+
+
         {!isSubmitting ?
          <Button type="submit" variant="extendedFab" aria-label="add" className={classes.button}>Submit</Button> :
          <CircularProgress style={{ margin: '10px 10px 10px 50%' }} />
@@ -80,20 +102,31 @@ const InnerForm = ({
 
 const StyledForm = withStyles(styles)(InnerForm);
 const AddPoll = withFormik({
-  mapPropsToValues: props => ({ description: ''}),
+  mapPropsToValues: props => ({ title: '', ballots: ''}),
   validate(values, props){
     const errors = {};
-    const { description } = values;
-    if(description.toString().trim() === "") errors.description = true;
+    const { title, ballots } = values;
+    const ballotOptions = ballots.toString().split("|")
+    if(title.toString().trim() === "") {
+      errors.title = "Required";
+    }
+    if(ballotOptions.filter(n => n).length == 1) {
+      errors.ballots = "A minimum of 2 options is required if using multiple options";
+    }
+
     return errors;
   },
+
   async handleSubmit(values, { setSubmitting, setErrors, props }) {
-    const { description } = values;
+    const { title, ballots } = values;
     const { eth: { getBlockNumber } } = window.web3;
-    const { addPoll } = PollManager.methods;
+    const addPoll = PollManager.methods["addPoll(uint256,bytes,uint8)"];
     const currentBlock = await getBlockNumber();
     const endTime = currentBlock + (oneDayinBlocks * 90);
-    const toSend = addPoll(endTime, description);
+    const options = ballots.split("|");
+    const encodedDesc = "0x" + rlp.encode([title, options]).toString('hex');
+    
+    const toSend = addPoll(endTime, encodedDesc, options.length || 0);
 
     setSubmitting(true);
 
