@@ -5,7 +5,7 @@ pragma solidity ^0.4.24;
 */
 import "./RLPReader.sol";
 
-contract Helper {
+contract RLPHelper {
     using RLPReader for bytes;
     using RLPReader for uint;
     using RLPReader for RLPReader.RLPItem;

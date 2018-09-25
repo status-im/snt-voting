@@ -2,7 +2,7 @@ pragma solidity ^0.4.23;
 
 import "../common/Controlled.sol";
 import "../token/MiniMeToken.sol";
-import "../rlp/Helper.sol";
+import "../rlp/RLPHelper.sol";
 
 
 contract PollManager is Controlled {
@@ -24,19 +24,42 @@ contract PollManager is Controlled {
 
     MiniMeToken public token;
 
-    Helper public rlpHelper;
+    RLPHelper public rlpHelper;
 
+    /// @notice Contract constructor
+    /// @param _token Address of the token used for governance
     constructor(address _token) 
         public {
         token = MiniMeToken(_token);
-        rlpHelper = new Helper();
+        rlpHelper = new RLPHelper();
     }
 
+    /// @notice Only allow addresses that have > 0 SNT to perform an operation
     modifier onlySNTHolder {
         require(token.balanceOf(msg.sender) > 0, "SNT Balance is required to perform this operation"); 
         _; 
     }
 
+    /// @notice Create a Poll and enable it immediatly
+    /// @param _endBlock Block where the poll ends
+    /// @param _description RLP encoded: [poll_title, [poll_ballots]]
+    /// @param _numBallots Number of ballots
+    function addPoll(
+        uint _endBlock,
+        bytes _description,
+        uint8 _numBallots)
+        public
+        onlySNTHolder
+        returns (uint _idPoll)
+    {
+        _idPoll = addPoll(block.number, _endBlock, _description, _numBallots);
+    }
+
+    /// @notice Create a Poll
+    /// @param _startBlock Block where the poll starts
+    /// @param _endBlock Block where the poll ends
+    /// @param _description RLP encoded: [poll_title, [poll_ballots]]
+    /// @param _numBallots Number of ballots
     function addPoll(
         uint _startBlock,
         uint _endBlock,
@@ -51,6 +74,7 @@ contract PollManager is Controlled {
         
         _idPoll = _polls.length;
         _polls.length ++;
+
         Poll storage p = _polls[_idPoll];
         p.startBlock = _startBlock;
         p.endBlock = _endBlock;
@@ -62,6 +86,10 @@ contract PollManager is Controlled {
         emit PollCreated(_idPoll); 
     }
 
+    /// @notice Update poll description (title or ballots) as long as it hasn't started
+    /// @param _idPoll Poll to update
+    /// @param _description RLP encoded: [poll_title, [poll_ballots]]
+    /// @param _numBallots Number of ballots
     function updatePollDescription(
         uint _idPoll, 
         bytes _description,
@@ -72,27 +100,39 @@ contract PollManager is Controlled {
 
         Poll storage p = _polls[_idPoll];
         require(p.startBlock > block.number, "You cannot modify an active poll");
-        require(p.author == msg.sender || msg.sender == controller, "Only the owner can modify the poll");
+        require(p.author == msg.sender || msg.sender == controller, "Only the owner/controller can modify the poll");
 
         p.numBallots = _numBallots;
         p.description = _description;
         p.author = msg.sender;
     }
 
+    /// @notice Cancel an existing poll
+    /// @dev Can only be done by the controller (which should be a Multisig/DAO) at any time, or by the owner if the poll hasn't started
+    /// @param _idPoll Poll to cancel
     function cancelPoll(uint _idPoll) 
-        public
-        onlyController {
+        public {
         require(_idPoll < _polls.length, "Invalid _idPoll");
 
         Poll storage p = _polls[_idPoll];
-
+        
+        require(!p.canceled, "Poll has been canceled already");
         require(p.endBlock < block.number, "Only active polls can be canceled");
+
+        if(p.startBlock <= block.number){
+            require(msg.sender == controller, "Only the controller can cancel the poll");
+        } else {
+            require(p.author == msg.sender, "Only the controller can cancel the poll");
+        }
 
         p.canceled = true;
 
         emit PollCanceled(_idPoll);
     }
 
+    /// @notice Determine if user can bote for a poll
+    /// @param _idPoll Id of the poll
+    /// @return bool Can vote or not
     function canVote(uint _idPoll) 
         public 
         view 
@@ -105,8 +145,10 @@ contract PollManager is Controlled {
         return block.number >= p.startBlock && block.number < p.endBlock && !p.canceled && balance != 0;
     }
     
-
-    function sqrt(uint256 x) public pure returns (uint256 y) {
+    /// @notice Calculate square root of a uint (It has some precision loss)
+    /// @param x Number to calculate the square root
+    /// @return Square root of x
+    function sqrt(uint256 x) internal pure returns (uint256 y) {
         uint256 z = (x + 1) / 2;
         y = x;
         while (z < y) {
@@ -115,6 +157,9 @@ contract PollManager is Controlled {
         }
     }
 
+    /// @notice Vote for a poll
+    /// @param _idPoll Poll to vote
+    /// @param _ballots array of (number of ballots the poll has) elements, and their sum must be less or equal to the balance at the block start
     function vote(uint _idPoll, uint[] _ballots) public {
         require(_idPoll < _polls.length, "Invalid _idPoll");
 
@@ -147,6 +192,8 @@ contract PollManager is Controlled {
         emit Vote(_idPoll, msg.sender, _ballots);
     }
 
+    /// @notice Cancel or reset a vote
+    /// @param _idPoll Poll 
     function unvote(uint _idPoll) public {
         require(_idPoll < _polls.length, "Invalid _idPoll");
 
@@ -174,6 +221,8 @@ contract PollManager is Controlled {
 
     // Constant Helper Function
 
+    /// @notice Get number of polls
+    /// @return Num of polls
     function nPolls()
         public
         view 
@@ -182,6 +231,8 @@ contract PollManager is Controlled {
         return _polls.length;
     }
 
+    /// @notice Get Poll info
+    /// @param _idPoll Poll 
     function poll(uint _idPoll)
         public 
         view 
@@ -210,6 +261,9 @@ contract PollManager is Controlled {
         _voters = p.voters;
     }
 
+    /// @notice Decode poll title
+    /// @param _idPoll Poll
+    /// @return string with the poll title
     function pollTitle(uint _idPoll) public view returns (string){
         require(_idPoll < _polls.length, "Invalid _idPoll");
         Poll memory p = _polls[_idPoll];
@@ -217,15 +271,21 @@ contract PollManager is Controlled {
         return rlpHelper.pollTitle(p.description);
     }
 
-    function pollBallot(uint _idPoll, uint ballotNum) public view returns (string){
+    /// @notice Decode poll ballot
+    /// @param _idPoll Poll
+    /// @param _ballot Index (0-based) of the ballot to decode
+    /// @return string with the ballot text
+    function pollBallot(uint _idPoll, uint _ballot) public view returns (string){
         require(_idPoll < _polls.length, "Invalid _idPoll");
         Poll memory p = _polls[_idPoll];
 
-        return rlpHelper.pollBallot(p.description, ballotNum);
+        return rlpHelper.pollBallot(p.description, _ballot);
     }
 
-
-    function pollResults(uint _idPoll, uint8 ballot)
+    /// @notice Get ballot results for poll
+    /// @param _idPoll Poll
+    /// @param _ballot Index (0-based) of the ballot to decode
+    function pollResults(uint _idPoll, uint8 _ballot)
         public
         view
         returns (uint tokenTotal, uint quadraticVotes) {
@@ -233,14 +293,17 @@ contract PollManager is Controlled {
 
         Poll storage p = _polls[_idPoll];
 
-        require(ballot < p.numBallots, "Invalid ballot");
+        require(_ballot < p.numBallots, "Invalid ballot");
 
-        tokenTotal = p.results[ballot];
-        quadraticVotes = p.qvResults[ballot]; 
+        tokenTotal = p.results[_ballot];
+        quadraticVotes = p.qvResults[_ballot]; 
     }
 
-
-    function getVote(uint _idPoll, address _voter, uint8 ballot) 
+    /// @notice Get votes for poll/ballot
+    /// @param _idPoll Poll
+    /// @param _voter Address of the voter
+    /// @param _ballot Index (0-based) of the ballot to decode
+    function getVote(uint _idPoll, address _voter, uint8 _ballot) 
         public 
         view 
         returns (uint tokenTotal)
@@ -249,9 +312,9 @@ contract PollManager is Controlled {
 
         Poll storage p = _polls[_idPoll];
 
-        require(ballot < p.numBallots, "Invalid ballot");
+        require(_ballot < p.numBallots, "Invalid ballot");
 
-        return  p.ballots[ballot][_voter];
+        return  p.ballots[_ballot][_voter];
     }
 
     event Vote(uint indexed idPoll, address indexed _voter, uint[] ballots);
