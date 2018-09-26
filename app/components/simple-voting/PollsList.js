@@ -48,7 +48,7 @@ const getIdeaFromStr = str => {
 }
 
 const sortingFn = {
-  MOST_VOTES: (a, b) => b._qvResults - a._qvResults,
+  MOST_VOTES: (a, b) => b._quadraticVotes.map(x => parseInt(x)).reduce((x, y) => x + y, 0) - a._quadraticVotes.map(x => parseInt(x)).reduce((x, y) => x + y, 0),
   MOST_VOTERS: (a, b) => b._voters - a._voters,
   NEWEST_ADDED: (a, b) => b._startBlock - a._startBlock,
   ENDING_SOONEST: (a, b) => a._endBlock - b._endBlock
@@ -205,8 +205,7 @@ class Poll extends PureComponent {
               return <div key={i}>
                       <Typography variant="display1">{opt.toString()}</Typography>
                       <Typography variant="subheading">{quadVotes[i]} votes, {parseFloat(fromWei(sntTotals[i])).toFixed(2)} SNT</Typography>
-                      {!cantVote }
-                      <BallotSlider classes={classes} votes={votes[i]} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
+                      <BallotSlider classes={classes} votes={votes[i]} cantVote={cantVote} balance={balance} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
                     </div>
             }) 
           }
@@ -292,14 +291,18 @@ class BallotSlider extends Component {
   };
 
   render(){
-    const {maxVotes, maxVotesAvailable, classes} = this.props;
+    const {maxVotes, maxVotesAvailable, classes, cantVote, balance} = this.props;
     const {value} = this.state;
     const nextVote = value + 1;
 
+
+    //cantVote={cantVote} balance={balance}
+
+
     return <Fragment>
               <Slider  classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
-              <b>Your votes: {value} ({value * value} SNT)</b> 
-              { nextVote <= maxVotesAvailable ? <small>- Additional vote will cost {nextVote*nextVote - value*value} SNT</small> : <small>- Not enough balance available to buy additional votes</small> }
+              {balance > 0 && <b>Your votes: {value} ({value * value} SNT)</b>}
+              { nextVote <= maxVotesAvailable ? <small>- Additional vote will cost {nextVote*nextVote - value*value} SNT</small> : (balance > 0 && <small>- Not enough balance available to buy additional votes</small>) }
           </Fragment>
   }
 }

@@ -117,7 +117,7 @@ const AddPoll = withFormik({
     return errors;
   },
 
-  async handleSubmit(values, { setSubmitting, setErrors, props }) {
+  async handleSubmit(values, { setSubmitting, setErrors, props, resetForm }) {
     const { title, ballots } = values;
     const { eth: { getBlockNumber } } = window.web3;
     const addPoll = PollManager.methods["addPoll(uint256,bytes,uint8)"];
@@ -137,6 +137,7 @@ const AddPoll = withFormik({
           })
           .then(res => {
             console.log('sucess:', res);
+            resetForm();
             props.getPolls();
             setSubmitting(false);
             props.togglePoll();
