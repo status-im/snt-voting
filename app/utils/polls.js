@@ -16,15 +16,15 @@ export const getBalance = async (startBlock) => {
 export const getVote = async(idPoll) => {
   const { fromWei } = web3.utils;
   const votes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();
-  return parseInt(Math.sqrt(fromWei(votes)));
+  return votes.map(el => Math.floor(Math.sqrt(parseInt(fromWei(el)))));
 }
 
 const fetchPollData = async (index, pollMethod) => {
   const poll = await pollMethod(index).call();
   const balance = await getBalance(poll._startBlock);
+  const votes = await getVote(index);
 
-  //const votes = await getVote(index);
-  return { ...poll, idPoll: index, balance, votes: "0" };
+  return { ...poll, idPoll: index, balance, votes };
 }
 
 export const getPolls = (number, pollMethod) => {

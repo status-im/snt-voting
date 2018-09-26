@@ -46,28 +46,43 @@ const getIdeaFromStr = str => {
   if (match) return match[1].toLowerCase();
   return match;
 }
+
 const sortingFn = {
   MOST_VOTES: (a, b) => b._qvResults - a._qvResults,
   MOST_VOTERS: (a, b) => b._voters - a._voters,
   NEWEST_ADDED: (a, b) => b._startBlock - a._startBlock,
   ENDING_SOONEST: (a, b) => a._endBlock - b._endBlock
 };
+
+const arraysEqual = (arr1, arr2) => {
+  if(arr1.length !== arr2.length)
+      return false;
+  for(var i = arr1.length; i--;) {
+      if(arr1[i] !== arr2[i])
+          return false;
+  }
+
+  return true;
+}
 class Poll extends PureComponent {
 
   constructor(props){
     super(props);
+    
+    const votes = [];
+    for(let i = 0; i < props._numBallots; i++){
+      votes[i] = props.votes[i];
+    }
+
     this.state = { 
       t: 0,
-      value: props.votes, 
-      originalVotes: {},  // TODO:  props.votes
-      balance: 0, 
+      originalVotes: votes.slice(0),
       isSubmitting: false, 
       open: false,
-      votes: {
-      }
+      votes
      };
   }
-
+  
   updateVotes = i => numVotes => {
     const votes = this.state.votes;
     votes[i] = numVotes;
@@ -92,7 +107,7 @@ class Poll extends PureComponent {
     const { votes } = this.state;
     const { toWei } = web3.utils;
 
-    const ballots = Object.values(votes).map(el => el * el);
+    const ballots = votes.map(el => toWei((el * el).toString(), "ether"));
     const balance4Voting = ballots.reduce((prev, curr) => prev + curr, 0);
     const toSend = balance4Voting == 0 ? unvote(idPoll) : vote(idPoll, ballots);
 
@@ -103,7 +118,7 @@ class Poll extends PureComponent {
           })
           .then(res => {
             console.log('sucess:', res);
-            this.setState({ isSubmitting: false, originalVotes: Object.assign({}, votes)});
+            this.setState({ isSubmitting: false, originalVotes: votes.slice(0)});
             return updatePoll(idPoll);
           })
           .catch(res => {
@@ -120,33 +135,46 @@ class Poll extends PureComponent {
     const {
       _description,
       _voters,
-      _qvResults,
-      _results,
       _canVote,
       balance,
       classes,
       ideaSites,
       _numBallots,
+      _quadraticVotes,
+      _tokenTotal
     } = this.props;
+
+    const {fromWei} = web3.utils;
 
     const { originalVotes, isSubmitting, error, votes } = this.state;
     const cantVote = balance == 0 || !_canVote;
     const disableVote = cantVote || isSubmitting;
-    const originalVotesQty = Object.values(originalVotes).reduce((x,y) => x+y, 0);
-    const votesQty = Object.values(votes).reduce((x,y) => x+y, 0);
 
-    const buttonText = originalVotesQty != 0 && originalVotesQty != votesQty ? 'Change Vote' : 'Vote';
 
-    // Extracting description
+    const quadVotes = [];
+    const sntTotals = [];
+    for(let i = 0; i < _numBallots; i++){
+      quadVotes[i] = _quadraticVotes[i];
+      sntTotals[i] = _tokenTotal[i];
+    }
+
+    // Votes calculation
+    const originalVotesQty = originalVotes.reduce((x,y) => x+y, 0);
+    const qvResults = quadVotes.map(x => parseInt(x)).reduce((x, y) => x + y, 0);
+    const sntTotal = sntTotals.map(x => parseFloat(fromWei(x))).reduce((x, y) => x + y, 0)
+
+    // Setting string fields
     const decodedDesc = rlp.decode(_description);
     const title = decodedDesc[0].toString();
     const ballots = decodedDesc[1];
     const idea = getIdeaFromStr(title);
     const ideaSite = ideaSites && ideaSites.filter(site => site.includes(idea));
+    const buttonText = originalVotesQty != 0 && !arraysEqual(originalVotes, votes) ? 'Change Vote' : 'Vote';
+
 
     // Calculating votes availables
     const maxVotes = Math.floor(Math.sqrt(balance));
-    const maxValuesForBallots = {};
+    const maxValuesForBallots = [];
     let votedSNT = 0;
     for(let i = 0; i < ballots.length; i++){
       if(votes[i] == undefined){
@@ -165,7 +193,7 @@ class Poll extends PureComponent {
         <CardContent>
           <Typography variant="title">{title}</Typography>
           <Typography variant="subheading" color="textSecondary">
-            <b>Total:</b> {_voters} voters. {_qvResults} votes ({(_results)} SNT) 
+            <b>Total:</b> {_voters} voters. {qvResults} votes ({sntTotal.toFixed(2)} SNT) 
           </Typography>
           <Typography variant="subheading" color="textSecondary">
             <b>SNT available for voting:</b> {(balance - votedSNT).toFixed(2)} of {(parseFloat(balance).toFixed(2))} SNT
@@ -176,8 +204,9 @@ class Poll extends PureComponent {
             ballots.map((opt, i) => {
               return <div key={i}>
                       <Typography variant="display1">{opt.toString()}</Typography>
+                      <Typography variant="subheading">{quadVotes[i]} votes, {parseFloat(fromWei(sntTotals[i])).toFixed(2)} SNT</Typography>
                       {!cantVote }
-                      <BallotSlider classes={classes} votes={votes[0]} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
+                      <BallotSlider classes={classes} votes={votes[i]} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
                     </div>
             }) 
           }
@@ -269,7 +298,7 @@ class BallotSlider extends Component {
 
     return <Fragment>
               <Slider  classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
-              <b>Votes: {value} ({value * value} SNT)</b> 
+              <b>Your votes: {value} ({value * value} SNT)</b> 
               { nextVote <= maxVotesAvailable ? <small>- Additional vote will cost {nextVote*nextVote - value*value} SNT</small> : <small>- Not enough balance available to buy additional votes</small> }
           </Fragment>
   }
