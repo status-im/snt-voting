@@ -4,9 +4,7 @@ import PollManager from 'Embark/contracts/PollManager';
 import SNT from 'Embark/contracts/SNT';
 
 const excluded = {
-  PROPER_LIGHT_CLIENT_SUPPORT : 3,
-  IMPLEMENT_SECURITY_PRACTICES : 14,
-  SHIP_1_0 : 16
+ // PROPER_LIGHT_CLIENT_SUPPORT : 3,
 };
 
 export const getBalance = async (startBlock) => {

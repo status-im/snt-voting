@@ -148,7 +148,7 @@ contract PollManager is Controlled {
     /// @notice Calculate square root of a uint (It has some precision loss)
     /// @param x Number to calculate the square root
     /// @return Square root of x
-    function sqrt(uint256 x) internal pure returns (uint256 y) {
+    function sqrt(uint256 x) public pure returns (uint256 y) {
         uint256 z = (x + 1) / 2;
         y = x;
         while (z < y) {

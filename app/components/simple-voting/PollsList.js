@@ -1,4 +1,4 @@
-import React, { Fragment, PureComponent } from 'react';
+import React, { Fragment, Component, PureComponent } from 'react';
 import { toString } from 'lodash';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -55,7 +55,22 @@ class Poll extends PureComponent {
 
   constructor(props){
     super(props);
-    this.state = { value: props.votes, originalValue: props.votes, balance: 0, isSubmitting: false, open: false };
+    this.state = { 
+      t: 0,
+      value: props.votes, 
+      originalValue: props.votes, 
+      balance: 0, 
+      isSubmitting: false, 
+      open: false,
+      votes: {
+      }
+     };
+  }
+
+  updateVotes = i => numVotes => {
+    const votes = this.state.votes;
+    votes[i] = numVotes;
+    this.setState({votes, t: new Date()});
   }
 
   handleClickOpen = () => {
@@ -64,10 +79,6 @@ class Poll extends PureComponent {
 
   handleClose = () => {
     this.setState({ open: false });
-  };
-
-  handleChange = (event, value) => {
-    this.setState({ value })
   };
 
   handleClick = (event) => {
@@ -105,7 +116,6 @@ class Poll extends PureComponent {
   render(){
     const {
       _description,
-      _totalCensus,
       _voters,
       _qvResults,
       _results,
@@ -115,11 +125,11 @@ class Poll extends PureComponent {
       ideaSites,
       _numBallots,
     } = this.props;
-    const { value, originalValue, isSubmitting, error } = this.state;
+
+    const { value, originalValue, isSubmitting, error, votes } = this.state;
+    const { fromWei } = web3.utils;
     const cantVote = balance == 0 || !_canVote;
     const disableVote = cantVote || isSubmitting;
-    const fromWei  = (m) => m;
-    const maxValue = Math.floor(Math.sqrt(balance));
     const buttonText = originalValue != 0 && value != originalValue ? 'Change Vote' : 'Vote';
     const idea = getIdeaFromStr(_description)
     const ideaSite = ideaSites && ideaSites.filter(site => site.includes(idea));
@@ -128,24 +138,54 @@ class Poll extends PureComponent {
     const title = decodedDesc[0].toString();
     const ballots = decodedDesc[1];
 
+    // Calculating votes availables
+    const maxVotes = Math.floor(Math.sqrt(balance));
+    const maxValuesForBallots = {};
+    let votedSNT = 0;
+    for(let i = 0; i < ballots.length; i++){
+      if(votes[i] == undefined){
+        votes[i] = 0;
+        maxValuesForBallots[i] = 0;
+      } else {
+        votedSNT += votes[i]*votes[i];
+      }
+    }
+    for(let i = 0; i < ballots.length; i++){
+      maxValuesForBallots[i]  = Math.floor(Math.sqrt(balance - votedSNT + votes[i]*votes[i]));         // votes[i]   // Math.floor(Math.sqrt(balance - (votedSNT*votedSNT) + (votes[i]*votes[i])));
+    }
+
+
     return (
       <Card>
         <CardContent>
-          <Typography variant="headline">{title}</Typography>
+          <Typography variant="title">{title}</Typography>
           <Typography variant="subheading" color="textSecondary">
-            <b>Total:</b> {_voters} voters. {_qvResults} votes ({fromWei(_results)} SNT)
+            <b>Total:</b> {_voters} voters. {_qvResults} votes ({(_results)} SNT) 
+          </Typography>
+          <Typography variant="subheading" color="textSecondary">
+            <b>SNT available for voting:</b> {(balance - votedSNT).toFixed(2)} of {(parseFloat(balance).toFixed(2))} SNT
           </Typography>
 
-          { _numBallots > 0 && ballots.map((opt, i) => <p key={i}>{opt.toString()}</p>) }
 
-          <Typography variant="subheading" color="textSecondary">
-            <b>Your vote:</b> {value} votes ({value * value} SNT)
-          </Typography>
+          { _numBallots > 0 && 
+            ballots.map((opt, i) => {
+              return <div key={i}>
+                      <Typography variant="display1">{opt.toString()}</Typography>
+                      {!cantVote }
+                      <BallotSlider votes={votes[0]} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
+                    </div>
+            }) 
+          }
+
+         
+
+
           {cantVote && <Typography variant="body2" color="error">
             {balance == 0 && <span>Voting disabled for proposals made when there was no SNT in the account</span>}
             {balance != 0 && !_canVote && <span>You can not vote on this poll</span>}
           </Typography>}
           {error && <Typography variant="body2" color="error">{error}</Typography>}
+
           {ideaSite && ideaSite.length > 0 && <Typography onClick={this.handleClickOpen} variant="subheading" color="primary">{ideaSite}</Typography>}
           {ideaSite && <Dialog
                          fullScreen
@@ -179,9 +219,8 @@ class Poll extends PureComponent {
           </Dialog>}
         </CardContent>
         {!cantVote && <CardActions className={classes.card}>
-          <Slider style={{ width: '95%' }} classes={{ thumb: classes.thumb }} disabled={disableVote} value={value || 0} min={0} max={maxValue} step={1} onChange={this.handleChange} />
-          {isSubmitting ? <CircularProgress /> : <Button variant="contained" disabled={disableVote}  color="primary" onClick={this.handleClick}>{buttonText}</Button>}
-        </CardActions>}
+        {isSubmitting ? <CircularProgress /> : <Button variant="contained" disabled={disableVote}  color="primary" onClick={this.handleClick}>{buttonText}</Button>}
+      </CardActions>}
       </Card>
     )
   }
@@ -194,10 +233,40 @@ const PollsList = ({ classes }) => (
       <Fragment>
         {rawPolls
           .sort(sortingFn[pollOrder])
-          .map((poll) => <Poll key={poll.idPoll} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} ideaSites={ideaSites} {...poll} />)}
+          .map((poll, i) => <Poll key={poll.idPoll} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} ideaSites={ideaSites} {...poll} />)}
       </Fragment>
     }
   </VotingContext.Consumer>
 )
+
+class BallotSlider extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      value: props.votes || 0
+    }
+  }
+
+  handleChange = (event, value) => {
+    if(value > this.props.maxVotesAvailable){
+      value = this.props.maxVotesAvailable;
+    }
+    this.setState({value});
+    this.props.updateVotes(value);
+  };
+
+  render(){
+    const {maxVotes, maxVotesAvailable} = this.props;
+    const {value} = this.state;
+    const nextVote = value + 1;
+
+    return <Fragment>
+              <Slider style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
+              <b>Votes: {value} ({value * value} SNT)</b> 
+              { nextVote <= maxVotesAvailable ? <small>- Additional vote will cost {nextVote*nextVote - value*value} SNT</small> : <small>- Not enough balance available to buy additional votes</small> }
+          </Fragment>
+  }
+}
 
 export default withStyles(styles)(PollsList);
