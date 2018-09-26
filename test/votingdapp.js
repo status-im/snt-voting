@@ -121,13 +121,10 @@ describe("VotingDapp", function () {
     it("The option the voter selected must be stored correctly", async() => {
         const ballots = [decimals(9), decimals(0), decimals(1)];
 
-        const ballot1 = await PollManager.methods.getVote(pollId, accounts[0], 0).call();
-        const ballot2 = await PollManager.methods.getVote(pollId, accounts[0], 1).call();
-        const ballot3 = await PollManager.methods.getVote(pollId, accounts[0], 2).call();
-        
-        assert.equal(ballot1, ballots[0], "Ballot1 value is incorrect");
-        assert.equal(ballot2, ballots[1], "Ballot2 value is incorrect");
-        assert.equal(ballot3, ballots[2], "Ballot3 value is incorrect");
+        const contractBallots = await PollManager.methods.getVote(pollId, accounts[0]).call();
+        assert.equal(contractBallots[0], ballots[0], "Ballot1 value is incorrect");
+        assert.equal(contractBallots[1], ballots[1], "Ballot2 value is incorrect");
+        assert.equal(contractBallots[2], ballots[2], "Ballot3 value is incorrect");
     });
 
     it("More than 1 user should be able to vote", async() => {
@@ -154,11 +151,9 @@ describe("VotingDapp", function () {
         const poll = await PollManager.methods.poll(pollId).call();
 
         const voters = poll._voters;
-        const resultsB1 = await PollManager.methods.pollResults(pollId, 0).call();
-        const resultsB2 = await PollManager.methods.pollResults(pollId, 1).call();
-        const resultsB3 = await PollManager.methods.pollResults(pollId, 2).call();
+      
 
-        // TODO: add tests with voters, and resultsB*
+        // TODO: add tests with voters, and results*
     });
 
     it("User can unvote", async () => {
@@ -167,13 +162,11 @@ describe("VotingDapp", function () {
         const receipt = await PollManager.methods.unvote(pollId).send({from: accounts[0]});
         assert(!!receipt.events.Unvote, "Unvote not triggered");
 
-        const ballot1 = await PollManager.methods.getVote(pollId, accounts[0], 0).call();
-        const ballot2 = await PollManager.methods.getVote(pollId, accounts[0], 1).call();
-        const ballot3 = await PollManager.methods.getVote(pollId, accounts[0], 2).call();
+        const contractBallots = await PollManager.methods.getVote(pollId, accounts[0]).call();
 
-        assert.equal(ballot1, 0, "Ballot1 value is incorrect");
-        assert.equal(ballot2, 0, "Ballot2 value is incorrect");
-        assert.equal(ballot3, 0, "Ballot3 value is incorrect");
+        assert.equal(contractBallots[0], 0, "Ballot1 value is incorrect");
+        assert.equal(contractBallots[1], 0, "Ballot2 value is incorrect");
+        assert.equal(contractBallots[2], 0, "Ballot3 value is incorrect");
 
         const updatedPoll = await PollManager.methods.poll(pollId).call();
         assert.equal(updatedPoll._voters, poll._voters -1, "Number of voters is incorrect")

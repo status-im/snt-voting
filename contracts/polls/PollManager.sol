@@ -1,4 +1,4 @@
-pragma solidity ^0.4.23;
+pragma solidity ^0.4.24;
 
 import "../common/Controlled.sol";
 import "../token/MiniMeToken.sol";
@@ -71,7 +71,8 @@ contract PollManager is Controlled {
     {
         require(_endBlock > block.number, "End block must be greater than current block");
         require(_startBlock >= block.number && _startBlock < _endBlock, "Start block must not be in the past, and should be less than the end block" );
-        
+        require(_numBallots <= 15, "Only a max of 15 ballots are allowed");
+
         _idPoll = _polls.length;
         _polls.length ++;
 
@@ -97,6 +98,7 @@ contract PollManager is Controlled {
         public
     {
         require(_idPoll < _polls.length, "Invalid _idPoll");
+        require(_numBallots <= 15, "Only a max of 15 ballots are allowed");
 
         Poll storage p = _polls[_idPoll];
         require(p.startBlock > block.number, "You cannot modify an active poll");
@@ -244,7 +246,9 @@ contract PollManager is Controlled {
         bytes _description,
         uint8 _numBallots,
         bool _finalized,
-        uint _voters
+        uint _voters,
+        uint[15] _tokenTotal,
+        uint[15] _quadraticVotes
     )
     {
         require(_idPoll < _polls.length, "Invalid _idPoll");
@@ -259,6 +263,11 @@ contract PollManager is Controlled {
         _numBallots = p.numBallots;
         _finalized = (!p.canceled) && (block.number >= _endBlock);
         _voters = p.voters;
+
+        for(uint8 i = 0; i < p.numBallots; i++){
+            _tokenTotal[i] = p.results[i];
+            _quadraticVotes[i] = p.qvResults[i];
+        }
     }
 
     /// @notice Decode poll title
@@ -282,39 +291,19 @@ contract PollManager is Controlled {
         return rlpHelper.pollBallot(p.description, _ballot);
     }
 
-    /// @notice Get ballot results for poll
-    /// @param _idPoll Poll
-    /// @param _ballot Index (0-based) of the ballot to decode
-    function pollResults(uint _idPoll, uint8 _ballot)
-        public
-        view
-        returns (uint tokenTotal, uint quadraticVotes) {
-        require(_idPoll < _polls.length, "Invalid _idPoll");
-
-        Poll storage p = _polls[_idPoll];
-
-        require(_ballot < p.numBallots, "Invalid ballot");
-
-        tokenTotal = p.results[_ballot];
-        quadraticVotes = p.qvResults[_ballot]; 
-    }
-
     /// @notice Get votes for poll/ballot
     /// @param _idPoll Poll
     /// @param _voter Address of the voter
-    /// @param _ballot Index (0-based) of the ballot to decode
-    function getVote(uint _idPoll, address _voter, uint8 _ballot) 
+    function getVote(uint _idPoll, address _voter) 
         public 
         view 
-        returns (uint tokenTotal)
-    {
+        returns (uint[15] votes){
         require(_idPoll < _polls.length, "Invalid _idPoll");
-
         Poll storage p = _polls[_idPoll];
-
-        require(_ballot < p.numBallots, "Invalid ballot");
-
-        return  p.ballots[_ballot][_voter];
+        for(uint8 i = 0; i < p.numBallots; i++){
+            votes[i] = p.ballots[i][_voter];
+        }
+        return votes;
     }
 
     event Vote(uint indexed idPoll, address indexed _voter, uint[] ballots);
