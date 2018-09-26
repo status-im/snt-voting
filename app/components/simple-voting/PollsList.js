@@ -36,6 +36,7 @@ const styles = {
     flex: 1,
   },
 };
+
 function Transition(props) {
   return <Slide direction="up" {...props} />;
 };
@@ -58,7 +59,7 @@ class Poll extends PureComponent {
     this.state = { 
       t: 0,
       value: props.votes, 
-      originalValue: props.votes, 
+      originalVotes: {},  // TODO:  props.votes
       balance: 0, 
       isSubmitting: false, 
       open: false,
@@ -86,13 +87,14 @@ class Poll extends PureComponent {
 
     this.setState({isSubmitting: true});
 
-    const { customVote, poll, unvote } = PollManager.methods;
+    const { vote, poll, unvote } = PollManager.methods;
     const { updatePoll, idPoll } = this.props;
-    const { value } = this.state;
+    const { votes } = this.state;
     const { toWei } = web3.utils;
 
-    const balance4Voting = toWei(toString(value * value));
-    const toSend = balance4Voting == 0 ? unvote(idPoll) : customVote(idPoll, balance4Voting);
+    const ballots = Object.values(votes).map(el => el * el);
+    const balance4Voting = ballots.reduce((prev, curr) => prev + curr, 0);
+    const toSend = balance4Voting == 0 ? unvote(idPoll) : vote(idPoll, ballots);
 
     toSend.estimateGas()
           .then(gasEstimated => {
@@ -101,7 +103,7 @@ class Poll extends PureComponent {
           })
           .then(res => {
             console.log('sucess:', res);
-            this.setState({ isSubmitting: false, originalValue: value });
+            this.setState({ isSubmitting: false, originalVotes: Object.assign({}, votes)});
             return updatePoll(idPoll);
           })
           .catch(res => {
@@ -111,6 +113,7 @@ class Poll extends PureComponent {
           .finally(() => {
             this.setState({isSubmitting: false});
           });
+          
   }
 
   render(){
@@ -126,17 +129,20 @@ class Poll extends PureComponent {
       _numBallots,
     } = this.props;
 
-    const { value, originalValue, isSubmitting, error, votes } = this.state;
-    const { fromWei } = web3.utils;
+    const { originalVotes, isSubmitting, error, votes } = this.state;
     const cantVote = balance == 0 || !_canVote;
     const disableVote = cantVote || isSubmitting;
-    const buttonText = originalValue != 0 && value != originalValue ? 'Change Vote' : 'Vote';
-    const idea = getIdeaFromStr(_description)
-    const ideaSite = ideaSites && ideaSites.filter(site => site.includes(idea));
+    const originalVotesQty = Object.values(originalVotes).reduce((x,y) => x+y, 0);
+    const votesQty = Object.values(votes).reduce((x,y) => x+y, 0);
 
+    const buttonText = originalVotesQty != 0 && originalVotesQty != votesQty ? 'Change Vote' : 'Vote';
+
+    // Extracting description
     const decodedDesc = rlp.decode(_description);
     const title = decodedDesc[0].toString();
     const ballots = decodedDesc[1];
+    const idea = getIdeaFromStr(title);
+    const ideaSite = ideaSites && ideaSites.filter(site => site.includes(idea));
 
     // Calculating votes availables
     const maxVotes = Math.floor(Math.sqrt(balance));
@@ -153,7 +159,6 @@ class Poll extends PureComponent {
     for(let i = 0; i < ballots.length; i++){
       maxValuesForBallots[i]  = Math.floor(Math.sqrt(balance - votedSNT + votes[i]*votes[i]));         // votes[i]   // Math.floor(Math.sqrt(balance - (votedSNT*votedSNT) + (votes[i]*votes[i])));
     }
-
 
     return (
       <Card>
@@ -172,18 +177,18 @@ class Poll extends PureComponent {
               return <div key={i}>
                       <Typography variant="display1">{opt.toString()}</Typography>
                       {!cantVote }
-                      <BallotSlider votes={votes[0]} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
+                      <BallotSlider classes={classes} votes={votes[0]} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
                     </div>
             }) 
           }
 
          
-
-
           {cantVote && <Typography variant="body2" color="error">
             {balance == 0 && <span>Voting disabled for proposals made when there was no SNT in the account</span>}
             {balance != 0 && !_canVote && <span>You can not vote on this poll</span>}
           </Typography>}
+
+
           {error && <Typography variant="body2" color="error">{error}</Typography>}
 
           {ideaSite && ideaSite.length > 0 && <Typography onClick={this.handleClickOpen} variant="subheading" color="primary">{ideaSite}</Typography>}
@@ -203,6 +208,7 @@ class Poll extends PureComponent {
                 </Typography>
               </Toolbar>
             </AppBar>
+
             <div
               style={{ overflow: "auto", height: '100%', width: '100%', position: "fixed", top: 0, left: 0, zIndex: 1, overflowScrolling: "touch", WebkitOverflowScrolling: "touch" }}
             >
@@ -257,12 +263,12 @@ class BallotSlider extends Component {
   };
 
   render(){
-    const {maxVotes, maxVotesAvailable} = this.props;
+    const {maxVotes, maxVotesAvailable, classes} = this.props;
     const {value} = this.state;
     const nextVote = value + 1;
 
     return <Fragment>
-              <Slider style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
+              <Slider  classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
               <b>Votes: {value} ({value * value} SNT)</b> 
               { nextVote <= maxVotesAvailable ? <small>- Additional vote will cost {nextVote*nextVote - value*value} SNT</small> : <small>- Not enough balance available to buy additional votes</small> }
           </Fragment>
