@@ -119,12 +119,12 @@ contract PollManager is Controlled {
         Poll storage p = _polls[_idPoll];
         
         require(!p.canceled, "Poll has been canceled already");
-        require(p.endBlock < block.number, "Only active polls can be canceled");
+        require(p.endBlock > block.number, "Only active polls can be canceled");
 
-        if(p.startBlock <= block.number){
+        if(p.startBlock < block.number){
             require(msg.sender == controller, "Only the controller can cancel the poll");
         } else {
-            require(p.author == msg.sender, "Only the controller can cancel the poll");
+            require(p.author == msg.sender, "Only the owner can cancel the poll");
         }
 
         p.canceled = true;
@@ -247,6 +247,7 @@ contract PollManager is Controlled {
         uint8 _numBallots,
         bool _finalized,
         uint _voters,
+        address _author,
         uint[15] _tokenTotal,
         uint[15] _quadraticVotes
     )
@@ -261,6 +262,7 @@ contract PollManager is Controlled {
         _canVote = canVote(_idPoll);
         _description = p.description;
         _numBallots = p.numBallots;
+        _author = p.author;
         _finalized = (!p.canceled) && (block.number >= _endBlock);
         _voters = p.voters;
 

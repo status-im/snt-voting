@@ -18,7 +18,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { VotingContext } from '../../context';
 import rlp from 'rlp';
-
+window.PollManager = PollManager;
 const styles = {
   card: {
     display: 'flex',
@@ -102,7 +102,7 @@ class Poll extends PureComponent {
 
     this.setState({isSubmitting: true});
 
-    const { vote, poll, unvote } = PollManager.methods;
+    const { vote, unvote } = PollManager.methods;
     const { updatePoll, idPoll } = this.props;
     const { votes } = this.state;
     const { toWei } = web3.utils;
@@ -149,7 +149,6 @@ class Poll extends PureComponent {
     const { originalVotes, isSubmitting, error, votes } = this.state;
     const cantVote = balance == 0 || !_canVote;
     const disableVote = cantVote || isSubmitting;
-
 
     const quadVotes = [];
     const sntTotals = [];
@@ -213,7 +212,7 @@ class Poll extends PureComponent {
          
           {cantVote && <Typography variant="body2" color="error">
             {balance == 0 && <span>Voting disabled for proposals made when there was no SNT in the account</span>}
-            {balance != 0 && !_canVote && <span>You can not vote on this poll</span>}
+            {balance != 0 && cantVote && <span>Voting is not enabled for this poll</span>}
           </Typography>}
 
 
@@ -267,7 +266,7 @@ const PollsList = ({ classes }) => (
       <Fragment>
         {rawPolls
           .sort(sortingFn[pollOrder])
-          .map((poll, i) => <Poll key={poll.idPoll} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} ideaSites={ideaSites} {...poll} />)}
+          .map((poll, i) => !poll._canceled && <Poll key={poll.idPoll} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} ideaSites={ideaSites} {...poll} />)}
       </Fragment>
     }
   </VotingContext.Consumer>
@@ -295,14 +294,13 @@ class BallotSlider extends Component {
     const {value} = this.state;
     const nextVote = value + 1;
 
-
     //cantVote={cantVote} balance={balance}
 
 
     return <Fragment>
-              <Slider  classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
-              {balance > 0 && <b>Your votes: {value} ({value * value} SNT)</b>}
-              { nextVote <= maxVotesAvailable ? <small>- Additional vote will cost {nextVote*nextVote - value*value} SNT</small> : (balance > 0 && <small>- Not enough balance available to buy additional votes</small>) }
+              <Slider disabled={cantVote} classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
+              {balance > 0 && !cantVote && <b>Your votes: {value} ({value * value} SNT)</b>}
+              { nextVote <= maxVotesAvailable && !cantVote ? <small>- Additional vote will cost {nextVote*nextVote - value*value} SNT</small> : (balance > 0 && !cantVote && <small>- Not enough balance available to buy additional votes</small>) }
           </Fragment>
   }
 }
