@@ -15,6 +15,7 @@ window['SNT'] = SNT;
 import './dapp.css';
 
 const MAINNET = 1;
+const TESTNET = 3;
 
 class App extends React.Component {
 
@@ -31,7 +32,8 @@ class App extends React.Component {
         this._setAccounts();
       }
       web3.eth.net.getId((err, netId) => {
-        if (netId !== MAINNET && netId < 5) this.setState({ web3Provider: false})
+        // TODO: check the environment here
+        if (netId !== MAINNET && netId !== TESTNET && netId < 5) this.setState({ web3Provider: false})
       })
       fetchIdeas().then(ideaSites => { this.setState({ ideaSites })});
     })

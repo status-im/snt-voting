@@ -149,8 +149,6 @@ const AddPoll = withFormik({
 
     return web3.eth.getBlockNumber()
       .then(currentBlock => {
-        console.log(currentBlock);
-
         const errors = {};
         const { title, ballots, startBlock, endBlock } = values;
         const ballotOptions = ballots.toString().split("|")
