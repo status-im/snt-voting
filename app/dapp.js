@@ -10,7 +10,7 @@ import { VotingContext } from './context';
 import Web3Render from './components/standard/Web3Render';
 import fetchIdeas from './utils/fetchIdeas';
 import { getPolls, omitPolls } from './utils/polls';
-window['SNT'] = SNT;
+window['Token'] = SNT;
 
 import './dapp.css';
 
@@ -22,7 +22,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
   }
-  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true };
+  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, symbol: "SNT" };
 
   componentDidMount(){
     EmbarkJS.onReady((err) => {
@@ -30,6 +30,11 @@ class App extends React.Component {
       else {
         this._getPolls();
         this._setAccounts();
+
+        SNT.methods.symbol().call().then((symbol) => {
+          this.setState({symbol});
+        })
+
       }
       web3.eth.net.getId((err, netId) => {
         // TODO: check the environment here
@@ -89,7 +94,7 @@ class App extends React.Component {
   }
 
   render(){
-    const { admin, web3Provider, loading } = this.state;
+    const { admin, web3Provider } = this.state;
     const { _getPolls, updatePoll, setPollOrder, appendToPoll } = this;
     const toggleAdmin = () => this.setState({ admin: true });
     const votingContext = { getPolls: _getPolls, toggleAdmin, updatePoll, appendToPoll, setPollOrder, ...this.state };

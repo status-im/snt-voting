@@ -4,13 +4,12 @@ import 'typeface-roboto';
 import AppBar from './standard/AppBar';
 import AddPoll from './simple-voting/AddPoll';
 import PollsList from './simple-voting/PollsList';
-import StatusLogo from '../ui/components/StatusLogo';
 import Collapse from '@material-ui/core/Collapse';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { VotingContext } from '../context';
-
+ 
 class Voting extends PureComponent {
   state = { addPoll: false };
 
@@ -19,10 +18,10 @@ class Voting extends PureComponent {
     const togglePoll = () => { this.setState({ addPoll: !addPoll })};
     return (
       <VotingContext.Consumer>
-        {({ getPolls, rawPolls, loading }) =>
+        {({ getPolls, rawPolls, loading, symbol }) =>
           <div>
             <CssBaseline />
-            <AppBar togglePoll={togglePoll} />
+            <AppBar togglePoll={togglePoll} symbol={symbol} />
             {loading && <LinearProgress />}
             <div style={{ margin: '30px', textAlign: 'center' }}>
               <img src="images/logo.png" width="200" />

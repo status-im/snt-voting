@@ -141,7 +141,8 @@ class Poll extends PureComponent {
       ideaSites,
       _numBallots,
       _quadraticVotes,
-      _tokenTotal
+      _tokenTotal,
+      symbol
     } = this.props;
 
     const {fromWei} = web3.utils;
@@ -192,10 +193,10 @@ class Poll extends PureComponent {
         <CardContent>
           <Typography variant="title">{title}</Typography>
           <Typography variant="subheading" color="textSecondary">
-            <b>Total:</b> {_voters} voters. {qvResults} votes ({sntTotal.toFixed(2)} SNT) 
+            <b>Total:</b> {_voters} voters. {qvResults} votes ({sntTotal.toFixed(2)} {symbol}) 
           </Typography>
           <Typography variant="subheading" color="textSecondary">
-            <b>SNT available for voting:</b> {(balance - votedSNT).toFixed(2)} of {(parseFloat(balance).toFixed(2))} SNT
+            <b>{symbol} available for voting:</b> {(balance - votedSNT).toFixed(2)} of {(parseFloat(balance).toFixed(2))} {symbol}
           </Typography>
 
 
@@ -203,15 +204,15 @@ class Poll extends PureComponent {
             ballots.map((opt, i) => {
               return <div key={i}>
                       <Typography variant="display1">{opt.toString()}</Typography>
-                      <Typography variant="subheading">{quadVotes[i]} votes, {parseFloat(fromWei(sntTotals[i])).toFixed(2)} SNT</Typography>
-                      <BallotSlider classes={classes} votes={votes[i]} cantVote={cantVote} balance={balance} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
+                      <Typography variant="subheading">{quadVotes[i]} votes, {parseFloat(fromWei(sntTotals[i])).toFixed(2)} {symbol}</Typography>
+                      <BallotSlider symbol={symbol} classes={classes} votes={votes[i]} cantVote={cantVote} balance={balance} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
                     </div>
             }) 
           }
 
          
           {cantVote && <Typography variant="body2" color="error">
-            {balance == 0 && <span>Voting disabled for proposals made when there was no SNT in the account</span>}
+            {balance == 0 && <span>Voting disabled for proposals made when there was no {symbol} in the account</span>}
             {balance != 0 && cantVote && <span>Voting is disabled for this poll</span>}
           </Typography>}
 
@@ -262,11 +263,11 @@ class Poll extends PureComponent {
 
 const PollsList = ({ classes }) => (
   <VotingContext.Consumer>
-    {({ updatePoll, rawPolls, pollOrder, appendToPoll, ideaSites }) =>
+    {({ updatePoll, rawPolls, pollOrder, appendToPoll, ideaSites, symbol }) =>
       <Fragment>
         {rawPolls
           .sort(sortingFn[pollOrder])
-          .map((poll, i) => !poll._canceled && <Poll key={poll.idPoll} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} ideaSites={ideaSites} {...poll} />)}
+          .map((poll, i) => !poll._canceled && <Poll key={poll.idPoll} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} symbol={symbol} ideaSites={ideaSites} {...poll} />)}
       </Fragment>
     }
   </VotingContext.Consumer>
@@ -290,7 +291,7 @@ class BallotSlider extends Component {
   };
 
   render(){
-    const {maxVotes, maxVotesAvailable, classes, cantVote, balance} = this.props;
+    const {maxVotes, maxVotesAvailable, classes, cantVote, balance, symbol} = this.props;
     const {value} = this.state;
     const nextVote = value + 1;
 
@@ -299,8 +300,8 @@ class BallotSlider extends Component {
 
     return <Fragment>
               <Slider disabled={cantVote} classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
-              {balance > 0 && !cantVote && <b>Your votes: {value} ({value * value} SNT)</b>}
-              { nextVote <= maxVotesAvailable && !cantVote ? <small>- Additional vote will cost {nextVote*nextVote - value*value} SNT</small> : (balance > 0 && !cantVote && <small>- Not enough balance available to buy additional votes</small>) }
+              {balance > 0 && !cantVote && <b>Your votes: {value} ({value * value} {symbol})</b>}
+              { nextVote <= maxVotesAvailable && !cantVote ? <small>- Additional vote will cost {nextVote*nextVote - value*value} {symbol}</small> : (balance > 0 && !cantVote && <small>- Not enough balance available to buy additional votes</small>) }
           </Fragment>
   }
 }

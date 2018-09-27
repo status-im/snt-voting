@@ -32,7 +32,7 @@ const styles = {
 };
 
 function ButtonAppBar(props) {
-  const { classes, togglePoll } = props;
+  const { classes, togglePoll, symbol } = props;
   return (
     <VotingContext.Consumer>
     {({ snt, toggleAdmin }) =>
@@ -47,7 +47,7 @@ function ButtonAppBar(props) {
                 What should we build next?
               </Typography>
             </Hidden>
-            {snt && <Button disabled={!hasSnt(snt)} variant="outlined" color="inherit" onClick={togglePoll}>{hasSnt(snt) ? 'Add Proposal' : 'Your account has no SNT'}</Button>}
+            {snt && <Button disabled={!hasSnt(snt)} variant="outlined" color="inherit" onClick={togglePoll}>{hasSnt(snt) ? 'Add Proposal' : 'Your account has no ' + symbol}</Button>}
             <OrderingFilter />
           </Toolbar>
         </AppBar>
