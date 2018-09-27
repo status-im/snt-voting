@@ -18,7 +18,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { VotingContext } from '../../context';
 import rlp from 'rlp';
-window.PollManager = PollManager;
+
 const styles = {
   card: {
     display: 'flex',
@@ -212,7 +212,7 @@ class Poll extends PureComponent {
          
           {cantVote && <Typography variant="body2" color="error">
             {balance == 0 && <span>Voting disabled for proposals made when there was no SNT in the account</span>}
-            {balance != 0 && cantVote && <span>Voting is not enabled for this poll</span>}
+            {balance != 0 && cantVote && <span>Voting is disabled for this poll</span>}
           </Typography>}
 
 

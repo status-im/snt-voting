@@ -91,6 +91,47 @@ const InnerForm = ({
         />
 
 
+        <TextField
+          id="startBlock"
+          label="Start Block (optional)"
+          className={classes.textField}
+          value={values.startBlock}
+          onChange={handleChange}
+          margin="normal"
+          fullWidth
+          error={!!errors.startBlock}
+          InputProps={{
+            classes: {
+              input: classes.textFieldInput
+            },
+          }}
+          InputLabelProps={{
+            className: classes.textFieldFormLabel
+          }}
+          helperText={errors.startBlock}
+        />
+
+        <TextField
+          id="endBlock"
+          label="End Block (optional)"
+          className={classes.textField}
+          value={values.endBlock}
+          onChange={handleChange}
+          margin="normal"
+          fullWidth
+          error={!!errors.endBlock}
+          InputProps={{
+            classes: {
+              input: classes.textFieldInput
+            },
+          }}
+          InputLabelProps={{
+            className: classes.textFieldFormLabel
+          }}
+          helperText={errors.endBlock}
+        />
+
+
         {!isSubmitting ?
          <Button type="submit" variant="extendedFab" aria-label="add" className={classes.button}>Submit</Button> :
          <CircularProgress style={{ margin: '10px 10px 10px 50%' }} />
@@ -102,37 +143,82 @@ const InnerForm = ({
 
 const StyledForm = withStyles(styles)(InnerForm);
 const AddPoll = withFormik({
-  mapPropsToValues: props => ({ title: '', ballots: ''}),
+  mapPropsToValues: props => ({ title: '', ballots: '', startBlock: '', endBlock: ''}),
   validate(values, props){
-    const errors = {};
-    const { title, ballots } = values;
-    const ballotOptions = ballots.toString().split("|")
-    if(title.toString().trim() === "") {
-      errors.title = "Required";
-    }
-    if(ballotOptions.filter(n => n).length == 1) {
-      errors.ballots = "A minimum of 2 options is required if using multiple options";
-    }
 
-    return errors;
+
+    return web3.eth.getBlockNumber()
+      .then(currentBlock => {
+        console.log(currentBlock);
+
+        const errors = {};
+        const { title, ballots, startBlock, endBlock } = values;
+        const ballotOptions = ballots.toString().split("|")
+        if(title.toString().trim() === "") {
+          errors.title = "Required";
+        }
+        if(ballotOptions.filter(n => n).length == 1) {
+          errors.ballots = "A minimum of 2 options is required if using multiple options";
+        }
+        let sBlock;
+        if(startBlock != ""){
+          var parsed = parseInt(startBlock, 10);
+          if (isNaN(parsed)) {
+            errors.startBlock = "Invalid Start Block"
+          } else {
+            sBlock = parsed;
+
+            if(sBlock < currentBlock){
+              errors.startBlock = "Block number is in the past. Recommended: " + (currentBlock + 60) + " (will be mined in ~10min)"
+            }
+          }
+        }
+
+        let eBlock;
+        if(endBlock != ""){
+          var parsed = parseInt(endBlock, 10);
+          if (isNaN(parsed)) {
+            errors.endBlock = "Invalid End Block"
+          } else {
+            eBlock = parsed;
+          }
+
+          if(eBlock < sBlock){
+            errors.endBlock = "End block must occur after start block"
+          }
+        }
+
+        if (Object.keys(errors).length) {
+          throw errors;
+        }
+
+    });
   },
 
   async handleSubmit(values, { setSubmitting, setErrors, props, resetForm }) {
-    const { title, ballots } = values;
+    const { title, ballots, startBlock, endBlock } = values;
     const { eth: { getBlockNumber } } = window.web3;
-    const addPoll = PollManager.methods["addPoll(uint256,bytes,uint8)"];
+
+    const addPollCustomBlock = PollManager.methods["addPoll(uint256,uint256,bytes,uint8)"];
+    const addPollOnlyEndBlock = PollManager.methods["addPoll(uint256,bytes,uint8)"];
+
     const currentBlock = await getBlockNumber();
-    const endTime = currentBlock + (oneDayinBlocks * 90);
+    const endTime = endBlock ? endBlock : ((startBlock ? startBlock : currentBlock) + (oneDayinBlocks * 90));
     const options = ballots.split("|");
     const encodedDesc = "0x" + rlp.encode([title, options]).toString('hex');
-    
-    const toSend = addPoll(endTime, encodedDesc, options.length || 0);
 
+
+    let toSend;
+    if(startBlock){
+      toSend = addPollCustomBlock(startBlock, endTime, encodedDesc, options.length || 0);
+    } else {
+      toSend = addPollOnlyEndBlock(endTime, encodedDesc, options.length || 0);
+    }
     setSubmitting(true);
 
     toSend.estimateGas()
           .then(gasEstimated => {
-            console.log("addPoll gas estimated: "+gasEstimated);
+            console.log("addPoll gas estimated: "+ gasEstimated);
             return toSend.send({gas: gasEstimated + 100000});
           })
           .then(res => {
