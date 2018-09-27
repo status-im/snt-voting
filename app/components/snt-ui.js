@@ -19,7 +19,7 @@ class SNTUI extends React.Component {
     }
 
     componentDidMount(){
-      __embarkContext.execWhenReady(async () => {
+      EmbarkJS.onReady(async () => {
         this.setState({address: web3.eth.defaultAccount});
       });
     }
@@ -36,7 +36,7 @@ class SNTUI extends React.Component {
 
       SNT.methods.controller().call()
         .then((controller) => {
-          return SNT.methods.generateTokens(address, value)
+          return SNT.methods.generateTokens(address, value.toString())
             .send({from: controller, gasLimit: 1000000});
          })
         .then(console.log);

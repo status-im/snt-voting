@@ -214,25 +214,22 @@ const AddPoll = withFormik({
     }
     setSubmitting(true);
 
-    toSend.estimateGas()
-          .then(gasEstimated => {
-            console.log("addPoll gas estimated: "+ gasEstimated);
-            return toSend.send({gas: gasEstimated + 100000});
-          })
-          .then(res => {
-            console.log('sucess:', res);
-            resetForm();
-            props.getPolls();
-            setSubmitting(false);
-            props.togglePoll();
-          })
-          .catch(res => {
-            console.log('fail:', res);
-            setErrors({ 'description': res.message.split('Error:').pop().trim() });
-          })
-          .finally(() => {
-            setSubmitting(false);
-          });
+    try {
+      const gasEstimated = await toSend.estimateGas();
+      console.log("addPoll gas estimated: "+ gasEstimated);
+      const res = await toSend.send({gas: gasEstimated + 100000});
+      console.log('sucess:', res);
+      resetForm();
+      props.getPolls();
+      setSubmitting(false);
+      props.togglePoll();
+
+    } catch (err) {
+      console.log('fail:', err);
+      setErrors({ 'description': err.message.split('Error:').pop().trim() });
+    }
+
+    setSubmitting(false);
   }
 })(StyledForm)
 

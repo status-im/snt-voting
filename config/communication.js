@@ -2,18 +2,17 @@ module.exports = {
   // default applies to all environments
   default: {
     enabled: false,
-    available_providers: ["ens"],
-    provider: "ens"
+    provider: "whisper", // Communication provider. Currently, Embark only supports whisper
+    available_providers: ["whisper"], // Array of available providers
   },
 
   // default environment, merges with the settings in default
   // assumed to be the intended environment by `embark run`
   development: {
-    register: {
-      rootDomain: "embark.eth",
-      subdomains: {
-        'status': '0x1a2f3b98e434c02363f3dac3174af93c1d690914'
-      }
+    connection: {
+      host: "localhost", // Host of the blockchain node
+      port: 8546, // Port of the blockchain node
+      type: "ws" // Type of connection (ws or rpc)
     }
   },
 
@@ -21,6 +20,7 @@ module.exports = {
   // used with "embark run privatenet"
   privatenet: {
   },
+
 
   // merges with the settings in default
   // used with "embark run testnet"
@@ -33,7 +33,8 @@ module.exports = {
   },
 
   // you can name an environment with specific settings and then specify with
-  // "embark run custom_name" or "embark blockchain custom_name"
+  // "embark run custom_name"
   //custom_name: {
   //}
 };
+

@@ -16,7 +16,7 @@ class AccList extends React.Component {
             addresses: [],
             balances: []
         }
-        __embarkContext.execWhenReady(() => {
+        EmbarkJS.onReady(() => {
             this.load()   
         });
     }  
