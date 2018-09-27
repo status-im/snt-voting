@@ -9,23 +9,11 @@
       "$WEB3",
       "http://localhost:8545"
     ],
+    
     "gas": "auto",
     "contracts": {
-      "SafeMath": {"deploy": false},
       "ERC20Receiver": { "deploy": false },
       "MiniMeToken": { "deploy": false },
-      "DelegationProxy": { "deploy": false },
-      "DelegationProxyFactory": { "deploy": false },
-      "ProposalManager": { "deploy": false },
-      "TrustNetwork": { "deploy": false },
-      "Factory": { "deploy": false },
-      "Instance": { "deploy": false },
-      "InstanceStorage": { "deploy": false },
-      "UpdatableInstance": { "deploy": false },
-      "DelegationProxyView": { "deploy": false },
-      "DelegationProxyKernel": { "deploy": false },
-      "ProposalCuration": { "deploy": false },
-      "Democracy": { "deploy": false },
       "TestToken": {
       },
       "MiniMeTokenFactory": {
@@ -45,10 +33,27 @@
       },
       "PollManager": {
         "args": ["$SNT"]
+      },
+      "RLPHelper": {
+        "deploy": false
+      },
+      "RLPReader": {
+        "deploy": false
       }
     }
   },
+
   "testnet":{
+    "deployment": {
+      "host": "localhost",
+      "port": 8545,
+      "type": "rpc",
+      "accounts": [
+        {
+          "privateKey": "0x00000"
+        }
+      ]
+    },
     "contracts": {
       "TestToken": { "deploy": false },
       "MiniMeTokenFactory": {
@@ -59,10 +64,50 @@
         "address": "0xc55cf4b03948d7ebc8b9e8bad92643703811d162"
       },
       "PollManager": {
-        "address": "0x456E047eDEa0a91a66C3DC7aCc0B1424d80cf8a6"
+        "args": ["$SNT"],
+        "gasPrice": 5000000000
       }
     }
   },
+
+  "testnet_devcoin":{
+    "deployment": {
+      "host": "localhost",
+      "port": 8545,
+      "type": "rpc",
+      "accounts": [
+        {
+          "privateKey": "0x00000"
+        }
+      ]
+    },
+    "contracts": {
+      "TestToken": { "deploy": false },
+      "MiniMeTokenFactory": {
+        "gasPrice": 5000000000
+      },
+      "SNT": {
+        "instanceOf": "MiniMeToken",
+        "args": [
+          "$MiniMeTokenFactory",
+          0,
+          0,
+          "Status Core Dev Token (TEST)",
+          18,
+          "SCT",
+          true
+        ],
+        "gasPrice": 5000000000
+      },
+      "PollManager": {
+        "args": ["$SNT"],
+        "gasPrice": 5000000000
+      }
+    }
+  },
+
+
+
   "staging":{
     "contracts": {
       "TestToken": { "deploy": false },
