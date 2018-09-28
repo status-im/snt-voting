@@ -92,10 +92,7 @@ module.exports = {
     networkType: "livenet",
     syncMode: "light",
     rpcCorsDomain: "http://localhost:8000",
-    wsOrigins: "http://localhost:8000",
-    account: {
-      password: "config/livenet/password"
-    }
+    wsOrigins: "http://localhost:8000"
   }
 
   // you can name an environment with specific settings and then specify with

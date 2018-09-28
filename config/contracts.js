@@ -93,21 +93,23 @@ module.exports = {
       ]
     },
     "contracts": {
-      "TestToken": { "deploy": false },
+      "TestToken": { deploy: false },
       "MiniMeTokenFactory": {
-        "address": "0x6bfa86a71a7dbc68566d5c741f416e3009804279"
+        address: "0x6bfa86a71a7dbc68566d5c741f416e3009804279"
       },
       "SNT": {
-        "instanceOf": "MiniMeToken",
-        "address": "0xc55cf4b03948d7ebc8b9e8bad92643703811d162"
+        instanceOf: "MiniMeToken",
+        address: "0xc55cf4b03948d7ebc8b9e8bad92643703811d162"
       },
       "PollManager": {
-        "args": ["$SNT"],
-        "gasPrice": 5000000000
+        args: ["$SNT"],
+        gasPrice: 5000000000,
+        from: "0x00000...."
+
       }
     }
   },
-
+  
   "testnet_devcoin":{
     deployment: {
       host: "localhost",
@@ -120,26 +122,28 @@ module.exports = {
       ]
     },
     "contracts": {
-      "TestToken": { "deploy": false },
+      "TestToken": { deploy: false },
       "MiniMeTokenFactory": {
-        "gasPrice": 5000000000
+        address: "0x6bfa86a71a7dbc68566d5c741f416e3009804279"
       },
       "SNT": {
-        "instanceOf": "MiniMeToken",
-        "args": [
+        instanceOf: "MiniMeToken",
+        args: [
           "$MiniMeTokenFactory",
           "0x0000000000000000000000000000000000000000",
           0,
-          "Status Core Dev Token (TEST)",
+          "Status Core Dev Meeting Token (TEST)",
           18,
-          "SCT",
+          "SCDMT",
           true
         ],
-        "gasPrice": 5000000000
+        gasPrice: 5000000000,
+        from: "0x00000...."
       },
       "PollManager": {
-        "args": ["$SNT"],
-        "gasPrice": 5000000000
+        args: ["$SNT"],
+        gasPrice: 5000000000,
+        from: "0x00000...."
       }
     }
   },
@@ -174,6 +178,33 @@ module.exports = {
       },
       "PollManager": 	{
         "address": "0x0e222932911b9a558104b4b4b2f330398561436f"
+      }
+    }
+  },
+
+
+
+  livenet_devcoin: {
+    deployment: {
+      host: "localhost",
+      port: 8545,
+      type: "rpc",
+      accounts: [
+        {
+          privateKey: "0x00000...."
+        }
+      ]
+    },
+    "contracts": {
+      "TestToken": { "deploy": false },
+      "MiniMeTokenFactory": {
+        "address": "0xa1c957C0210397D2d0296341627B74411756d476"
+      },
+      "SNT": {
+        "address": "0x05fD4a5c96c54a17D845D62C6cB00E39D39BeaF4"
+      },
+      "PollManager": {
+        "address": "0x83d84673b33be2d782a829b5d7cb337190dc36a3"
       }
     }
   },
