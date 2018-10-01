@@ -4,6 +4,9 @@ const BN = web3.utils.BN;
 var _ = require('lodash');
 var rlp = require('rlp');
 
+const PollManager = embark.require('Embark/contracts/PollManager');
+const SNT = embark.require('Embark/contracts/SNT');
+
 
 const decimals = (amount) => web3.utils.toWei(amount.toString(), "ether");
 
