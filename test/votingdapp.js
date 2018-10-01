@@ -133,6 +133,10 @@ describe("VotingDapp", function () {
     it("More than 1 user should be able to vote", async() => {
         const receipt = await PollManager.methods.vote(pollId, [decimals(4), decimals(4), decimals(1)]).send({from: accounts[2]});
         assert(!!receipt.events.Vote, "Vote not triggered");
+
+        const poll = await PollManager.methods.poll(pollId).call();
+        assert.equal(poll._voters, 2, "Invalid number of voters");
+
     });
 
     it("Voting when you're not a SNT holder SHOULD FAIL!", async () => {

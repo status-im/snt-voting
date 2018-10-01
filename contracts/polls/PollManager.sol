@@ -205,17 +205,21 @@ contract PollManager is Controlled {
 
         if(p.voters == 0) return;
 
-        p.voters--;
-
+        uint prevVotes = 0;
         for(uint8 i = 0; i < p.numBallots; i++){
             uint ballotAmount = p.ballots[i][msg.sender];
 
+            prevVotes += ballotAmount;
             p.ballots[i][msg.sender] = 0;
 
             if(ballotAmount != 0){
                 p.qvResults[i] -= sqrt(ballotAmount / 1 ether);
                 p.results[i] -= ballotAmount;
             }
+        }
+
+        if(prevVotes != 0){
+            p.voters--;
         }
 
         emit Unvote(_idPoll, msg.sender);
