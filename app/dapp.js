@@ -10,7 +10,9 @@ import { VotingContext } from './context';
 import Web3Render from './components/standard/Web3Render';
 import fetchIdeas from './utils/fetchIdeas';
 import { getPolls, omitPolls } from './utils/polls';
+import { ledgerInstance } from './ledger';
 window['Token'] = SNT;
+
 
 import './dapp.css';
 
@@ -44,8 +46,17 @@ class App extends React.Component {
     })
   }
 
-  setAccount(_account){
+  setAccount = (_account) => {
     this.setState({account: _account});
+  }  
+  
+  setLedgerAccount = async (_account) => {
+    const balance = await SNT.methods.balanceOf(_account).call()
+    web3.eth.defaultAccount = _account
+    this.setState({ 
+      account: _account,
+      snt: { balance: web3.utils.fromWei(balance) }
+    })
   }
 
   _getPolls = async () => {
@@ -94,10 +105,10 @@ class App extends React.Component {
   }
 
   render(){
-    const { admin, web3Provider } = this.state;
-    const { _getPolls, updatePoll, setPollOrder, appendToPoll } = this;
+    const { admin, web3Provider, loading } = this.state;
+    const { _getPolls, updatePoll, setPollOrder, appendToPoll, setLedgerAccount, setAccount, _setAccounts } = this;
     const toggleAdmin = () => this.setState({ admin: true });
-    const votingContext = { getPolls: _getPolls, toggleAdmin, updatePoll, appendToPoll, setPollOrder, ...this.state };
+    const votingContext = { getPolls: _getPolls, toggleAdmin, updatePoll, appendToPoll, setPollOrder, setLedgerAccount, setAccount, setAccounts: _setAccounts,  ...this.state };
     return (
       <Web3Render ready={web3Provider}>
         <VotingContext.Provider value={votingContext}>

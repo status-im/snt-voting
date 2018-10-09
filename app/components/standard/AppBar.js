@@ -10,6 +10,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Hidden from '@material-ui/core/Hidden';
 import OrderingFilter from '../simple-voting/OrderingFilter';
 import { VotingContext } from '../../context';
+import LedgerAccountList from '../ledgerAccountSelect';
 
 const hasSnt = snt => Number(snt.balance) > 0;
 
@@ -47,6 +48,7 @@ function ButtonAppBar(props) {
                 What should we build next?
               </Typography>
             </Hidden>
+            <LedgerAccountList classNameNavDropdown="pull-right" />
             {snt && <Button disabled={!hasSnt(snt)} variant="outlined" color="inherit" onClick={togglePoll}>{hasSnt(snt) ? 'Add Proposal' : 'Your account has no ' + symbol}</Button>}
             <OrderingFilter />
           </Toolbar>

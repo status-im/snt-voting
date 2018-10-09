@@ -13,11 +13,14 @@ import Slider from '@material-ui/lab/Slider';
 import PollManager from 'Embark/contracts/PollManager';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import TextField from '@material-ui/core/TextField';
 import web3 from "Embark/web3"
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { VotingContext } from '../../context';
 import rlp from 'rlp';
+import { ledgerInstance, ledgerSendTransaction } from '../../ledger';
+import LedgerDialog from '../ledgerDialog';
 
 const styles = {
   card: {
@@ -79,6 +82,7 @@ class Poll extends PureComponent {
       originalVotes: votes.slice(0),
       isSubmitting: false, 
       open: false,
+      ledgerDialogOpen: false,
       votes
      };
   }
@@ -97,8 +101,25 @@ class Poll extends PureComponent {
     this.setState({ open: false });
   };
 
+  handleChange = (event, value) => {
+    this.setState({ value })
+  }
+
+  setGasPrice = (gasPrice) => {
+    this.setState({ gasPrice: gasPrice })
+    this.handleSubmit(true)
+  }
+
   handleClick = (event) => {
-    event.preventDefault();
+    event.preventDefault()
+    if(ledgerInstance.accounts.length) {
+      this.setState({ ledgerDialogOpen: true })
+    } else {
+      this.handleSubmit(false)
+    }
+  }
+
+  handleSubmit = (isLedger) => {
 
     this.setState({isSubmitting: true});
 
@@ -114,6 +135,9 @@ class Poll extends PureComponent {
     toSend.estimateGas()
           .then(gasEstimated => {
             console.log("voting gas estimated: " + gasEstimated);
+            if(isLedger) {
+              return ledgerSendTransaction(toSend, gasEstimated, web3.utils.toWei(this.state.gasPrice, 'gwei'))
+            }
             return toSend.send({gas: gasEstimated + 100000});
           })
           .then(res => {
@@ -255,6 +279,7 @@ class Poll extends PureComponent {
         {!cantVote && <CardActions className={classes.card}>
         {isSubmitting ? <CircularProgress /> : <Button variant="contained" disabled={disableVote}  color="primary" onClick={this.handleClick}>{buttonText}</Button>}
       </CardActions>}
+      <LedgerDialog onGasPrice={this.setGasPrice} open={this.state.ledgerDialogOpen} />
       </Card>
     )
   }

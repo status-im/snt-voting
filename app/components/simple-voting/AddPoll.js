@@ -8,6 +8,7 @@ import rlp from 'rlp';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { withFormik } from 'formik';
+import { ledgerInstance, ledgerSendTransaction } from '../../ledger';
 
 const oneDayinBlocks = 5760;
 
@@ -132,6 +133,16 @@ const InnerForm = ({
         />
 
 
+        {ledgerInstance.accounts.length &&
+          <TextField
+            id="gasPrice"
+            label="Gas price(gwei)"
+            className={classes.textField}
+            value={values.gasPrice}
+            onChange={handleChange}
+            margin="normal"
+          />
+        }
         {!isSubmitting ?
          <Button type="submit" variant="extendedFab" aria-label="add" className={classes.button}>Submit</Button> :
          <CircularProgress style={{ margin: '10px 10px 10px 50%' }} />
@@ -194,7 +205,7 @@ const AddPoll = withFormik({
   },
 
   async handleSubmit(values, { setSubmitting, setErrors, props, resetForm }) {
-    const { title, ballots, startBlock, endBlock } = values;
+    const { title, ballots, startBlock, endBlock, gasPrice } = values;
     const { eth: { getBlockNumber } } = window.web3;
 
     const addPollCustomBlock = PollManager.methods["addPoll(uint256,uint256,bytes,uint8)"];
@@ -217,7 +228,11 @@ const AddPoll = withFormik({
     try {
       const gasEstimated = await toSend.estimateGas();
       console.log("addPoll gas estimated: "+ gasEstimated);
-      const res = await toSend.send({gas: gasEstimated + 100000});
+
+      const res = ledgerInstance.accounts.length ? 
+        await ledgerSendTransaction(toSend, gasEstimated, web3.utils.toWei(gasPrice, 'gwei')) :
+        await toSend.send({gas: gasEstimated + 100000});
+
       console.log('sucess:', res);
       resetForm();
       props.getPolls();
