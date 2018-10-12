@@ -204,7 +204,7 @@ module.exports = {
         "address": "0x05fD4a5c96c54a17D845D62C6cB00E39D39BeaF4"
       },
       "PollManager": {
-        "address": "0x83d84673b33be2d782a829b5d7cb337190dc36a3"
+        "address": "0x8262dE6Fa74915f0D1E77d3f45de90d02A01E7aE"
       }
     }
   },
