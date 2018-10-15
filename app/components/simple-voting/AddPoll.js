@@ -4,12 +4,11 @@ import CardContent from '@material-ui/core/CardContent';
 import PollManager from 'Embark/contracts/PollManager';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import rlp from 'rlp';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { withFormik } from 'formik';
+import rlp from 'rlp';
 
-const oneDayinBlocks = 5760;
 
 const styles = theme => ({
   button: {
@@ -114,14 +113,14 @@ const InnerForm = ({
         />
 
         <TextField
-          id="endBlock"
-          label="End Block (optional)"
+          id="endTime"
+          label="End Time (optional)"
           className={classes.textField}
-          value={values.endBlock}
+          value={values.endTime}
           onChange={handleChange}
           margin="normal"
           fullWidth
-          error={!!errors.endBlock}
+          error={!!errors.endTime}
           InputProps={{
             classes: {
               input: classes.textFieldInput
@@ -130,7 +129,7 @@ const InnerForm = ({
           InputLabelProps={{
             className: classes.textFieldFormLabel
           }}
-          helperText={errors.endBlock}
+          helperText={errors.endTime}
         />
 
 
@@ -145,14 +144,14 @@ const InnerForm = ({
 
 const StyledForm = withStyles(styles)(InnerForm);
 const AddPoll = withFormik({
-  mapPropsToValues: props => ({ title: '', ballots: '', startBlock: '', endBlock: ''}),
+  mapPropsToValues: props => ({ title: '', ballots: '', startBlock: '', endTime: ''}),
   validate(values, props){
 
 
     return web3.eth.getBlockNumber()
       .then(currentBlock => {
         const errors = {};
-        const { title, ballots, startBlock, endBlock } = values;
+        const { title, ballots, startBlock, endTime } = values;
         
         if(title.toString().trim() === "") {
           errors.title = "Required";
@@ -201,16 +200,16 @@ const AddPoll = withFormik({
         }
 
         let eBlock;
-        if(endBlock != ""){
-          var parsed = parseInt(endBlock, 10);
+        if(endTime != ""){
+          var parsed = parseInt(endTime, 10);
           if (isNaN(parsed)) {
-            errors.endBlock = "Invalid End Block"
+            errors.endTime = "Invalid End Time"
           } else {
             eBlock = parsed;
           }
 
-          if(eBlock < sBlock){
-            errors.endBlock = "End block must occur after start block"
+          if(eBlock < ((new Date()).getTime() / 1000)){
+            errors.endTime = "End time must occur in the future"
           }
         }
 
@@ -222,23 +221,25 @@ const AddPoll = withFormik({
   },
 
   async handleSubmit(values, { setSubmitting, setErrors, props, resetForm }) {
-    const { title, ballots, startBlock, endBlock } = values;
+    const { title, ballots, startBlock, endTime } = values;
     const { eth: { getBlockNumber }, utils: { toHex } } = window.web3;
 
     const addPollCustomBlock = PollManager.methods["addPoll(uint256,uint256,bytes,uint8)"];
-    const addPollOnlyEndBlock = PollManager.methods["addPoll(uint256,bytes,uint8)"];
+    const addPollOnlyEndTime = PollManager.methods["addPoll(uint256,bytes,uint8)"];
 
-    const currentBlock = await getBlockNumber();
-    const endTime = endBlock ? endBlock : ((startBlock ? startBlock : currentBlock) + (oneDayinBlocks * 90));
+    let date = new Date();
+    const d90 = date.setDate(date.getDate() + 90).getTime() / 1000;
+
+    const endTime = endTime ? endTime : d90;
     const options = JSON.parse(ballots);
     const ipfsHash = await EmbarkJS.Storage.saveText(ballots);
-
+    const encodedDesc = "0x" + rlp.encode([title, ipfsHash]).toString('hex');
 
     let toSend;
     if(startBlock){
-      toSend = addPollCustomBlock(startBlock, endTime, toHex(ipfsHash), options.length || 0);
+      toSend = addPollCustomBlock(startBlock, endTime, encodedDesc, options.length || 0);
     } else {
-      toSend = addPollOnlyEndBlock(endTime, toHex(ipfsHash), options.length || 0);
+      toSend = addPollOnlyEndTime(endTime, encodedDesc, options.length || 0);
     }
     setSubmitting(true);
 

@@ -9,7 +9,7 @@ contract PollManager is Controlled {
 
     struct Poll {
         uint startBlock;
-        uint endBlock;
+        uint endTime;
         bool canceled;
         uint voters;
         bytes description;
@@ -41,36 +41,36 @@ contract PollManager is Controlled {
     }
 
     /// @notice Create a Poll and enable it immediatly
-    /// @param _endBlock Block where the poll ends
+    /// @param _endTime Block where the poll ends
     /// @param _description RLP encoded: [poll_title, [poll_ballots]]
     /// @param _numBallots Number of ballots
     function addPoll(
-        uint _endBlock,
+        uint _endTime,
         bytes _description,
         uint8 _numBallots)
         public
         onlySNTHolder
         returns (uint _idPoll)
     {
-        _idPoll = addPoll(block.number, _endBlock, _description, _numBallots);
+        _idPoll = addPoll(block.number, _endTime, _description, _numBallots);
     }
 
     /// @notice Create a Poll
     /// @param _startBlock Block where the poll starts
-    /// @param _endBlock Block where the poll ends
+    /// @param _endTime Block where the poll ends
     /// @param _description RLP encoded: [poll_title, [poll_ballots]]
     /// @param _numBallots Number of ballots
     function addPoll(
         uint _startBlock,
-        uint _endBlock,
+        uint _endTime,
         bytes _description,
         uint8 _numBallots)
         public
         onlySNTHolder
         returns (uint _idPoll)
     {
-        require(_endBlock > block.number, "End block must be greater than current block");
-        require(_startBlock >= block.number && _startBlock < _endBlock, "Start block must not be in the past, and should be less than the end block" );
+        require(_endTime > block.timestamp, "End time must be greater than current timestamp");
+        require(_startBlock >= block.number, "Start block must not be in the past");
         require(_numBallots <= 15, "Only a max of 15 ballots are allowed");
 
         _idPoll = _polls.length;
@@ -78,7 +78,7 @@ contract PollManager is Controlled {
 
         Poll storage p = _polls[_idPoll];
         p.startBlock = _startBlock;
-        p.endBlock = _endBlock;
+        p.endTime = _endTime;
         p.voters = 0;
         p.numBallots = _numBallots;
         p.description = _description;
@@ -119,7 +119,7 @@ contract PollManager is Controlled {
         Poll storage p = _polls[_idPoll];
         
         require(!p.canceled, "Poll has been canceled already");
-        require(p.endBlock > block.number, "Only active polls can be canceled");
+        require(block.timestamp <= p.endTime, "Only active polls can be canceled");
 
         if(p.startBlock < block.number){
             require(msg.sender == controller, "Only the controller can cancel the poll");
@@ -144,7 +144,7 @@ contract PollManager is Controlled {
 
         Poll storage p = _polls[_idPoll];
         uint balance = token.balanceOfAt(msg.sender, p.startBlock);
-        return block.number >= p.startBlock && block.number < p.endBlock && !p.canceled && balance != 0;
+        return block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled && balance != 0;
     }
     
     /// @notice Calculate square root of a uint (It has some precision loss)
@@ -167,7 +167,7 @@ contract PollManager is Controlled {
 
         Poll storage p = _polls[_idPoll];
 
-        require(block.number >= p.startBlock && block.number < p.endBlock && !p.canceled, "Poll is inactive");
+        require(block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
         require(_ballots.length == p.numBallots, "Number of ballots is incorrect");
 
         unvote(_idPoll);
@@ -201,7 +201,7 @@ contract PollManager is Controlled {
 
         Poll storage p = _polls[_idPoll];
         
-        require(block.number >= p.startBlock && block.number < p.endBlock && !p.canceled, "Poll is inactive");
+        require(block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
 
         if(p.voters == 0) return;
 
@@ -244,7 +244,7 @@ contract PollManager is Controlled {
         view 
         returns(
         uint _startBlock,
-        uint _endBlock,
+        uint _endTime,
         bool _canVote,
         bool _canceled,
         bytes _description,
@@ -261,13 +261,13 @@ contract PollManager is Controlled {
         Poll storage p = _polls[_idPoll];
 
         _startBlock = p.startBlock;
-        _endBlock = p.endBlock;
+        _endTime = p.endTime;
         _canceled = p.canceled;
         _canVote = canVote(_idPoll);
         _description = p.description;
         _numBallots = p.numBallots;
         _author = p.author;
-        _finalized = (!p.canceled) && (block.number >= _endBlock);
+        _finalized = (!p.canceled) && (block.number >= _endTime);
         _voters = p.voters;
 
         for(uint8 i = 0; i < p.numBallots; i++){
