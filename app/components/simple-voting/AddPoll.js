@@ -72,12 +72,14 @@ const InnerForm = ({
 
         <TextField
           id="ballots"
-          label="Enter the proposal options, separated by '|' (optional)"
+          label="Enter the ballots array ([{&quot;title&quot;:&quot;&quot;, &quot;subtitle&quot;:&quot;&quot;, &quot;content&quot;:&quot;&quot;}]) (optional)"
           className={classes.textField}
           value={values.ballots}
           onChange={handleChange}
           margin="normal"
           fullWidth
+          multiline={true}
+          rows={10}
           error={!!errors.ballots}
           InputProps={{
             classes: {
@@ -151,13 +153,39 @@ const AddPoll = withFormik({
       .then(currentBlock => {
         const errors = {};
         const { title, ballots, startBlock, endBlock } = values;
-        const ballotOptions = ballots.toString().split("|")
+        
         if(title.toString().trim() === "") {
           errors.title = "Required";
         }
-        if(ballotOptions.filter(n => n).length == 1) {
-          errors.ballots = "A minimum of 2 options is required if using multiple options";
+
+        let ballotOptions;
+        try {
+          ballotOptions = JSON.parse(ballots);
+
+          if(!Array.isArray(ballotOptions)){
+            errors.ballots = "JSON must be an array of objects";
+          } else if(ballotOptions.length == 1) {
+            errors.ballots = "A minimum of 2 options is required if using multiple options";
+          } else {
+            const validOptions = ['title', 'subtitle', 'content'];
+
+            for(let i = 0; i < ballotOptions.length; i++){
+              if(!ballotOptions[i].title){
+                errors.ballots = "Option " + (i+1) + " is missing a title";
+                break;
+              }
+
+              const userOptions = Object.keys(ballotOptions[i]);
+              if(userOptions.filter(o1 => validOptions.filter(o2 => o2 === o1).length === 0).length > 0){
+                errors.ballots = "Only 'title', 'subtitle', and 'content' are allowed in option " + (i+1);
+              }
+            }
+          }
+        } catch(err){
+          if(ballots.trim() !== "")
+            errors.ballots = "Invalid JSON";
         }
+
         let sBlock;
         if(startBlock != ""){
           var parsed = parseInt(startBlock, 10);
@@ -195,22 +223,22 @@ const AddPoll = withFormik({
 
   async handleSubmit(values, { setSubmitting, setErrors, props, resetForm }) {
     const { title, ballots, startBlock, endBlock } = values;
-    const { eth: { getBlockNumber } } = window.web3;
+    const { eth: { getBlockNumber }, utils: { toHex } } = window.web3;
 
     const addPollCustomBlock = PollManager.methods["addPoll(uint256,uint256,bytes,uint8)"];
     const addPollOnlyEndBlock = PollManager.methods["addPoll(uint256,bytes,uint8)"];
 
     const currentBlock = await getBlockNumber();
     const endTime = endBlock ? endBlock : ((startBlock ? startBlock : currentBlock) + (oneDayinBlocks * 90));
-    const options = ballots.split("|");
-    const encodedDesc = "0x" + rlp.encode([title, options]).toString('hex');
+    const options = JSON.parse(ballots);
+    const ipfsHash = await EmbarkJS.Storage.saveText(ballots);
 
 
     let toSend;
     if(startBlock){
-      toSend = addPollCustomBlock(startBlock, endTime, encodedDesc, options.length || 0);
+      toSend = addPollCustomBlock(startBlock, endTime, toHex(ipfsHash), options.length || 0);
     } else {
-      toSend = addPollOnlyEndBlock(endTime, encodedDesc, options.length || 0);
+      toSend = addPollOnlyEndBlock(endTime, toHex(ipfsHash), options.length || 0);
     }
     setSubmitting(true);
 

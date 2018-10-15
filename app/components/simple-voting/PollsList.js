@@ -17,7 +17,6 @@ import web3 from "Embark/web3"
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { VotingContext } from '../../context';
-import rlp from 'rlp';
 
 const styles = {
   card: {
@@ -164,9 +163,10 @@ class Poll extends PureComponent {
     const sntTotal = sntTotals.map(x => parseFloat(fromWei(x))).reduce((x, y) => x + y, 0)
 
     // Setting string fields
-    const decodedDesc = rlp.decode(_description);
-    const title = decodedDesc[0].toString();
-    const ballots = decodedDesc[1];
+    console.log(_description);
+    const title ="TODO Map this"
+    const ballots = ["Option 1", "Option 2"]; // TODO 
+
     const idea = getIdeaFromStr(title);
     const ideaSite = ideaSites && ideaSites.filter(site => site.includes(idea));
     const buttonText = originalVotesQty != 0 && !arraysEqual(originalVotes, votes) ? 'Change Vote' : 'Vote';
@@ -294,9 +294,6 @@ class BallotSlider extends Component {
     const {maxVotes, maxVotesAvailable, classes, cantVote, balance, symbol} = this.props;
     const {value} = this.state;
     const nextVote = value + 1;
-
-    //cantVote={cantVote} balance={balance}
-
 
     return <Fragment>
               <Slider disabled={cantVote} classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
