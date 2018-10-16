@@ -1,0 +1,51 @@
+#votingDapp div.section {
+    padding: 20px;
+}
+
+#votingDapp hr {
+    border: 3px solid #edf2f5;
+}
+
+#votingDapp div.votingTimer {
+    padding: 20px;
+    text-align: center;
+}
+
+#votingDapp div.votingTimer h4 {
+    font-weight: normal;
+}
+
+#votingDapp div.votingTimer ul {
+    width: 150px;
+    margin: auto;
+    list-style: none;
+    padding: 0;
+}
+
+#votingDapp div.votingTimer ul li {
+    width: 50px;
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+
+#votingDapp div.action {
+    display: block;
+    width: 100%;
+    float: left;
+    clear: both;
+    margin-top: 1em;
+}
+
+#votingDapp div.action a {
+    text-decoration: none;
+}
+
+#votingDapp div.pollClosed {
+    text-align: center;
+    padding-top: 2em;
+}
+
+#votingDapp div.center {
+    text-align: center;
+}

@@ -10,6 +10,10 @@ import { VotingContext } from './context';
 import Web3Render from './components/standard/Web3Render';
 import fetchIdeas from './utils/fetchIdeas';
 import { getPolls, omitPolls } from './utils/polls';
+import { HashRouter as Router, Route, Link } from "react-router-dom";
+
+
+
 window['Token'] = SNT;
 
 import './dapp.css';
@@ -52,7 +56,9 @@ class App extends React.Component {
     this.setState({ loading: true })
     const { nPolls, poll } = PollManager.methods;
     const polls = await nPolls().call();
-    if (polls) getPolls(polls, poll).then(omitPolls).then(rawPolls => { this.setState({ rawPolls, loading: false })});
+    if (polls) getPolls(polls, poll).then(omitPolls).then(rawPolls => { 
+      this.setState({ rawPolls, loading: false });
+    });
     else this.setState({ rawPolls: [], loading: false });
   }
 
@@ -100,13 +106,13 @@ class App extends React.Component {
     const votingContext = { getPolls: _getPolls, toggleAdmin, updatePoll, appendToPoll, setPollOrder, ...this.state };
     return (
       <Web3Render ready={web3Provider}>
-        <VotingContext.Provider value={votingContext}>
-          <Fragment>
-            {admin ?
-             <AdminView setAccount={this.setAccount} /> :
-             <Voting />}
-          </Fragment>
-        </VotingContext.Provider>
+        <Router>
+          <VotingContext.Provider value={votingContext}>
+            <Fragment>
+              {admin ? <AdminView setAccount={this.setAccount} /> : <Route path="/" component={Voting}/>}
+            </Fragment>
+          </VotingContext.Provider>
+        </Router>
       </Web3Render>
     );
   }

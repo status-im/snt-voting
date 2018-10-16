@@ -40,15 +40,9 @@ function ButtonAppBar(props) {
         <AppBar position="static">
           <Toolbar className={classes.toolBar}>
             <Hidden mdDown>
-              <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={toggleAdmin} />
-            </Hidden>
-            <Hidden smDown>
-              <Typography variant="display1" color="inherit" className={classes.flex}>
-                What should we build next?
-              </Typography>
+              <Button className={classes.menuButton} color="inherit" aria-label="Menu" onClick={toggleAdmin}>Admin</Button>
             </Hidden>
             {snt && <Button disabled={!hasSnt(snt)} variant="outlined" color="inherit" onClick={togglePoll}>{hasSnt(snt) ? 'Add Proposal' : 'Your account has no ' + symbol}</Button>}
-            <OrderingFilter />
           </Toolbar>
         </AppBar>
       </div>

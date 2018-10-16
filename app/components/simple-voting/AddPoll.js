@@ -49,29 +49,10 @@ const InnerForm = ({
   <Card>
     <CardContent>
       <form onSubmit={handleSubmit} className={classes.form}>
-        <TextField
-          id="title"
-          label="Enter your proposal title"
-          className={classes.textField}
-          value={values.title}
-          onChange={handleChange}
-          margin="normal"
-          fullWidth
-          error={!!errors.title}
-          InputProps={{
-            classes: {
-              input: classes.textFieldInput
-            },
-          }}
-          InputLabelProps={{
-            className: classes.textFieldFormLabel
-          }}
-          helperText={errors.title}
-        />
-
+        
         <TextField
           id="ballots"
-          label="Enter the ballots array ([{&quot;title&quot;:&quot;&quot;, &quot;subtitle&quot;:&quot;&quot;, &quot;content&quot;:&quot;&quot;}]) (optional)"
+          label="Enter the poll details(title: &quot;&quot;description: &quot;&quot;, ballots: [{&quot;title&quot;:&quot;&quot;, &quot;subtitle&quot;:&quot;&quot;, &quot;content&quot;:&quot;&quot;}]) (optional)"
           className={classes.textField}
           value={values.ballots}
           onChange={handleChange}
@@ -144,22 +125,51 @@ const InnerForm = ({
 
 const StyledForm = withStyles(styles)(InnerForm);
 const AddPoll = withFormik({
-  mapPropsToValues: props => ({ title: '', ballots: '', startBlock: '', endTime: ''}),
+  mapPropsToValues: props => ({ ballots: JSON.stringify({
+    title: "What should we build next?",
+    description: `<p>Status Incubate exists to help early-stage startups reinvent the Web. Your vote help us decide where to invest.</p>
+                    <p><a href="#">Learn more about Status Incubate</a>`,
+    ballots: [
+      {
+        title: "Option1",
+        subtitle: "Subtitle Option1",
+        content: "Text About Option1"
+      },
+      {
+        title: "Option2",
+        subtitle: "Subtitle Option2",
+        content: "Text About Option2"
+      },
+      {
+        title: "Option3",
+        subtitle: "Subtitle Option3",
+        content: "Text About Option3"
+      }
+    ]
+  }), startBlock: '', endTime: ''}),
   validate(values, props){
 
 
     return web3.eth.getBlockNumber()
       .then(currentBlock => {
         const errors = {};
-        const { title, ballots, startBlock, endTime } = values;
+        let { ballots, startBlock, endTime } = values;
         
-        if(title.toString().trim() === "") {
-          errors.title = "Required";
-        }
-
-        let ballotOptions;
+        let pollDetails;
         try {
-          ballotOptions = JSON.parse(ballots);
+          pollDetails = JSON.parse(ballots);
+
+          const details = Object.keys(pollDetails);
+          const validAttributes = ['title', 'description', 'ballots'];
+          if(details.filter(o1 => validAttributes.filter(o2 => o2 === o1).length === 0).length > 0){
+            errors.ballots = "Only 'description', 'ballots' are allowed" + (i+1);
+          }
+
+          if(pollDetails.title.toString().trim() == ""){
+            errors.ballots = "Title is required";
+          }
+
+          const ballotOptions = pollDetails.ballots;
 
           if(!Array.isArray(ballotOptions)){
             errors.ballots = "JSON must be an array of objects";
@@ -181,6 +191,7 @@ const AddPoll = withFormik({
             }
           }
         } catch(err){
+          console.log(err);
           if(ballots.trim() !== "")
             errors.ballots = "Invalid JSON";
         }
@@ -221,25 +232,26 @@ const AddPoll = withFormik({
   },
 
   async handleSubmit(values, { setSubmitting, setErrors, props, resetForm }) {
-    const { title, ballots, startBlock, endTime } = values;
+    const { ballots, startBlock, endTime } = values;
     const { eth: { getBlockNumber }, utils: { toHex } } = window.web3;
 
     const addPollCustomBlock = PollManager.methods["addPoll(uint256,uint256,bytes,uint8)"];
     const addPollOnlyEndTime = PollManager.methods["addPoll(uint256,bytes,uint8)"];
 
     let date = new Date();
-    const d90 = date.setDate(date.getDate() + 90).getTime() / 1000;
+    date.setDate(date.getDate() + 90);
+    const d90 = date.getTime() / 1000;
 
-    const endTime = endTime ? endTime : d90;
+    const endTime90 = parseInt(endTime ? endTime : d90);
     const options = JSON.parse(ballots);
     const ipfsHash = await EmbarkJS.Storage.saveText(ballots);
-    const encodedDesc = "0x" + rlp.encode([title, ipfsHash]).toString('hex');
+    const encodedDesc = toHex(ipfsHash);
 
     let toSend;
     if(startBlock){
-      toSend = addPollCustomBlock(startBlock, endTime, encodedDesc, options.length || 0);
+      toSend = addPollCustomBlock(startBlock, endTime90, encodedDesc, options.length || 0);
     } else {
-      toSend = addPollOnlyEndTime(endTime, encodedDesc, options.length || 0);
+      toSend = addPollOnlyEndTime(endTime90, encodedDesc, options.length || 0);
     }
     setSubmitting(true);
 

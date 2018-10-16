@@ -42,7 +42,7 @@ contract PollManager is Controlled {
 
     /// @notice Create a Poll and enable it immediatly
     /// @param _endTime Block where the poll ends
-    /// @param _description RLP encoded: [poll_title, [poll_ballots]]
+    /// @param _description IPFS hash with the description
     /// @param _numBallots Number of ballots
     function addPoll(
         uint _endTime,
@@ -58,7 +58,7 @@ contract PollManager is Controlled {
     /// @notice Create a Poll
     /// @param _startBlock Block where the poll starts
     /// @param _endTime Block where the poll ends
-    /// @param _description RLP encoded: [poll_title, [poll_ballots]]
+    /// @param _description IPFS hash with the description
     /// @param _numBallots Number of ballots
     function addPoll(
         uint _startBlock,
@@ -84,12 +84,12 @@ contract PollManager is Controlled {
         p.description = _description;
         p.author = msg.sender;
 
-        emit PollCreated(_idPoll); 
+        emit PollCreated(_idPoll);
     }
 
     /// @notice Update poll description (title or ballots) as long as it hasn't started
     /// @param _idPoll Poll to update
-    /// @param _description RLP encoded: [poll_title, [poll_ballots]]
+    /// @param _description IPFS hash with the description
     /// @param _numBallots Number of ballots
     function updatePollDescription(
         uint _idPoll, 

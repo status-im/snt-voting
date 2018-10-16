@@ -1,15 +1,20 @@
-import React, { Fragment, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import 'typeface-roboto';
 import AppBar from './standard/AppBar';
 import AddPoll from './simple-voting/AddPoll';
-import PollsList from './simple-voting/PollsList';
 import Collapse from '@material-ui/core/Collapse';
-import Hidden from '@material-ui/core/Hidden';
-import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { VotingContext } from '../context';
- 
+import { Route, Switch } from "react-router-dom";
+
+import TitleScreen from './flow/TitleScreen';
+import LearnAboutBallots from './flow/LearnAboutBallots';
+import HowVotingWorks from './flow/HowVotingWorks';
+import ConnectYourWallet from './flow/ConnectYourWallet';
+import OtherWallets from './flow/OtherWallets';
+
+
 class Voting extends PureComponent {
   state = { addPoll: false };
 
@@ -23,18 +28,18 @@ class Voting extends PureComponent {
             <CssBaseline />
             <AppBar togglePoll={togglePoll} symbol={symbol} />
             {loading && <LinearProgress />}
-            <div style={{ margin: '30px', textAlign: 'center' }}>
-              <img src="images/logo.png" width="200" />
-              <Hidden smUp>
-                <Typography variant="headline" color="inherit">
-                  What should we build next?
-                </Typography>
-              </Hidden>
-            </div>
             <Collapse in={addPoll}>
               <AddPoll togglePoll={togglePoll} getPolls={getPolls} />
             </Collapse>
-            {rawPolls && <PollsList rawPolls={rawPolls}  />}
+            <div id="votingDapp">
+              <Switch>
+                <Route exact path="/" render={() => <TitleScreen polls={rawPolls} />} />
+                <Route path="/learn" component={LearnAboutBallots} />
+                <Route path="/votingHelp" render={HowVotingWorks} />
+                <Route path="/wallet" render={ConnectYourWallet} />
+                <Route path="/otherWallets" render={OtherWallets} />
+              </Switch>
+            </div>
           </div>
         }
       </VotingContext.Consumer>
@@ -42,4 +47,4 @@ class Voting extends PureComponent {
   }
 }
 
-export default Voting
+export default Voting;

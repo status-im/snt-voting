@@ -189,6 +189,70 @@ class Poll extends PureComponent {
     }
 
     return (
+      <Fragment>
+      {title}
+      </Fragment>);
+  }
+}
+
+
+const PollsList = ({ classes }) => (
+  <VotingContext.Consumer>
+    {({ updatePoll, rawPolls, pollOrder, appendToPoll, ideaSites, symbol }) =>
+      <Fragment>
+        {rawPolls
+          .sort(sortingFn[pollOrder])
+          .map((poll, i) => !poll._canceled && <Poll key={poll.idPoll} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} symbol={symbol} ideaSites={ideaSites} {...poll} />)}
+      </Fragment>
+    }
+  </VotingContext.Consumer>
+)
+
+class BallotSlider extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      value: props.votes || 0
+    }
+  }
+
+  handleChange = (event, value) => {
+    if(value > this.props.maxVotesAvailable){
+      value = this.props.maxVotesAvailable;
+    }
+    this.setState({value});
+    this.props.updateVotes(value);
+  };
+
+  render(){
+    const {maxVotes, maxVotesAvailable, classes, cantVote, balance, symbol} = this.props;
+    const {value} = this.state;
+    const nextVote = value + 1;
+
+    return <Fragment>
+              <Slider disabled={cantVote} classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
+              {balance > 0 && !cantVote && <b>Your votes: {value} ({value * value} {symbol})</b>}
+              { nextVote <= maxVotesAvailable && !cantVote ? <small>- Additional vote will cost {nextVote*nextVote - value*value} {symbol}</small> : (balance > 0 && !cantVote && <small>- Not enough balance available to buy additional votes</small>) }
+          </Fragment>
+  }
+}
+
+export default withStyles(styles)(PollsList);
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
       <Card>
         <CardContent>
           <Typography variant="title">{title}</Typography>
@@ -256,51 +320,4 @@ class Poll extends PureComponent {
         {isSubmitting ? <CircularProgress /> : <Button variant="contained" disabled={disableVote}  color="primary" onClick={this.handleClick}>{buttonText}</Button>}
       </CardActions>}
       </Card>
-    )
-  }
-}
-
-
-const PollsList = ({ classes }) => (
-  <VotingContext.Consumer>
-    {({ updatePoll, rawPolls, pollOrder, appendToPoll, ideaSites, symbol }) =>
-      <Fragment>
-        {rawPolls
-          .sort(sortingFn[pollOrder])
-          .map((poll, i) => !poll._canceled && <Poll key={poll.idPoll} classes={classes} appendToPoll={appendToPoll} updatePoll={updatePoll} symbol={symbol} ideaSites={ideaSites} {...poll} />)}
-      </Fragment>
-    }
-  </VotingContext.Consumer>
-)
-
-class BallotSlider extends Component {
-
-  constructor(props){
-    super(props);
-    this.state = {
-      value: props.votes || 0
-    }
-  }
-
-  handleChange = (event, value) => {
-    if(value > this.props.maxVotesAvailable){
-      value = this.props.maxVotesAvailable;
-    }
-    this.setState({value});
-    this.props.updateVotes(value);
-  };
-
-  render(){
-    const {maxVotes, maxVotesAvailable, classes, cantVote, balance, symbol} = this.props;
-    const {value} = this.state;
-    const nextVote = value + 1;
-
-    return <Fragment>
-              <Slider disabled={cantVote} classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
-              {balance > 0 && !cantVote && <b>Your votes: {value} ({value * value} {symbol})</b>}
-              { nextVote <= maxVotesAvailable && !cantVote ? <small>- Additional vote will cost {nextVote*nextVote - value*value} {symbol}</small> : (balance > 0 && !cantVote && <small>- Not enough balance available to buy additional votes</small>) }
-          </Fragment>
-  }
-}
-
-export default withStyles(styles)(PollsList);
+    )*/
