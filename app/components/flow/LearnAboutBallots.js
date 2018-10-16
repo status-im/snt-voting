@@ -12,12 +12,16 @@ import DialogContent from '@material-ui/core/DialogContent';
 
 class LearnAboutBallots extends Component {
   state = {
-    open: false
+    open: false,
+    dialogTitle: '',
+    dialogText: ''
   };
 
-  handleClickOpen = () => {
+  handleClickOpen = (dialogTitle, dialogText) => {
     this.setState({
-    open: true,
+      open: true,
+      dialogTitle,
+      dialogText
     });
   };
 
@@ -26,23 +30,36 @@ class LearnAboutBallots extends Component {
   };
 
   render(){
+    const {polls} = this.props;
+
+    let title, ballots = [];
+    if(polls && polls.length){
+      title = polls[0].content.title;
+      ballots = polls[0].content.ballots;
+    }
+
     return (
-    <div>
-        <Typography variant="headline">What should Status Incubate invest in next?</Typography>
+    <div class="section">
+        <Typography variant="headline">{title}</Typography>
         <BallotDialog
-          selectedValue={this.state.selectedValue}
+          title={this.state.dialogTitle}
+          text={this.state.dialogText}
           open={this.state.open}
           onClose={this.handleClose}
         />
-        <Card>
-        <CardContent>
-            <Typography gutterBottom component="h2">Pixura</Typography>
-            <Typography component="p">A protocol for digital asset ownership</Typography>
-        </CardContent>
-        <CardActions>
-            <Button size="small" color="primary" onClick={this.handleClickOpen}>Learn more &gt;</Button>
-        </CardActions>
-        </Card>
+        {
+          ballots.map((item, i) => {
+            return <Card key={i} className="card">
+              <CardContent>
+                  <Typography gutterBottom component="h2">{item.title}</Typography>
+                  <Typography component="p">{item.subtitle}</Typography>
+              </CardContent>
+              <CardActions>
+                  <Button size="small" color="primary" onClick={() => this.handleClickOpen(item.title, item.content)}>Learn more &gt;</Button>
+              </CardActions>
+            </Card>
+          })
+        }
         <Link to="/votingHelp"> <Button>How voting works</Button></Link>
     </div>
     );
@@ -60,13 +77,13 @@ class BallotDialog extends Component {
   };
   
   render() {
-    const { onClose, selectedValue, ...other } = this.props;
-  
+    const { onClose, title, text, polls, ...other } = this.props;
+   
     return (
     <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" {...other}>
-      <DialogTitle>Pixura</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <Typography variant="body1" component="div">{text}</Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={this.handleClose} color="primary" autoFocus>Ok</Button>

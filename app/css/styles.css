@@ -49,3 +49,14 @@
 #votingDapp div.center {
     text-align: center;
 }
+
+#votingDapp div.card {
+    margin-top: 1em;
+    border: 1px solid #edf2f5;
+    border-radius: 3px;
+    box-shadow: none;
+}
+
+#votingDapp div.card h2 {
+    font-weight: bold;
+}

@@ -12,8 +12,6 @@ const pad = (n, width, z) => {
 class TitleScreen extends Component {
 
   state = {
-    ipfsHash: '',
-    content: {},
     time: {},
     seconds: 100000
   }
@@ -57,18 +55,9 @@ class TitleScreen extends Component {
     clearInterval(this.timer);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps){
     if (this.props.polls !== prevProps.polls) {
-      if(this.state.ipfsHash === ''){
-        const ipfsHash = web3.utils.toAscii(this.props.polls[0]._description);
-        this.setState({ipfsHash});
-        EmbarkJS.Storage.get(ipfsHash).then(text => {
-          this.setState({content: JSON.parse(text)});
-        });
-      }
-      
       const seconds = this.props.polls[0]._endTime - (new Date()).getTime() / 1000
-
       if(seconds > 0){
         let timeLeftVar = this.secondsToTime(seconds);
         this.setState({ time: timeLeftVar, seconds });
@@ -80,21 +69,19 @@ class TitleScreen extends Component {
   }
 
   render(){
-    const {time, content, seconds} = this.state;
-    const {title, description} = content;
+    const {time, seconds} = this.state;
     const {polls} = this.props;
-
     let canceled = true;
-    let startBlock, endTime;
+
+    let startBlock, endTime, title, description;
 
     if(polls && polls.length){
+      title = polls[0].content.title;
+      description = polls[0].content.description;
       canceled = polls[0]._canceled;
       startBlock = polls[0]._startBlock;
       endTime = polls[0]._endTime;
     }
-
-
-
     
     return (polls && !canceled ? <div>
       <div className="section">

@@ -21,6 +21,7 @@ class Voting extends PureComponent {
   render(){
     const { addPoll } = this.state;
     const togglePoll = () => { this.setState({ addPoll: !addPoll })};
+
     return (
       <VotingContext.Consumer>
         {({ getPolls, rawPolls, loading, symbol }) =>
@@ -34,7 +35,7 @@ class Voting extends PureComponent {
             <div id="votingDapp">
               <Switch>
                 <Route exact path="/" render={() => <TitleScreen polls={rawPolls} />} />
-                <Route path="/learn" component={LearnAboutBallots} />
+                <Route path="/learn" render={() => <LearnAboutBallots polls={rawPolls} />} />
                 <Route path="/votingHelp" render={HowVotingWorks} />
                 <Route path="/wallet" render={ConnectYourWallet} />
                 <Route path="/otherWallets" render={OtherWallets} />

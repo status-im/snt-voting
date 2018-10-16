@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 const OtherWallets = (props) => <div className="section">
   <Typography variant="headline">Connect with another wallet</Typography>
   <Typography variant="body1">Do you hold your SNT in another wallet? Don't worry, we've got you covered. You can also vote using the following wallets.</Typography>
-  <Card>
+  <Card className="card">
     <CardContent>
       <Typography gutterBottom component="h2">
         Ledger or Metamask
@@ -21,7 +21,7 @@ const OtherWallets = (props) => <div className="section">
       </Typography>
     </CardContent>
   </Card>
-  <Card>
+  <Card className="card">
     <CardContent>
       <Typography gutterBottom component="h2">
         Web3 wallet / browser
@@ -31,7 +31,7 @@ const OtherWallets = (props) => <div className="section">
       </Typography>
     </CardContent>
   </Card>
-  <Card>
+  <Card className="card">
     <CardContent>
       <Typography gutterBottom component="h2">
         Exchanges

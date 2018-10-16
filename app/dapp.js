@@ -52,12 +52,23 @@ class App extends React.Component {
     this.setState({account: _account});
   }
 
+  _loadIPFSContent = async (polls) => {
+    let promises = polls.map((item,i) => EmbarkJS.Storage.get(web3.utils.toAscii(item._description)));
+    let ipfsContent = await Promise.all(promises);
+    
+    for(let i = 0; i < polls.length; i++){
+      polls[i].content = JSON.parse(ipfsContent[i]);
+    }
+
+    this.setState({ rawPolls: polls, loading: false });
+  }
+
   _getPolls = async () => {
     this.setState({ loading: true })
     const { nPolls, poll } = PollManager.methods;
     const polls = await nPolls().call();
     if (polls) getPolls(polls, poll).then(omitPolls).then(rawPolls => { 
-      this.setState({ rawPolls, loading: false });
+      this._loadIPFSContent(rawPolls);
     });
     else this.setState({ rawPolls: [], loading: false });
   }

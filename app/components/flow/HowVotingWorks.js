@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 
 const HowVotingWorks = (props) => <div className="section">
   <Typography variant="headline">How voting works</Typography>
-  <Card>
+  <Card className="card">
     <CardContent>
       <Typography gutterBottom component="h2">
         Any wallet with SNT can vote
@@ -17,7 +17,7 @@ const HowVotingWorks = (props) => <div className="section">
       </Typography>
     </CardContent>
   </Card>
-  <Card>
+  <Card className="card">
     <CardContent>
       <Typography gutterBottom component="h2">
         You don't spend your SNT!
@@ -27,7 +27,7 @@ const HowVotingWorks = (props) => <div className="section">
       </Typography>
     </CardContent>
   </Card>
-  <Card>
+  <Card className="card">
     <CardContent>
       <Typography gutterBottom component="h2">
       Your vote counts
