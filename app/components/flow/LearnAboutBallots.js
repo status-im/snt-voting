@@ -39,7 +39,7 @@ class LearnAboutBallots extends Component {
     }
 
     return (
-    <div class="section">
+    <div className="section">
         <Typography variant="headline">{title}</Typography>
         <BallotDialog
           title={this.state.dialogTitle}

@@ -13,6 +13,9 @@ import LearnAboutBallots from './flow/LearnAboutBallots';
 import HowVotingWorks from './flow/HowVotingWorks';
 import ConnectYourWallet from './flow/ConnectYourWallet';
 import OtherWallets from './flow/OtherWallets';
+import VotingCredits from './flow/VotingCredits';
+import PollVoting from './flow/PollVoting';
+import ReviewVotes from './flow/ReviewVotes';
 
 
 class Voting extends PureComponent {
@@ -39,6 +42,9 @@ class Voting extends PureComponent {
                 <Route path="/votingHelp" render={HowVotingWorks} />
                 <Route path="/wallet" render={ConnectYourWallet} />
                 <Route path="/otherWallets" render={OtherWallets} />
+                <Route path="/votingCredits" render={() => <VotingCredits polls={rawPolls} />} />
+                <Route path="/voting" render={() => <PollVoting polls={rawPolls} />} />
+                <Route path="/review" render={() => <ReviewVotes polls={rawPolls} />} />
               </Switch>
             </div>
           </div>
