@@ -7,17 +7,14 @@ class ReviewVotes extends Component {
 
   render(){
     const {polls} = this.props;
-
-    if(polls && polls.length){
-      title = polls[0].content.title;
-      description = polls[0].content.description;
-    }
     
     return (polls ? <div>
       <div className="section">
         <Typography variant="headline">Review your vote</Typography>
       </div>
       
+      <Link to="/voting"><Button variant="text">Add votes</Button></Link>
+
         <Link to="/review"><Button variant="text">Review vote</Button></Link>
 
 

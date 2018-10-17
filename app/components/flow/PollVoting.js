@@ -25,30 +25,43 @@ const styles = {
     flex: 1,
   },
 };
+
+const arraysEqual = (arr1, arr2) => {
+  if(arr1.length !== arr2.length)
+      return false;
+  for(var i = arr1.length; i--;) {
+      if(arr1[i] !== arr2[i])
+          return false;
+  }
+  return true;
+}
+
 class PollVoting extends Component {
 
   state = {
     votes: [],
-    originalVotes: []
+    originalVotes: [],
+    t: new Date()
   }
 
   componentDidMount(){
-    const {polls} = this.props;
+    const {polls, originalVotes} = this.props;
 
     if(!polls || !polls.length){
       this.props.history.push('/');
-      console.log("A");
     }
 
     const poll = polls[0];
 
     const votes = [];
-    for(let i = 0; i < poll._numBallots; i++){
-      votes[i] = 0; // props.votes[i];
+    if(originalVotes.length){
+      for(let i = 0; i < poll._numBallots; i++){
+        votes[i] = originalVotes[i];
+      }
     }
 
     this.setState({
-      originalVotes: votes.slice(0),
+      originalVotes,
       votes
     });
   }
@@ -56,7 +69,7 @@ class PollVoting extends Component {
   updateVotes = i => numVotes => {
     const votes = this.state.votes;
     votes[i] = numVotes;
-    this.setState({votes});
+    this.setState({votes, t: new Date()});
   }
 
   sendToReview = () => {
@@ -102,15 +115,16 @@ class PollVoting extends Component {
         votedSNT += votes[i]*votes[i];
       }
     }
-
+    
     for(let i = 0; i < poll._numBallots; i++){
       maxValuesForBallots[i]  = Math.floor(Math.sqrt(balance - votedSNT + votes[i]*votes[i]));
     }
 
     return <div className="section">
         <Typography variant="headline">{title}</Typography>
-      { ballots.map((item, i) => {
-          return <BallotSlider key={i} title={item.title} subtitle={item.subtitle} symbol={symbol} classes={classes} votes={votes[i]} cantVote={cantVote} balance={balance} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
+      { votes.map((v, i) => {
+          const item = ballots[i];
+          return <BallotSlider key={i} title={item.title} subtitle={item.subtitle} symbol={symbol} classes={classes} votes={v} cantVote={cantVote} balance={balance} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
 
       })}
       <Typography>{availableCredits} Credits left</Typography>
@@ -122,11 +136,13 @@ class PollVoting extends Component {
 
 class BallotSlider extends Component {
 
-  constructor(props){
-    super(props);
-    this.state = {
-      value: props.votes || 0
-    }
+  state = {
+    value: 0
+  }
+
+  componentWillReceiveProps(prevProps){
+    if(this.props.votes != prevProps.votes)
+      this.setState({value: prevProps.votes || 0})
   }
 
   handleChange = (event, value) => {
