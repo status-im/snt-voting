@@ -8,10 +8,15 @@ import { withRouter } from 'react-router-dom'
 class ConnectYourWallet extends Component {
   connectWallet = async () => {
     const {history, polls, updateBalances} = this.props;
-    const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, polls[0]._startBlock).call();
-    const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
-    updateBalances(0, tokenBalance, ethBalance);
-    history.push('/votingCredits');
+
+    if(web3.currentProvider.isStatus){
+      const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, polls[0]._startBlock).call();
+      const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
+      updateBalances(0, tokenBalance, ethBalance);
+      history.push('/votingCredits');
+    } else {
+      window.location.href = "https://get.status.im/browse/" + location.href.replace(/^http(s?):\/\//, '');
+    }
   }
 
   render(){

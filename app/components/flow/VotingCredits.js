@@ -25,11 +25,9 @@ class VotingCredits extends Component {
     let ethBalance = web3.utils.fromWei(balances[0].ethBalance, "ether");
     let tokenBalance = Math.floor(web3.utils.fromWei(balances[0].tokenBalance, "ether"));
     
-    return (polls ? <div>
-      <div className="section">
+    return (polls ? <div className="section">
         <Typography variant="headline">{title}</Typography>
         <Typography variant="body1" component="div" dangerouslySetInnerHTML={{__html: description}}></Typography>
-      </div>
       <Card className="card">
         <CardContent>
             <Typography component="p">
@@ -68,7 +66,7 @@ class VotingCredits extends Component {
           </CardContent>
       </Card> }
       { ethBalance == 0 || tokenBalance == 0 && <Link to="/wallet"><Button variant="text">Back</Button></Link> }
-      { ethBalance > 0 || tokenBalance > 0 &&<Link to="/voting"><Button variant="text">Vote</Button></Link> }
+      { ethBalance > 0 && tokenBalance > 0 && <Link to="/voting"><Button variant="text">Vote</Button></Link> }
     </div> : null);
   }
 }

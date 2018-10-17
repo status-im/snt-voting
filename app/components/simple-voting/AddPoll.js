@@ -233,7 +233,7 @@ const AddPoll = withFormik({
 
   async handleSubmit(values, { setSubmitting, setErrors, props, resetForm }) {
     const { ballots, startBlock, endTime } = values;
-    const { eth: { getBlockNumber }, utils: { toHex } } = window.web3;
+    const { utils: { toHex } } = window.web3;
 
     const addPollCustomBlock = PollManager.methods["addPoll(uint256,uint256,bytes,uint8)"];
     const addPollOnlyEndTime = PollManager.methods["addPoll(uint256,bytes,uint8)"];
@@ -243,15 +243,15 @@ const AddPoll = withFormik({
     const d90 = date.getTime() / 1000;
 
     const endTime90 = parseInt(endTime ? endTime : d90);
-    const options = JSON.parse(ballots);
+    const jsonObj = JSON.parse(ballots);
     const ipfsHash = await EmbarkJS.Storage.saveText(ballots);
     const encodedDesc = toHex(ipfsHash);
 
     let toSend;
     if(startBlock){
-      toSend = addPollCustomBlock(startBlock, endTime90, encodedDesc, options.length || 0);
+      toSend = addPollCustomBlock(startBlock, endTime90, encodedDesc, jsonObj.ballots.length || 0);
     } else {
-      toSend = addPollOnlyEndTime(endTime90, encodedDesc, options.length || 0);
+      toSend = addPollOnlyEndTime(endTime90, encodedDesc, jsonObj.ballots.length || 0);
     }
     setSubmitting(true);
 

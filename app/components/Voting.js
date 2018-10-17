@@ -21,7 +21,8 @@ import ReviewVotes from './flow/ReviewVotes';
 class Voting extends PureComponent {
   state = { 
     addPoll: false,
-    pollTokenBalances: []
+    pollTokenBalances: [],
+    votes: []
   };
 
   updatePollBalance = (pollId, tokenBalance, ethBalance) => {
@@ -30,6 +31,9 @@ class Voting extends PureComponent {
     this.setState({pollTokenBalances});
   }
 
+  setVotesToReview = (votes) => {
+    this.setState({votes});
+  }
 
   render(){
     const { addPoll, pollTokenBalances } = this.state;
@@ -53,7 +57,7 @@ class Voting extends PureComponent {
                 <Route path="/wallet" render={() => <ConnectYourWallet polls={rawPolls} updateBalances={this.updatePollBalance} />} />
                 <Route path="/otherWallets" render={OtherWallets} />
                 <Route path="/votingCredits" render={() => <VotingCredits polls={rawPolls} balances={pollTokenBalances} />} />
-                <Route path="/voting" render={() => <PollVoting polls={rawPolls} />} />
+                <Route path="/voting" render={() => <PollVoting polls={rawPolls} balances={pollTokenBalances} setVotesToReview={this.setVotesToReview} />} />
                 <Route path="/review" render={() => <ReviewVotes polls={rawPolls} />} />
               </Switch>
             </div>
