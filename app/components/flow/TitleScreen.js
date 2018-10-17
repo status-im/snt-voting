@@ -56,7 +56,7 @@ class TitleScreen extends Component {
   }
 
   componentDidUpdate(prevProps){
-    if (this.props.polls !== prevProps.polls) {
+    if (this.props.polls !== prevProps.polls && this.props.polls && this.props.polls.length) {
       const seconds = this.props.polls[0]._endTime - (new Date()).getTime() / 1000
       if(seconds > 0){
         let timeLeftVar = this.secondsToTime(seconds);
