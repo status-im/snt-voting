@@ -13,7 +13,7 @@ class TitleScreen extends Component {
 
   state = {
     time: {},
-    seconds: 100000
+    seconds: -1
   }
 
   timer = 0
