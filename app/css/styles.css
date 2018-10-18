@@ -1,6 +1,30 @@
+* {
+    font-family: 'Inter UI' !important;
+}
+
+#votingDapp p a,
+#votingDapp p a:visited {
+    background: url(../images/external-link.svg) no-repeat center right;
+    padding-right: 20px;
+    color: #4360DF;
+    text-decoration: none;
+}
+
 #votingDapp div.section {
     padding: 20px;
+    margin-bottom: 66px
 }
+
+#votingDapp div.section h1 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 1em;
+}
+
+#votingDapp div.votingTimer p {
+    font-size: 0.8rem;
+}
+
 
 #votingDapp hr {
     border: 3px solid #edf2f5;
@@ -11,19 +35,27 @@
     text-align: center;
 }
 
-#votingDapp div.votingTimer h4 {
+#votingDapp div.votingTimer h1 {
+    margin-top: .5rem;
+    font-size: 2.2rem;
+}
+
+#votingDapp div.votingTimer .timeUnit {
     font-weight: normal;
+    text-transform: uppercase;
+    font-size: .75rem;
+    color: #939BA1;
 }
 
 #votingDapp div.votingTimer ul {
-    width: 150px;
+    width: 240px;
     margin: auto;
     list-style: none;
     padding: 0;
 }
 
 #votingDapp div.votingTimer ul li {
-    width: 50px;
+    width: 80px;
     float: left;
     padding: 0;
     margin: 0;
@@ -46,6 +78,18 @@
     padding-top: 2em;
 }
 
+
+#votingDapp div.pollClosed h1 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 1em;
+}
+
+#votingDapp div.pollClosed p {
+    color: #939BA1;
+    margin-top: .5em;
+}
+
 #votingDapp div.center {
     text-align: center;
 }
@@ -57,6 +101,44 @@
     box-shadow: none;
 }
 
+#votingDapp div.card div.ballotData {
+    padding-bottom: 0;
+}
+
+#votingDapp div.card div.actionArea {
+    padding-top: 0;
+}
+
+#votingDapp div.card div.actionArea button {
+    color: #4360DF;
+    background: url(../images/small-arrow.svg) center right no-repeat;
+    padding-right: 15px;
+}
+
 #votingDapp div.card h2 {
     font-weight: bold;
+}
+
+#votingDapp div.buttonNav {
+    text-align: right;
+    box-shadow: 0px 2px 16px rgba(0, 10, 56, 0.1);
+    padding: 15px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    background: #ffffff;
+}
+
+#votingDapp div.buttonNav a,
+#votingDapp div.buttonNav a:visited {
+    text-decoration: none;
+}
+
+#votingDapp div.buttonNav button {
+    background: url(../images/medium-arrow.svg) center right no-repeat;
+    padding-right: 15px;
+    text-decoration: none;
+    text-transform: capitalize;
+    color: #4360DF;
+    font-size: 0.75rem;
 }

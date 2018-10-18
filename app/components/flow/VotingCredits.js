@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -25,7 +25,7 @@ class VotingCredits extends Component {
     let ethBalance = web3.utils.fromWei(balances[0].ethBalance, "ether");
     let tokenBalance = Math.floor(web3.utils.fromWei(balances[0].tokenBalance, "ether"));
     
-    return (polls ? <div className="section">
+    return (polls ? <Fragment><div className="section">
         <Typography variant="headline">{title}</Typography>
         <Typography variant="body1" component="div" dangerouslySetInnerHTML={{__html: description}}></Typography>
       <Card className="card">
@@ -65,9 +65,13 @@ class VotingCredits extends Component {
             </Typography>
           </CardContent>
       </Card> }
+    </div>
+    <div className="buttonNav">
+
       { ethBalance == 0 || tokenBalance == 0 && <Link to="/wallet"><Button variant="text">Back</Button></Link> }
       { ethBalance > 0 && tokenBalance > 0 && <Link to="/voting"><Button variant="text">Vote</Button></Link> }
-    </div> : null);
+    </div>
+    </Fragment> : null);
   }
 }
 

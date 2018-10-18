@@ -85,7 +85,7 @@ class TitleScreen extends Component {
     
     return (polls && !canceled ? <div>
       <div className="section">
-        <img src="images/logo.png" width="200" />
+        <img src="images/status-logo.svg" width="36" />
         <Typography variant="headline">{title}</Typography>
         <Typography variant="body1" component="div" dangerouslySetInnerHTML={{__html: description}}></Typography>
       </div>
@@ -95,15 +95,15 @@ class TitleScreen extends Component {
         <ul>
           <li>
             <Typography variant="headline">{pad(time.d, 2)}</Typography>
-            <Typography variant="body1">Days</Typography>
+            <Typography variant="body1" className="timeUnit">Days</Typography>
           </li>
           <li>
             <Typography variant="headline">{pad(time.h, 2)}</Typography>
-            <Typography variant="body1">Hours</Typography>
+            <Typography variant="body1" className="timeUnit">Hours</Typography>
           </li>
           <li>
             <Typography variant="headline">{pad(time.m, 2)}</Typography>
-            <Typography variant="body1">Mins</Typography>
+            <Typography variant="body1" className="timeUnit">Mins</Typography>
           </li>
         </ul>
         <div className="action">

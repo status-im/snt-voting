@@ -4,7 +4,8 @@
     "js/dapp.js": ["app/dapp.js"],
     "css/styles.css": ["app/css/**"],
     "index.html": "app/index.html",
-    "images/": ["app/images/**"]
+    "images/": ["app/images/**"],
+    "fonts/": ["app/fonts/**"]
   },
   "buildDir": "dist/",
   "config": "config/",

@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -48,7 +48,7 @@ class ReviewVotes extends Component {
     const balance = fromWei(balances[0].tokenBalance, "ether");
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
     
-    return (polls ? <div className="section">
+    return (polls ? <Fragment><div className="section">
         <Typography variant="headline">Review your vote</Typography>
 
         { ballots.map((item, i) => {
@@ -69,11 +69,13 @@ class ReviewVotes extends Component {
               <Link to="/voting"><Button variant="text">Add votes</Button></Link>
           </CardContent>
         </Card>
+      </div>
+      <div className="buttonNav">
 
         <Button variant="text" onClick={this.vote} disabled={isSubmitting}>Sign to confirm</Button>
 
 
-    </div> : null);
+    </div></Fragment> : null);
   }
 }
 

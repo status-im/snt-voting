@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -38,7 +38,7 @@ class LearnAboutBallots extends Component {
       ballots = polls[0].content.ballots;
     }
 
-    return (
+    return (<Fragment>
     <div className="section">
         <Typography variant="headline">{title}</Typography>
         <BallotDialog
@@ -50,18 +50,21 @@ class LearnAboutBallots extends Component {
         {
           ballots.map((item, i) => {
             return <Card key={i} className="card">
-              <CardContent>
+              <CardContent className="ballotData">
                   <Typography gutterBottom component="h2">{item.title}</Typography>
                   <Typography component="p">{item.subtitle}</Typography>
               </CardContent>
-              <CardActions>
-                  <Button size="small" color="primary" onClick={() => this.handleClickOpen(item.title, item.content)}>Learn more &gt;</Button>
+              <CardActions className="actionArea">
+                  <Button size="small" color="primary" onClick={() => this.handleClickOpen(item.title, item.content)}>Learn more</Button>
               </CardActions>
             </Card>
           })
         }
-        <Link to="/votingHelp"> <Button>How voting works</Button></Link>
     </div>
+    <div className="buttonNav">
+      <Link to="/votingHelp"><Button className="nextAction">How voting works</Button></Link>
+    </div>
+    </Fragment>
     );
   }
 }
