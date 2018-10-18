@@ -16,10 +16,9 @@ class ReviewVotes extends Component {
     this.setState({isSubmitting: true});
 
     const { vote, unvote } = PollManager.methods;
-    const { polls, votes } = this.props;
+    const { polls, votes, history} = this.props;
     const { toWei } = web3.utils;
-
-    const poll = polls[0];
+    
     const idPoll = 0; // TODO: 
 
     const ballots = votes.map(el => parseInt(toWei((el * el).toString(), "ether")));
@@ -29,9 +28,9 @@ class ReviewVotes extends Component {
     toSend.estimateGas()
       .then(gasEstimated => {
         console.log("voting gas estimated: " + gasEstimated);
-        toSend.send({gas: gasEstimated + 100000});
-
-        alert("Redirect to results page, keep promise somewhere");
+        const transaction = toSend.send({gas: gasEstimated + 100000});
+        this.props.setTransactionPromise(transaction);
+        history.push('/results');
       });
   }
 
@@ -78,4 +77,4 @@ class ReviewVotes extends Component {
   }
 }
 
-export default ReviewVotes;
+export default withRouter(ReviewVotes);

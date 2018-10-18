@@ -16,12 +16,15 @@ import OtherWallets from './flow/OtherWallets';
 import VotingCredits from './flow/VotingCredits';
 import PollVoting from './flow/PollVoting';
 import ReviewVotes from './flow/ReviewVotes';
+import Results from './flow/Results';
+
 
 class Voting extends PureComponent {
   state = { 
     addPoll: false,
     pollTokenBalances: [],
-    votes: []
+    votes: [],
+    transaction: null
   };
 
   updatePollBalance = (pollId, tokenBalance, ethBalance, votes) => {
@@ -34,8 +37,12 @@ class Voting extends PureComponent {
     this.setState({votes});
   }
 
+  setTransactionPromise = (transaction) => {
+    this.setState({transaction});
+  }
+
   render(){
-    const { addPoll, pollTokenBalances, votes } = this.state;
+    const { addPoll, pollTokenBalances, votes, transaction } = this.state;
     const togglePoll = () => { this.setState({ addPoll: !addPoll })};
 
     return (
@@ -57,7 +64,8 @@ class Voting extends PureComponent {
                 <Route path="/otherWallets" render={OtherWallets} />
                 <Route path="/votingCredits" render={() => <VotingCredits polls={rawPolls} balances={pollTokenBalances} />} />
                 <Route path="/voting" render={() => <PollVoting polls={rawPolls} balances={pollTokenBalances} originalVotes={votes} setVotesToReview={this.setVotesToReview} />} />
-                <Route path="/review" render={() => <ReviewVotes polls={rawPolls} votes={votes} balances={pollTokenBalances} />} />
+                <Route path="/review" render={() => <ReviewVotes polls={rawPolls} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} />} />
+                <Route path="/results" render={() => <Results polls={rawPolls} transaction={transaction} />} />
               </Switch>
             </div>
           </div>
