@@ -173,20 +173,20 @@ const AddPoll = withFormik({
 
           if(!Array.isArray(ballotOptions)){
             errors.ballots = "JSON must be an array of objects";
-          } else if(ballotOptions.length == 1) {
-            errors.ballots = "A minimum of 2 options is required if using multiple options";
+          } else if(ballotOptions.length == 0) {
+            errors.ballots = "At least one ballot is required";
           } else {
             const validOptions = ['title', 'subtitle', 'content'];
 
             for(let i = 0; i < ballotOptions.length; i++){
               if(!ballotOptions[i].title){
-                errors.ballots = "Option " + (i+1) + " is missing a title";
+                errors.ballots = "Ballot " + (i+1) + " is missing a title";
                 break;
               }
 
               const userOptions = Object.keys(ballotOptions[i]);
               if(userOptions.filter(o1 => validOptions.filter(o2 => o2 === o1).length === 0).length > 0){
-                errors.ballots = "Only 'title', 'subtitle', and 'content' are allowed in option " + (i+1);
+                errors.ballots = "Only 'title', 'subtitle', and 'content' are allowed in ballot " + (i+1);
               }
             }
           }
