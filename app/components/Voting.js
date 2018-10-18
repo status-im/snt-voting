@@ -24,10 +24,10 @@ class Voting extends PureComponent {
     votes: []
   };
 
-  updatePollBalance = (pollId, tokenBalance, ethBalance) => {
+  updatePollBalance = (pollId, tokenBalance, ethBalance, votes) => {
     const {pollTokenBalances} = this.state;
     pollTokenBalances[pollId] = { tokenBalance, ethBalance };
-    this.setState({pollTokenBalances});
+    this.setState({pollTokenBalances, votes});
   }
 
   setVotesToReview = (votes) => {
@@ -57,7 +57,7 @@ class Voting extends PureComponent {
                 <Route path="/otherWallets" render={OtherWallets} />
                 <Route path="/votingCredits" render={() => <VotingCredits polls={rawPolls} balances={pollTokenBalances} />} />
                 <Route path="/voting" render={() => <PollVoting polls={rawPolls} balances={pollTokenBalances} originalVotes={votes} setVotesToReview={this.setVotesToReview} />} />
-                <Route path="/review" render={() => <ReviewVotes polls={rawPolls} votes={votes} />} />
+                <Route path="/review" render={() => <ReviewVotes polls={rawPolls} votes={votes} balances={pollTokenBalances} />} />
               </Switch>
             </div>
           </div>
