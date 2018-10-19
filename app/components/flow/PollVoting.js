@@ -119,16 +119,20 @@ class PollVoting extends Component {
       maxValuesForBallots[i]  = Math.floor(Math.sqrt(balance - votedSNT + votes[i]*votes[i]));
     }
 
-    return <div className="section">
+    return <Fragment>
+    <div className="section">
         <Typography variant="headline">{title}</Typography>
       { votes.map((v, i) => {
           const item = ballots[i];
           return <BallotSlider key={i} title={item.title} subtitle={item.subtitle} symbol={symbol} classes={classes} votes={v} cantVote={cantVote} balance={balance} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
 
       })}
+    </div>
+    <div className="buttonNav">
       <Typography>{availableCredits} Credits left</Typography>
       <Button disabled={disableVote} variant="text" onClick={this.sendToReview}>Review vote</Button>
     </div>
+    </Fragment>
   }
 }
 

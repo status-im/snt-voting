@@ -101,6 +101,40 @@
     box-shadow: none;
 }
 
+#votingDapp div.credits {
+    padding: 0;
+}
+
+#votingDapp div.credits div {
+    padding: 0;
+}
+
+#votingDapp div.credits div .title {
+    display: inline-block;
+    width: 150px;
+    padding: 15px;
+}
+
+#votingDapp div.credits div .value {
+    font-weight: bold;
+    text-align: right;
+    width: 150px;
+    float: right;
+    padding: 15px;
+}
+
+#votingDapp div.credits .text {
+    border-top: 1px solid #edf2f5;
+    padding: 15px;
+    color: #939BA1;
+    font-size: .75rem;
+}
+
+#votingDapp div.credits .warning {
+    padding: 15px;
+    border-top: 1px solid #edf2f5;
+}
+
 #votingDapp div.card div.ballotData {
     padding-bottom: 0;
 }
@@ -129,6 +163,10 @@
     background: #ffffff;
 }
 
+#votingDapp div.buttonNav.back {
+    text-align: left;
+}
+
 #votingDapp div.buttonNav a,
 #votingDapp div.buttonNav a:visited {
     text-decoration: none;
@@ -141,4 +179,32 @@
     text-transform: capitalize;
     color: #4360DF;
     font-size: 0.75rem;
+}
+
+#votingDapp div.buttonNav.back button {
+    background: url(../images/medium-arrow-l.svg) center left no-repeat;
+    padding-right: 0;
+    padding-left: 15px;
+}
+
+#votingDapp div.left {
+    width: 60px;
+    float: left;
+    height: 75px;
+}
+
+#votingDapp div.left span {
+    background-color: #ECEFFC;
+    width:44px;
+    height:44px;
+    display:table-cell; 
+    vertical-align:middle; 
+    text-align:center;
+    border-radius:50%;
+    overflow:hidden;
+}
+
+#votingDapp div.warning h2 {
+    background: url(../images/warning.svg) no-repeat center left;
+    padding-left: 25px;
 }

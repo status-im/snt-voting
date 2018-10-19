@@ -12,13 +12,16 @@ class ConnectYourWallet extends Component {
 
 
     // TODO:
-    //web3.currentProvider.isStatus = true;
+    web3.currentProvider.isStatus = true;
 
     const poll = polls[0];
     const idPoll = 0;
 
     const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
     const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));
+
+    if(window.ethereum)
+      await ethereum.enable();
 
     if(web3.currentProvider.isStatus){
       const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call();

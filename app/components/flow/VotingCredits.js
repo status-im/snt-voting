@@ -28,48 +28,48 @@ class VotingCredits extends Component {
     return (polls ? <Fragment><div className="section">
         <Typography variant="headline">{title}</Typography>
         <Typography variant="body1" component="div" dangerouslySetInnerHTML={{__html: description}}></Typography>
-      <Card className="card">
+      <Card className="card credits">
         <CardContent>
-            <Typography component="p">
-                Voting Credits {tokenBalance}
+            <Typography component="div">
+              <span className="title">Voting Credits</span>
+              <span className="value">{tokenBalance}</span>
             </Typography>
             { tokenBalance > 0 &&
-            <Typography component="p">
+            <Typography component="p" className="text">
                 You get one credit for each SNT held in your wallet <b>at the time of poll was created</b>. They are usable only in this poll.
             </Typography> }
             { tokenBalance == 0 &&
-              <div>
-                <Typography component="h2">
+              <div className="warning">
+                <Typography component="h2" >
                   No SNT in your wallet
                 </Typography>
                 <Typography component="p">
                   To vote, you need to connect with a wallet that holds SNT tokens.
                 </Typography>
-                <Typography component="p">
-                  <Link to="/otherWallets">Connect with another wallet</Link>
-                </Typography>
               </div>
             }
           </CardContent>
       </Card>
-      { ethBalance == 0 && <Card className="card">
+      { ethBalance == 0 && <Card className="card credits">
         <CardContent>
-            <Typography component="p">
-                ETH {ethBalance}
+            <Typography component="div">
+              <span className="title">ETH</span>
+              <span className="value">{ethBalance}</span>
             </Typography>
-            <Typography component="h2">
-              Not enough ETH in your wallet
-            </Typography>
-            <Typography component="p">
-              You will sign a transaction to confirm your vote. No tokens are sent, but you need ETH to pay for gas (Ethereum network fee).
-            </Typography>
+            <div className="warning">
+              <Typography component="h2">
+                Not enough ETH in your wallet
+              </Typography>
+              <Typography component="p">
+                You will sign a transaction to confirm your vote. No tokens are sent, but you need ETH to pay for gas (Ethereum network fee).
+              </Typography>
+            </div>
           </CardContent>
       </Card> }
     </div>
-    <div className="buttonNav">
-
-      { ethBalance == 0 || tokenBalance == 0 && <Link to="/wallet"><Button variant="text">Back</Button></Link> }
-      { ethBalance > 0 && tokenBalance > 0 && <Link to="/voting"><Button variant="text">Vote</Button></Link> }
+    <div className={(ethBalance == 0 || tokenBalance == 0) ? 'buttonNav back' : 'buttonNav'}>
+      { (ethBalance == 0 || tokenBalance == 0) && <Link to="/wallet"><Button variant="text">Back</Button></Link> }
+      { (ethBalance > 0 && tokenBalance > 0) && <Link to="/voting"><Button variant="text">Vote</Button></Link> }
     </div>
     </Fragment> : null);
   }
