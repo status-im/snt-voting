@@ -17,12 +17,18 @@ class ReviewVotes extends Component {
 
     const { vote, unvote } = PollManager.methods;
     const { polls, votes, history} = this.props;
-    const { toWei } = web3.utils;
+    const { toWei, toBN } = web3.utils;
     
     const idPoll = 0; // TODO: 
 
-    const ballots = votes.map(el => parseInt(toWei((el * el).toString(), "ether")));
-    const balance4Voting = ballots.reduce((prev, curr) => prev + curr, 0);
+    const ballots = votes.map(el => {
+      let num = toBN(el);
+      num = num.mul(num);
+      return toWei(num, "ether");
+    });
+
+    const balance4Voting = ballots.reduce((prev, curr) => prev.add(curr), toBN("0"));
+
     const toSend = balance4Voting == 0 ? unvote(idPoll) : vote(idPoll, ballots);
 
     toSend.estimateGas()
