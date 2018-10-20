@@ -208,3 +208,86 @@
     background: url(../images/warning.svg) no-repeat center left;
     padding-left: 25px;
 }
+
+#votingDapp div.card.review,
+#votingDapp div.card.review > div {
+    padding: 0 !important;
+}
+
+#votingDapp div.card.review h2 {
+    padding-top: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#votingDapp div.card.review p {
+    padding-bottom: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#votingDapp div.review div.data {
+    border-top: 1px solid #edf2f5;
+}
+
+#votingDapp div.review div.data div.item {
+    width: 45%;
+    display: inline-block;
+    color: #939BA1;
+    font-size: .8rem;
+    padding: 15px;
+    border-right:  1px solid #edf2f5;
+}
+
+.noBorder {
+    border: none !important;
+}
+
+
+#votingDapp div.review div.data div.item span {
+    font-size: 1.3rem;
+    margin-right: .3em;
+    font-weight: bold;
+    color: #000000;
+}
+
+#votingDapp div.creditsAvailable {
+    background: #EEF2F5;
+    text-align: center;
+    padding: 15px;
+}
+
+#votingDapp div.creditsAvailable div {
+    padding: 0;
+}
+
+#votingDapp div.creditsAvailable a,
+#votingDapp div.creditsAvailable a:visited {
+    text-decoration: none;
+    text-transform: capitalize;
+    color: #4360DF;
+    font-size: 0.75rem;
+}
+
+#votingDapp div.creditsAvailable button {
+    width: 100%;
+    border-top: 1px solid #ffffff;
+    margin-top: 10px;
+}
+
+#votingDapp p.votingCredits {
+    float: left;
+    padding-left: 15px;
+    padding-top: 8px;
+    color: #939BA1;
+}
+
+#votingDapp p.votingCredits span {
+    color: #000000;
+}
+
+
+button:disabled,
+button[disabled]{
+    opacity: .5;
+}

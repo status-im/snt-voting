@@ -94,9 +94,8 @@ class PollVoting extends Component {
     
     const balance = fromWei(balances[0].tokenBalance, "ether");
     const cantVote = balance == 0 || !poll._canVote;
-    const disableVote = cantVote;
-
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
+    const disableVote = cantVote || availableCredits == parseInt(balance, 10);
 
     // Votes calculation
     const originalVotesQty = originalVotes.reduce((x,y) => x+y, 0);
@@ -129,7 +128,7 @@ class PollVoting extends Component {
       })}
     </div>
     <div className="buttonNav">
-      <Typography>{availableCredits} Credits left</Typography>
+      <Typography className="votingCredits"><span>{availableCredits}</span> Credits left</Typography>
       <Button disabled={disableVote} variant="text" onClick={this.sendToReview}>Review vote</Button>
     </div>
     </Fragment>

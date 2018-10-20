@@ -58,12 +58,20 @@ class ReviewVotes extends Component {
         <Typography variant="headline">Review your vote</Typography>
 
         { ballots.map((item, i) => {
-          return <Card className="card" key={i}>
+          return <Card className="card review" key={i}>
             <CardContent>
               <Typography gutterBottom component="h2">{item.title}</Typography>
               <Typography component="p">{item.subtitle}</Typography>
-              <Typography component="p">{votes[i]} votes</Typography>
-              <Typography component="p">{votes[i] * votes[i]} credits</Typography>
+              <div className="data">
+                <div className="item">
+                  <span>{votes[i]}</span>
+                  votes
+                </div>
+                <div className="item noBorder">
+                  <span>{votes[i] * votes[i]}</span>
+                  credits
+                </div>
+              </div>
             </CardContent>
           </Card>
         })}
@@ -77,10 +85,7 @@ class ReviewVotes extends Component {
         </Card>
       </div>
       <div className="buttonNav">
-
         <Button variant="text" onClick={this.vote} disabled={isSubmitting}>Sign to confirm</Button>
-
-
     </div></Fragment> : null);
   }
 }
