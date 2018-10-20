@@ -42,7 +42,7 @@ class Results extends Component {
 
   render(){
     const {polls} = this.props;
-    const {isError, poll} = this.state;
+    let {isError, poll} = this.state;
 
     const title = polls[0].content.title;
     const ballots = polls[0].content.ballots;
@@ -52,11 +52,12 @@ class Results extends Component {
     }
 
     return <div className="section">
-      { isError && <div>
+      { isError && <div className="errorTrx">
+        <div className="image"><img src="images/sad-face.svg" width="24" /></div>
         <Typography variant="headline">Transaction failed</Typography>
         <Typography variant="body1">Copy with apologies and invitation to try again</Typography>
         <Link to="/review">
-          <Button color="primary">Try again</Button>
+          <Button color="primary" variant="contained">Try again</Button>
         </Link>
       </div> }
       { !isError && <div>

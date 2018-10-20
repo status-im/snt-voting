@@ -291,3 +291,21 @@ button:disabled,
 button[disabled]{
     opacity: .5;
 }
+
+.errorTrx {
+    text-align: center;
+    padding-top: 100px;
+}
+
+.errorTrx div.image {
+    padding: 20px 11px 7px 11px;
+    border-radius: 50%;
+    background: #ffe8ec;
+    display: inline;
+}
+
+.errorTrx h1,
+.errorTrx p {
+    margin-bottom: 15px;
+}
+
