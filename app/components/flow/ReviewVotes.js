@@ -90,7 +90,7 @@ class ReviewVotes extends Component {
           <CardContent>
               <Typography gutterBottom component="p">Unused voting power</Typography>
               <Typography gutterBottom component="h2">{availableCredits} credits</Typography>
-              <Link to={"/voting/" + idPoll}><Button variant="text">Add votes</Button></Link>
+              <Link to={"/voting/" + idPoll + "/back"}><Button variant="text">Add votes</Button></Link>
           </CardContent>
         </Card>
       </div>
