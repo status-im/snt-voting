@@ -68,7 +68,7 @@ class ReviewVotes extends Component {
         <Typography variant="headline">Review your vote</Typography>
 
         { ballots.map((item, i) => {
-          return <Card className="card review" key={i}>
+          return votes[i] > 0 ? <Card className="card review" key={i}>
             <CardContent>
               <Typography gutterBottom component="h2">{item.title}</Typography>
               <Typography component="p">{item.subtitle}</Typography>
@@ -83,7 +83,7 @@ class ReviewVotes extends Component {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> : null;
         })}
 
         <Card className="card creditsAvailable">

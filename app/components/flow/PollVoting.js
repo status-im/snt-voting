@@ -96,7 +96,7 @@ class PollVoting extends Component {
     const balance = fromWei(balances[idPoll].tokenBalance, "ether");
     const cantVote = balance == 0 || !poll._canVote;
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
-    const disableVote = cantVote || availableCredits == parseInt(balance, 10);
+    const disableVote = cantVote || arraysEqual(originalVotes.slice(0, votes.length), votes)
 
     // Votes calculation
     const originalVotesQty = originalVotes.reduce((x,y) => x+y, 0);

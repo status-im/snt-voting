@@ -44,7 +44,8 @@ class App extends React.Component {
         // TODO: check the environment here
         if (netId !== MAINNET && netId !== TESTNET && netId < 5) this.setState({ web3Provider: false})
       })
-      fetchIdeas().then(ideaSites => { this.setState({ ideaSites })});
+
+      // fetchIdeas().then(ideaSites => { this.setState({ ideaSites })});
     })
   }
 
