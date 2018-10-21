@@ -333,13 +333,17 @@ button[disabled]{
     color: #939BA1;
 }
 
-#votingDapp div.ballotResult h2 {
-    background: url(../images/arrow-down.svg) no-repeat center right;
-    width: 100%;
-    margin-top: .2rem;
+#votingDapp div.ballotResult {
+    margin-bottom: 30px;
 }
 
-#votingDapp div.ballotResult h2.collapse {
+#votingDapp div.ballotResult .progress {
+    background: url(../images/arrow-down.svg) no-repeat center right;
+    width: 100%;
+    margin-top: .7rem;
+}
+
+#votingDapp div.ballotResult .collapse {
     background: url(../images/arrow-up.svg) no-repeat center right;
 }
 
@@ -366,3 +370,37 @@ button[disabled]{
 #votingDapp div.ballotResult ul li span {
     float: right;
 }
+
+.progress {
+    color: #000000;
+    box-sizing: initial;
+    color: #fff;
+    font-size: 11px;
+    font-size: 0.6875rem;
+    height: 12px;
+    line-height: 1.182;
+    margin: 6px 0;
+    position: relative;
+    text-align: left;
+    width: 100%;
+  }
+  
+  .progress-large {
+    font-size: 16px;
+    font-size: 1rem;
+    height: 25px;
+    line-height: 1.7;
+  }
+  
+  .progress > span {
+    background-color: #ECEFFC;
+    display: block;
+    height: 100%;
+    position: relative;
+    width: auto;
+    min-width: 5px;
+    max-width: 89%;
+    padding: 5px 0 5px 20px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }

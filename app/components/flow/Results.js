@@ -109,10 +109,16 @@ class BallotResult extends Component {
     const {title, quadraticVotes, tokenTotal, totalVotes} = this.props;
     const {show} = this.state;
 
+    const votePercentage = totalVotes > 0 ? parseInt(quadraticVotes) / totalVotes * 100 : 0;
+
     return (<div className="ballotResult">
-      <Typography gutterBottom className={show ? 'collapse' : ''} component="h2" onClick={this.showDetails}><span>{totalVotes > 0 ? parseInt(quadraticVotes) / totalVotes * 100 : 0}%</span> {title}</Typography>
+    <div className={show ? 'collapse progress progress-large' : 'progress progress-large'}>
+      <span style={{width: votePercentage +'%'}}>
+        <Typography gutterBottom component="h2" onClick={this.showDetails}><span>{votePercentage}%</span> {title}</Typography>
+      </span>
+</div>
       {show && <ul>
-        <Typography component="li">Voters: <span>???</span></Typography>
+        <Typography component="li">Voters: <span>N/A</span></Typography>
         <Typography component="li">Total votes: <span>{quadraticVotes}</span></Typography>
         <Typography component="li" className="noBorder">Total SNT: <span>{web3.utils.fromWei(tokenTotal, "ether")}</span></Typography>
       </ul>}
