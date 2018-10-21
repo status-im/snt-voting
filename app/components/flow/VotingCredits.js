@@ -16,14 +16,14 @@ class VotingCredits extends Component {
   }
 
   render(){
-    const {polls, balances, history} = this.props;
+    const {polls, balances, idPoll} = this.props;
 
     if(!polls || !balances) return null;
 
-    let title = polls[0].content.title;
-    let description = polls[0].content.description;
-    let ethBalance = web3.utils.fromWei(balances[0].ethBalance, "ether");
-    let tokenBalance = Math.floor(web3.utils.fromWei(balances[0].tokenBalance, "ether"));
+    let title = polls[idPoll].content.title;
+    let description = polls[idPoll].content.description;
+    let ethBalance = web3.utils.fromWei(balances[idPoll].ethBalance, "ether");
+    let tokenBalance = Math.floor(web3.utils.fromWei(balances[idPoll].tokenBalance, "ether"));
     
     return (polls ? <Fragment><div className="section">
         <Typography variant="headline">{title}</Typography>
@@ -68,8 +68,8 @@ class VotingCredits extends Component {
       </Card> }
     </div>
     <div className={(ethBalance == 0 || tokenBalance == 0) ? 'buttonNav back' : 'buttonNav'}>
-      { (ethBalance == 0 || tokenBalance == 0) && <Link to="/wallet"><Button variant="text">Back</Button></Link> }
-      { (ethBalance > 0 && tokenBalance > 0) && <Link to="/voting"><Button variant="text">Vote</Button></Link> }
+      { (ethBalance == 0 || tokenBalance == 0) && <Link to={"/wallet/" + idPoll}><Button variant="text">Back</Button></Link> }
+      { (ethBalance > 0 && tokenBalance > 0) && <Link to={"/voting/" + idPoll}><Button variant="text">Vote</Button></Link> }
     </div>
     </Fragment> : null);
   }

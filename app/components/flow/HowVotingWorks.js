@@ -54,7 +54,7 @@ const HowVotingWorks = (props) => <Fragment><div className="section">
   </Card>
 </div>
 <div className="buttonNav">
-  <Link to="/wallet"><Button>Connect with your wallet</Button></Link>
+  <Link to={"/wallet/" + props.idPoll}><Button>Connect with your wallet</Button></Link>
 </div>
 </Fragment>;
 

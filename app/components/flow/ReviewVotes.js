@@ -16,11 +16,9 @@ class ReviewVotes extends Component {
     this.setState({isSubmitting: true});
 
     const { vote, unvote } = PollManager.methods;
-    const { polls, votes, history} = this.props;
+    const { votes, history, idPoll} = this.props;
     const { toWei, toBN } = web3.utils;
     
-    const idPoll = 0; // TODO: 
-
     const ballots = votes.map(el => {
       let num = toBN(el);
       num = num.mul(num);
@@ -36,22 +34,31 @@ class ReviewVotes extends Component {
         console.log("voting gas estimated: " + gasEstimated);
         const transaction = toSend.send({gas: gasEstimated + 100000});
         this.props.setTransactionPromise(transaction);
-        history.push('/results');
+        history.push('/results/' + idPoll);
       });
   }
 
+  componentDidMount(){
+    const {polls, originalVotes, idPoll, history} = this.props;
+
+    if(!polls || !polls.length){
+      history.push('/');
+      return;
+    }
+  }
+
   render(){
-    const {polls, balances, votes} = this.props;
+    const {polls, balances, votes, idPoll} = this.props;
     const {isSubmitting} = this.state;
     const {fromWei} = web3.utils;
 
-    if(!polls || !polls.length){
+    if(!polls || !polls.length || !balances[idPoll]){
       return null;
     }
 
-    const poll = polls[0];
+    const poll = polls[idPoll];
     const ballots = poll.content.ballots
-    const balance = fromWei(balances[0].tokenBalance, "ether");
+    const balance = fromWei(balances[idPoll].tokenBalance, "ether");
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
     
     return (polls ? <Fragment><div className="section">
@@ -80,7 +87,7 @@ class ReviewVotes extends Component {
           <CardContent>
               <Typography gutterBottom component="p">Unused voting power</Typography>
               <Typography gutterBottom component="h2">{availableCredits} credits</Typography>
-              <Link to="/voting"><Button variant="text">Add votes</Button></Link>
+              <Link to={"/voting/" + idPoll}><Button variant="text">Add votes</Button></Link>
           </CardContent>
         </Card>
       </div>

@@ -15,48 +15,51 @@ class Results extends Component {
     super(props);
 
     if(props.polls && props.polls.length)
-      this.state.poll = props.polls[0]; // TODO: 
+      this.state.poll = props.polls[props.idPoll]; 
   }
 
   updatePoll(){
-    const idPoll = 0; // TODO: 
+    const idPoll = this.props.idPoll; 
     PollManager.methods.poll(idPoll).call().then(poll => {
       this.setState({poll});
     })
   }
 
   componentDidMount(){
-    const {transaction} = this.props;
+    const {transaction, idPoll} = this.props;
 
-    const idPoll = 0; // TODO: 
-
-    this.updatePoll();
-
-    transaction.then(receipt => {
+    EmbarkJS.onReady(() => {
       this.updatePoll();
-    })
-    .catch(err => {
-      this.setState({isError: true});
+
+      if(transaction){
+        transaction.then(receipt => {
+          this.updatePoll();
+        })
+        .catch(err => {
+          this.setState({isError: true});
+        });
+      }
     });
+
   }
 
   render(){
-    const {polls} = this.props;
+    const {polls, idPoll} = this.props;
     let {isError, poll} = this.state;
 
-    const title = polls[0].content.title;
-    const ballots = polls[0].content.ballots;
-
-    if(!poll){
+    if(!poll || !polls){
       return null;
     }
+
+    const title = polls[idPoll].content.title;
+    const ballots = polls[idPoll].content.ballots;
 
     return <div className="section">
       { isError && <div className="errorTrx">
         <div className="image"><img src="images/sad-face.svg" width="24" /></div>
         <Typography variant="headline">Transaction failed</Typography>
         <Typography variant="body1">Copy with apologies and invitation to try again</Typography>
-        <Link to="/review">
+        <Link to={"/review/" + idPoll}>
           <Button color="primary" variant="contained">Try again</Button>
         </Link>
       </div> }

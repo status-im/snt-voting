@@ -44,13 +44,14 @@ class PollVoting extends Component {
   }
 
   componentDidMount(){
-    const {polls, originalVotes} = this.props;
+    const {polls, originalVotes, idPoll, history} = this.props;
 
     if(!polls || !polls.length){
-      this.props.history.push('/');
+      history.push('/');
+      return;
     }
 
-    const poll = polls[0];
+    const poll = polls[idPoll];
 
     const votes = [];
     if(originalVotes.length){
@@ -73,11 +74,11 @@ class PollVoting extends Component {
 
   sendToReview = () => {
     this.props.setVotesToReview(this.state.votes);
-    this.props.history.push('/review');
+    this.props.history.push('/review/' + this.props.idPoll);
   }
 
   render(){
-    const {polls, classes, balances} = this.props;
+    const {polls, classes, balances, idPoll} = this.props;
     const {originalVotes, votes} = this.state;
     const {fromWei} = web3.utils;
 
@@ -87,15 +88,15 @@ class PollVoting extends Component {
 
     const symbol = "SNT"; // TODO:
 
-    const poll = polls[0];
+    const poll = polls[idPoll];
 
     const title = poll.content.title;
     const ballots = poll.content.ballots
     
-    const balance = fromWei(balances[0].tokenBalance, "ether");
+    const balance = fromWei(balances[idPoll].tokenBalance, "ether");
     const cantVote = balance == 0 || !poll._canVote;
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
-    const disableVote = cantVote || availableCredits == parseInt(balance, 10) || arraysEqual(votes, originalVotes.slice(0, votes.length));
+    const disableVote = cantVote || availableCredits == parseInt(balance, 10);
 
     // Votes calculation
     const originalVotesQty = originalVotes.reduce((x,y) => x+y, 0);

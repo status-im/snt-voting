@@ -1,11 +1,11 @@
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import React from 'react';
+import React, {Fragment} from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
-const OtherWallets = (props) => <div className="section">
+const OtherWallets = (props) => <Fragment><div className="section">
   <Typography variant="headline">Connect with another wallet</Typography>
   <Typography variant="body1">Do you hold your SNT in another wallet? Don't worry, we've got you covered. You can also vote using the following wallets.</Typography>
   <Card className="card">
@@ -41,7 +41,10 @@ const OtherWallets = (props) => <div className="section">
       </Typography>
     </CardContent>
   </Card>
-  <Link to="/wallet"><Button variant="text">Back</Button></Link>
-</div>
+  </div>
+  <div className="buttonNav back">
+    <Link to={"/wallet/" + props.idPoll}><Button variant="text">Back</Button></Link>
+  </div>
+</Fragment>
 
 export default OtherWallets;

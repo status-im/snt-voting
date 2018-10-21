@@ -58,14 +58,14 @@ class Voting extends PureComponent {
             <div id="votingDapp">
               <Switch>
                 <Route exact path="/" render={() => <TitleScreen polls={rawPolls} />} />
-                <Route path="/learn" render={() => <LearnAboutBallots polls={rawPolls} />} />
-                <Route path="/votingHelp" render={HowVotingWorks} />
-                <Route path="/wallet" render={() => <ConnectYourWallet polls={rawPolls} updateBalances={this.updatePollBalance} />} />
-                <Route path="/otherWallets" render={OtherWallets} />
-                <Route path="/votingCredits" render={() => <VotingCredits polls={rawPolls} balances={pollTokenBalances} />} />
-                <Route path="/voting" render={() => <PollVoting polls={rawPolls} balances={pollTokenBalances} originalVotes={votes} setVotesToReview={this.setVotesToReview} />} />
-                <Route path="/review" render={() => <ReviewVotes polls={rawPolls} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} />} />
-                <Route path="/results" render={() => <Results polls={rawPolls} transaction={transaction} />} />
+                <Route path="/learn/:id" render={props => <LearnAboutBallots polls={rawPolls} idPoll={props.match.params.id} />} />
+                <Route path="/votingHelp/:id" render={props => <HowVotingWorks idPoll={props.match.params.id} />} />
+                <Route path="/wallet/:id" render={props => <ConnectYourWallet polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} />} />
+                <Route path="/otherWallets/:id" render={props => <OtherWallets idPoll={props.match.params.id} />} />
+                <Route path="/votingCredits/:id" render={props => <VotingCredits polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} />} />
+                <Route path="/voting/:id" render={props => <PollVoting polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} originalVotes={votes} setVotesToReview={this.setVotesToReview} />} />
+                <Route path="/review/:id" render={props => <ReviewVotes polls={rawPolls} idPoll={props.match.params.id} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} />} />
+                <Route path="/results/:id" render={props => <Results polls={rawPolls} idPoll={props.match.params.id} transaction={transaction} />} />
               </Switch>
             </div>
           </div>

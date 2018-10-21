@@ -57,7 +57,8 @@ class TitleScreen extends Component {
 
   componentDidUpdate(prevProps){
     if (this.props.polls !== prevProps.polls && this.props.polls && this.props.polls.length) {
-      const seconds = this.props.polls[0]._endTime - (new Date()).getTime() / 1000
+      const idPoll = this.props.polls[this.props.polls.length - 1].idPoll;
+      const seconds = this.props.polls[idPoll]._endTime - (new Date()).getTime() / 1000
       if(seconds > 0){
         let timeLeftVar = this.secondsToTime(seconds);
         this.setState({ time: timeLeftVar, seconds });
@@ -75,12 +76,18 @@ class TitleScreen extends Component {
 
     let startBlock, endTime, title, description;
 
+    let idPoll;
+
     if(polls && polls.length){
-      title = polls[0].content.title;
-      description = polls[0].content.description;
-      canceled = polls[0]._canceled;
-      startBlock = polls[0]._startBlock;
-      endTime = polls[0]._endTime;
+
+      idPoll = polls[polls.length - 1].idPoll;
+
+
+      title = polls[idPoll].content.title;
+      description = polls[idPoll].content.description;
+      canceled = polls[idPoll]._canceled;
+      startBlock = polls[idPoll]._startBlock;
+      endTime = polls[idPoll]._endTime;
     }
     
     return (polls && !canceled ? <div>
@@ -107,14 +114,14 @@ class TitleScreen extends Component {
           </li>
         </ul>
         <div className="action">
-          <Link to="/learn"><Button variant="contained" color="primary">Get started</Button></Link>
+          <Link to={"/learn/" + idPoll}><Button variant="contained" color="primary">Get started</Button></Link>
         </div>
       </div>}
       { seconds < 0 && <div className="pollClosed">
         <Typography variant="headline">Poll closed</Typography>
         <Typography variant="body1">The vote was finished {parseInt(Math.abs(seconds) / 86400, 10)} day(s) ago</Typography>
         <div className="action">
-          <Link to="/learn"><Button variant="contained" color="primary">View results</Button></Link>
+          <Link to={"/results/" + idPoll}><Button variant="contained" color="primary">View results</Button></Link>
         </div>
       </div> }
     </div> : null);

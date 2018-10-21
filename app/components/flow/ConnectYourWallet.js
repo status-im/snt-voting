@@ -8,14 +8,12 @@ import PollManager from 'Embark/contracts/PollManager';
 
 class ConnectYourWallet extends Component {
   connectWallet = async () => {
-    const {history, polls, updateBalances} = this.props;
-
+    const {history, polls, updateBalances, idPoll} = this.props;
 
     // TODO:
     web3.currentProvider.isStatus = true;
 
-    const poll = polls[0];
-    const idPoll = 0;
+    const poll = polls[idPoll];
 
     const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
     const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));
@@ -26,14 +24,16 @@ class ConnectYourWallet extends Component {
     if(web3.currentProvider.isStatus){
       const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call();
       const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
-      updateBalances(0, tokenBalance, ethBalance, votes);
-      history.push('/votingCredits');
+      updateBalances(idPoll, tokenBalance, ethBalance, votes);
+      history.push('/votingCredits/' + idPoll);
     } else {
       window.location.href = "https://get.status.im/browse/" + location.href.replace(/^http(s?):\/\//, '');
     }
   }
 
   render(){
+    const {idPoll} = this.props;
+
     return <div className="section center">
     <Typography variant="headline">Connect your wallet</Typography>
     <Typography variant="body1">To start voting, connect to a wallet where you hold your SNT assets.</Typography>
@@ -41,7 +41,7 @@ class ConnectYourWallet extends Component {
       <Button color="primary" onClick={this.connectWallet} variant="contained">CONNECT USING STATUS</Button>
     </div>
     <div className="action">
-      <Link to="/otherWallets">
+      <Link to={"/otherWallets/" + idPoll}>
         <Button color="primary">CONNECT WITH ANOTHER WALLET</Button>
       </Link>
     </div>

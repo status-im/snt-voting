@@ -30,14 +30,13 @@ class LearnAboutBallots extends Component {
   };
 
   render(){
-    const {polls} = this.props;
+    const {polls, idPoll} = this.props;
 
-    let title, ballots = [];
-    if(polls && polls.length){
-      title = polls[0].content.title;
-      ballots = polls[0].content.ballots;
-    }
+    if(!polls || !polls.length) return null;
 
+    const title = polls[idPoll].content.title;
+    const ballots = polls[idPoll].content.ballots;
+  
     return (<Fragment>
     <div className="section">
         <Typography variant="headline">{title}</Typography>
@@ -62,7 +61,7 @@ class LearnAboutBallots extends Component {
         }
     </div>
     <div className="buttonNav">
-      <Link to="/votingHelp"><Button className="nextAction">How voting works</Button></Link>
+      <Link to={"/votingHelp/" + idPoll}><Button className="nextAction">How voting works</Button></Link>
     </div>
     </Fragment>
     );
