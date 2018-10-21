@@ -332,3 +332,37 @@ button[disabled]{
 #votingDapp div.transactionArea p {
     color: #939BA1;
 }
+
+#votingDapp div.ballotResult h2 {
+    background: url(../images/arrow-down.svg) no-repeat center right;
+    width: 100%;
+    margin-top: .2rem;
+}
+
+#votingDapp div.ballotResult h2.collapse {
+    background: url(../images/arrow-up.svg) no-repeat center right;
+}
+
+#votingDapp div.ballotResult h2 span {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+#votingDapp div.ballotResult ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    margin-bottom: .8rem;
+}
+
+#votingDapp div.ballotResult ul li {
+    border-bottom: 1px solid #EEF2F5;
+    color: #939BA1;
+    margin: 0;
+    padding: 10px 10px 10px 0;
+
+}
+
+#votingDapp div.ballotResult ul li span {
+    float: right;
+}

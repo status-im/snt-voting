@@ -53,9 +53,10 @@ class Results extends Component {
     if(!poll || !polls){
       return null;
     }
-
+    
     const title = polls[idPoll].content.title;
     const ballots = polls[idPoll].content.ballots;
+    const totalVotes = poll._quadraticVotes.map(x => parseInt(x, 10)).reduce((x, y) => x + y, 0);
 
     return <Fragment>
       { isError && <div className="errorTrx">
@@ -83,21 +84,41 @@ class Results extends Component {
       }
     <div className="section">
       { !isError && <Fragment>
-        { title }
-        { ballots.map((item, i) => {
-          return <div key={i}>
-            <h2>{item.title}</h2>
-            <p>Voters: ???</p>
-            <p>Total votes: {poll._quadraticVotes[i]}</p>
-            <p>Total SNT: {web3.utils.fromWei(poll._tokenTotal[i], "ether")}</p>
-
-          </div>
-        })}
+        <Typography variant="headline" gutterBottom>{title}</Typography>
+        { ballots.map((item, i) => <BallotResult title={item.title} totalVotes={totalVotes} quadraticVotes={poll._quadraticVotes[i]} tokenTotal={poll._tokenTotal[i]} key={i} />) }
         </Fragment>
       }
     </div>
     </Fragment>;
   }
+}
+
+
+class BallotResult extends Component {
+
+  state = {
+    show: false
+  }
+
+  showDetails = () => {
+    const show = this.state.show;
+    this.setState({show: !show});
+  }
+
+  render(){
+    const {title, quadraticVotes, tokenTotal, totalVotes} = this.props;
+    const {show} = this.state;
+
+    return (<div className="ballotResult">
+      <Typography gutterBottom className={show ? 'collapse' : ''} component="h2" onClick={this.showDetails}><span>{totalVotes > 0 ? parseInt(quadraticVotes) / totalVotes * 100 : 0}%</span> {title}</Typography>
+      {show && <ul>
+        <Typography component="li">Voters: <span>???</span></Typography>
+        <Typography component="li">Total votes: <span>{quadraticVotes}</span></Typography>
+        <Typography component="li" className="noBorder">Total SNT: <span>{web3.utils.fromWei(tokenTotal, "ether")}</span></Typography>
+      </ul>}
+    </div>);
+  }
+
 }
 
 export default Results;
