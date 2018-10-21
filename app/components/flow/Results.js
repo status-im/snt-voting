@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import Typography from '@material-ui/core/Typography'
 import PollManager from 'Embark/contracts/PollManager';
 
@@ -8,7 +8,9 @@ class Results extends Component {
 
   state = {
     isError: false,
-    poll: null
+    poll: null,
+    isPending: true,
+
   }
 
   constructor(props){
@@ -33,6 +35,7 @@ class Results extends Component {
 
       if(transaction){
         transaction.then(receipt => {
+          this.setState({isPending: false});
           this.updatePoll();
         })
         .catch(err => {
@@ -44,8 +47,8 @@ class Results extends Component {
   }
 
   render(){
-    const {polls, idPoll} = this.props;
-    let {isError, poll} = this.state;
+    const {polls, idPoll, transaction, transactionHash} = this.props;
+    let {isError, poll, isPending} = this.state;
 
     if(!poll || !polls){
       return null;
@@ -54,7 +57,7 @@ class Results extends Component {
     const title = polls[idPoll].content.title;
     const ballots = polls[idPoll].content.ballots;
 
-    return <div className="section">
+    return <Fragment>
       { isError && <div className="errorTrx">
         <div className="image"><img src="images/sad-face.svg" width="24" /></div>
         <Typography variant="headline">Transaction failed</Typography>
@@ -63,9 +66,23 @@ class Results extends Component {
           <Button color="primary" variant="contained">Try again</Button>
         </Link>
       </div> }
-      { !isError && <div>
-        <h2>TODO: Transaction details here</h2>
-
+      { !isError && transaction && <div className="transactionArea">
+        { isPending && <div className="pending">
+          <img src="images/pending.svg" width="40" />
+          <Typography variant="headline">Your vote will be posted once the transaction is complete.</Typography>
+          <Typography variant="body1">Your vote is in the process of being confirmed in the blockchain</Typography>
+        </div>
+        }
+        { !isPending && transaction && <div className="confirmed">
+        <img src="images/confirmed.svg" width="40" />
+        <Typography variant="headline">Transaction confirmed!<br />
+        Your vote was posted.</Typography>
+      </div>}
+        { transactionHash && <Typography variant="body1"><a href={"https://etherscan.io/tx/" + transactionHash}>View details on Etherscan</a></Typography> }
+        </div>
+      }
+    <div className="section">
+      { !isError && <Fragment>
         { title }
         { ballots.map((item, i) => {
           return <div key={i}>
@@ -76,9 +93,10 @@ class Results extends Component {
 
           </div>
         })}
-
-        </div> }
-    </div>;
+        </Fragment>
+      }
+    </div>
+    </Fragment>;
   }
 }
 

@@ -25,7 +25,8 @@ class Voting extends PureComponent {
     addPoll: false,
     pollTokenBalances: [],
     votes: [],
-    transaction: null
+    transaction: null,
+    transactionHash: ''
   };
 
   updatePollBalance = (pollId, tokenBalance, ethBalance, votes) => {
@@ -37,13 +38,17 @@ class Voting extends PureComponent {
   setVotesToReview = (votes) => {
     this.setState({votes});
   }
+  
+  setTransactionHash = (transactionHash) => {
+    this.setState({transactionHash});
+  }
 
   setTransactionPromise = (transaction) => {
     this.setState({transaction});
   }
 
   render(){
-    const { addPoll, pollTokenBalances, votes, transaction } = this.state;
+    const { addPoll, pollTokenBalances, votes, transaction, transactionHash } = this.state;
     const togglePoll = () => { this.setState({ addPoll: !addPoll })};
 
     return (
@@ -66,8 +71,8 @@ class Voting extends PureComponent {
                 <Route path="/externalWallet/:id" render={props => <ExternalWallet polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} />} />
                 <Route path="/votingCredits/:id" render={props => <VotingCredits polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} />} />
                 <Route path="/voting/:id" render={props => <PollVoting polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} originalVotes={votes} setVotesToReview={this.setVotesToReview} />} />
-                <Route path="/review/:id" render={props => <ReviewVotes polls={rawPolls} idPoll={props.match.params.id} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} />} />
-                <Route path="/results/:id" render={props => <Results polls={rawPolls} idPoll={props.match.params.id} transaction={transaction} />} />
+                <Route path="/review/:id" render={props => <ReviewVotes polls={rawPolls} idPoll={props.match.params.id} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} setTransactionHash={this.setTransactionHash} />} />
+                <Route path="/results/:id" render={props => <Results polls={rawPolls} idPoll={props.match.params.id} transaction={transaction} transactionHash={transactionHash} />} />
               </Switch>
             </div>
           </div>

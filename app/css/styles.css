@@ -309,3 +309,26 @@ button[disabled]{
     margin-bottom: 15px;
 }
 
+
+#votingDapp div.transactionArea {
+    background: #EEF2F5;
+    text-align: center;
+    padding: 3em;
+}
+
+#votingDapp div.transactionArea img {
+    margin-bottom: .8rem;
+}
+
+#votingDapp div.transactionArea h1 {
+    font-weight: bold;
+    margin-bottom: .8rem;
+}
+
+#votingDapp div.transactionArea div.confirmed h1 {
+    margin-bottom: 2rem;
+}
+
+#votingDapp div.transactionArea p {
+    color: #939BA1;
+}
