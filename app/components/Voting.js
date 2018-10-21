@@ -13,6 +13,7 @@ import LearnAboutBallots from './flow/LearnAboutBallots';
 import HowVotingWorks from './flow/HowVotingWorks';
 import ConnectYourWallet from './flow/ConnectYourWallet';
 import OtherWallets from './flow/OtherWallets';
+import ExternalWallet from './flow/ExternalWallet';
 import VotingCredits from './flow/VotingCredits';
 import PollVoting from './flow/PollVoting';
 import ReviewVotes from './flow/ReviewVotes';
@@ -62,6 +63,7 @@ class Voting extends PureComponent {
                 <Route path="/votingHelp/:id" render={props => <HowVotingWorks idPoll={props.match.params.id} />} />
                 <Route path="/wallet/:id" render={props => <ConnectYourWallet polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} />} />
                 <Route path="/otherWallets/:id" render={props => <OtherWallets idPoll={props.match.params.id} />} />
+                <Route path="/externalWallet/:id" render={props => <ExternalWallet polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} />} />
                 <Route path="/votingCredits/:id" render={props => <VotingCredits polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} />} />
                 <Route path="/voting/:id" render={props => <PollVoting polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} originalVotes={votes} setVotesToReview={this.setVotesToReview} />} />
                 <Route path="/review/:id" render={props => <ReviewVotes polls={rawPolls} idPoll={props.match.params.id} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} />} />

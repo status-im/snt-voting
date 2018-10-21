@@ -11,33 +11,43 @@ const OtherWallets = (props) => <Fragment><div className="section">
   <Card className="card">
     <CardContent>
       <Typography gutterBottom component="h2">
-        Ledger or Metamask
+        Connect on Desktop
       </Typography>
       <Typography component="p">
-        Text about sending the link to your email account and open it on desktop
-        <Button color="primary" variant="contained">
-          CALL TO ACTION
-        </Button>
+        Send yourself a link to vote using a hardware wallet or a desktop browser extension.
       </Typography>
+      <Link to={"/externalWallet/" + props.idPoll}>
+      <Button color="primary" variant="contained">
+        Send a link
+      </Button>
+      </Link>
     </CardContent>
   </Card>
   <Card className="card">
     <CardContent>
       <Typography gutterBottom component="h2">
-        Web3 wallet / browser
+      Connect on mobile
       </Typography>
       <Typography component="p">
-        Some explanation and CTA
+        Copy a link to use on a mobile Web3 browser
       </Typography>
+      <Link to={"/externalWallet/" + props.idPoll}>
+      <Button color="primary" variant="contained">
+        Copy link
+      </Button>
+      </Link>
     </CardContent>
   </Card>
   <Card className="card">
     <CardContent>
       <Typography gutterBottom component="h2">
-        Exchanges
+        SNT on Exchanges
       </Typography>
       <Typography component="p">
-        Unfortunately we cannot...
+      Sorry!, SNT held on exchanges don’t qualify for voting. 
+      </Typography>
+      <Typography component="p">
+      To vote in the next poll, move your tokens to a wallet where you control the private keys.
       </Typography>
     </CardContent>
   </Card>

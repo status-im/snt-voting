@@ -13,7 +13,8 @@ class TitleScreen extends Component {
 
   state = {
     time: {},
-    seconds: -1
+    seconds: -1,
+    initTimer: false
   }
 
   timer = 0
@@ -55,42 +56,46 @@ class TitleScreen extends Component {
     clearInterval(this.timer);
   }
 
+  componentDidMount(){
+    if(this.props.polls && this.props.polls.length){
+      this.initTimer();
+    }
+  }
+
   componentDidUpdate(prevProps){
     if (this.props.polls !== prevProps.polls && this.props.polls && this.props.polls.length) {
-      const idPoll = this.props.polls[this.props.polls.length - 1].idPoll;
-      const seconds = this.props.polls[idPoll]._endTime - (new Date()).getTime() / 1000
-      if(seconds > 0){
-        let timeLeftVar = this.secondsToTime(seconds);
-        this.setState({ time: timeLeftVar, seconds });
-        this.startTimer();
-      } else {
-        this.setState({seconds});
-      }
+      this.initTimer();
+    }
+  }
+
+  initTimer(){
+    if(this.state.initTimer) return;
+
+    this.setState({initTimer: true});
+    
+    const idPoll = this.props.polls[this.props.polls.length - 1].idPoll;
+    const seconds = this.props.polls[idPoll]._endTime - (new Date()).getTime() / 1000
+    if(seconds > 0){
+      let timeLeftVar = this.secondsToTime(seconds);
+      this.setState({ time: timeLeftVar, seconds });
+      this.startTimer();
+    } else {
+      this.setState({seconds});
     }
   }
 
   render(){
     const {time, seconds} = this.state;
     const {polls} = this.props;
-    let canceled = true;
 
-    let startBlock, endTime, title, description;
+    if(!polls || !polls.length) return null;
 
-    let idPoll;
-
-    if(polls && polls.length){
-
-      idPoll = polls[polls.length - 1].idPoll;
-
-
-      title = polls[idPoll].content.title;
-      description = polls[idPoll].content.description;
-      canceled = polls[idPoll]._canceled;
-      startBlock = polls[idPoll]._startBlock;
-      endTime = polls[idPoll]._endTime;
-    }
+    const  idPoll = polls[polls.length - 1].idPoll;
+    const title = polls[idPoll].content.title;
+    const description = polls[idPoll].content.description;
+    const canceled = polls[idPoll]._canceled;
     
-    return (polls && !canceled ? <div>
+    return (!canceled ? <div>
       <div className="section">
         <img src="images/status-logo.svg" width="36" />
         <Typography variant="headline">{title}</Typography>
