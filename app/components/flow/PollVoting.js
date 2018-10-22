@@ -184,7 +184,7 @@ class BallotSlider extends Component {
     const nextVote = value + 1;
 
     const toBN = web3.utils.toBN;
-    let percentage = Math.round(value * value * 100 / balance);
+    let percentage = Math.round(value * 100 / maxVotes);
     percentage = percentage > 100 ? 100 : percentage;  
 
     return <Card className="card">
