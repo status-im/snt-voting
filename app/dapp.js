@@ -3,12 +3,10 @@ import ReactDOM from 'react-dom';
 import web3 from "Embark/web3"
 import EmbarkJS from 'Embark/EmbarkJS';
 import PollManager from 'Embark/contracts/PollManager';
-import AdminView from './components/AdminView';
 import Voting from './components/Voting';
 import SNT from  'Embark/contracts/SNT';
 import { VotingContext } from './context';
 import Web3Render from './components/standard/Web3Render';
-import fetchIdeas from './utils/fetchIdeas';
 import { getPolls, omitPolls } from './utils/polls';
 import { HashRouter as Router, Route, Link } from "react-router-dom";
 
@@ -121,7 +119,7 @@ class App extends React.Component {
         <Router>
           <VotingContext.Provider value={votingContext}>
             <Fragment>
-              {admin ? <AdminView setAccount={this.setAccount} /> : <Route path="/" component={Voting}/>}
+              <Route path="/" component={Voting}/>
             </Fragment>
           </VotingContext.Provider>
         </Router>

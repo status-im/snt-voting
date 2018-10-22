@@ -7,7 +7,7 @@ import Collapse from '@material-ui/core/Collapse';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { VotingContext } from '../context';
 import { Route, Switch } from "react-router-dom";
-
+import AdminView from '../components/AdminView';
 import TitleScreen from './flow/TitleScreen';
 import LearnAboutBallots from './flow/LearnAboutBallots';
 import HowVotingWorks from './flow/HowVotingWorks';
@@ -56,11 +56,7 @@ class Voting extends PureComponent {
         {({ getPolls, rawPolls, loading, symbol }) =>
           <div>
             <CssBaseline />
-            <AppBar togglePoll={togglePoll} symbol={symbol} />
             {loading && <LinearProgress />}
-            <Collapse in={addPoll}>
-              <AddPoll togglePoll={togglePoll} getPolls={getPolls} />
-            </Collapse>
             <div id="votingDapp">
               <Switch>
                 <Route exact path="/" render={() => <TitleScreen polls={rawPolls} />} />
@@ -73,6 +69,8 @@ class Voting extends PureComponent {
                 <Route path="/voting/:id/:back?" render={props => <PollVoting polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} originalVotes={votes} back={!!props.match.params.back} setVotesToReview={this.setVotesToReview} />} />
                 <Route path="/review/:id" render={props => <ReviewVotes polls={rawPolls} idPoll={props.match.params.id} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} setTransactionHash={this.setTransactionHash} />} />
                 <Route path="/results/:id" render={props => <Results polls={rawPolls} idPoll={props.match.params.id} transaction={transaction} transactionHash={transactionHash} />} />
+                <Route path="/admin" render={() => <AdminView />} />
+                <Route path="/addPoll" render={() => <AddPoll togglePoll={togglePoll} getPolls={getPolls} />} />
               </Switch>
             </div>
           </div>
