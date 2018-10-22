@@ -114,7 +114,7 @@ class BallotResult extends Component {
     return (<div className="ballotResult">
     <div className={show ? 'collapse progress progress-large' : 'progress progress-large'}>
       <span style={{width: votePercentage +'%'}}>
-        <Typography gutterBottom component="h2" onClick={this.showDetails}><span>{votePercentage}%</span> {title}</Typography>
+        <Typography gutterBottom component="h2" onClick={this.showDetails}><span>{votePercentage.toFixed(2)}%</span> {title}</Typography>
       </span>
 </div>
       {show && <ul>
