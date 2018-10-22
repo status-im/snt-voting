@@ -147,30 +147,77 @@ class BallotSlider extends Component {
       this.setState({value: prevProps.votes || 0})
   }
 
+  /*
   handleChange = (event, value) => {
     if(value > this.props.maxVotesAvailable){
       value = this.props.maxVotesAvailable;
     }
     this.setState({value});
     this.props.updateVotes(value);
-  };
+  };*/
+
+  increaseVotes = (event) => {
+    let value = this.state.value;
+    if(value + 1 > this.props.maxVotesAvailable){
+      value = this.props.maxVotesAvailable;
+    }
+
+    value++;
+    this.setState({value});
+    this.props.updateVotes(value);
+  }
+
+  reduceVotes = (event) => {
+    let value = this.state.value;
+    if(value - 1 < 0){
+      value = 0;
+    }
+
+    value--;
+    this.setState({value});
+    this.props.updateVotes(value);
+  }
 
   render(){
     const {maxVotes, maxVotesAvailable, classes, cantVote, balance, symbol, title, subtitle} = this.props;
     const {value} = this.state;
     const nextVote = value + 1;
 
+    const toBN = web3.utils.toBN;
+    let percentage = Math.round(value * value * 100 / balance);
+    percentage = percentage > 100 ? 100 : percentage;  
+
     return <Card className="card">
               <CardContent>
                 <Typography gutterBottom component="h2">{title}</Typography>
                 <Typography component="p">{subtitle}</Typography>
-                <Slider disabled={cantVote} classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
-                {balance > 0 && !cantVote && <b>Your votes: {value} ({value * value} {symbol})</b>}
-                { nextVote <= maxVotesAvailable && !cantVote ? <small>- Additional vote will cost {nextVote*nextVote - value*value} {symbol}</small> : (balance > 0 && !cantVote && <small>- Not enough balance available to buy additional votes</small>) }
-              </CardContent>
-          </Card>
+                <div className="customSlider">
+                  <div className="nav1">
+                    <button onMouseDown={this.reduceVotes} disabled={percentage == 0 || cantVote || value == 0}><img src="images/slider-minus.svg" /></button>
+                  </div>
+                  <div className="nav2">
+                    <button onMouseDown={this.increaseVotes} disabled={percentage == 100 || cantVote || nextVote > maxVotesAvailable}><img src="images/slider-plus.svg" /></button>
+                  </div>
+                  <div className="content">
+                    <div className="progress progress-large">
+                      <span style={{width: percentage +'%'}}>
+                        <Typography gutterBottom component="h2"><span>{value} votes <br /><small>{value*value} Credits</small></span></Typography>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="clear"></div>
+              </div>
+            </CardContent>
+          </Card>;
   }
 }
 
+
+// <Slider disabled={cantVote} classes={{ thumb: classes.thumb }} style={{ width: '95%' }} value={value} min={0} max={maxVotes} step={1}  onChange={this.handleChange} />
+// {balance > 0 && !cantVote && <b>Your votes: {value} ({value * value} {symbol})</b>}
+// { nextVote <= maxVotesAvailable && !cantVote ? <small>- Additional vote will cost {nextVote*nextVote - value*value} {symbol}</small> : (balance > 0 && !cantVote && <small>- Not enough balance available to buy additional votes</small>) }
+              
+            
+              
 
 export default withRouter(withStyles(styles)(PollVoting));

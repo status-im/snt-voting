@@ -404,3 +404,66 @@ button[disabled]{
     border-radius: 8px;
     white-space: nowrap;
   }
+
+
+.customSlider {
+    height: 52px;
+}
+
+.customSlider .nav1    { 
+    width:50px; 
+    float:left; 
+    height: 52px;
+}
+
+.customSlider div button {
+    border: none;
+    background: #ECEFFC;
+}
+
+.customSlider .nav1 button {
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+}
+
+.customSlider .nav2 button {
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
+
+.customSlider .nav2    { width:50px; float:right; }
+
+.customSlider .content { 
+    margin:0 50px; 
+}
+
+.customSlider .content .progress {
+    background: #ECEFFC;
+    height: 54px;
+}
+
+.customSlider .content .progress > span {
+    background: rgba(67, 96, 223, 0.15);
+    height: 52px;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    max-width: 100% !important;
+    min-width: 0;
+}
+
+.customSlider .content .progress  > span {
+    text-align: center;
+}
+
+.customSlider .content .progress span span {
+    position: relative;
+    top: 5px;
+}
+
+.customSlider .content .progress span span small {
+    color: #666666;
+    font-weight: normal;
+}
+
+.customSlider .clear   { clear:both; }
