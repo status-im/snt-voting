@@ -139,7 +139,8 @@ class PollVoting extends Component {
 class BallotSlider extends Component {
 
   state = {
-    value: 0
+    value: 0,
+    interval: null
   }
 
   componentWillReceiveProps(prevProps){
@@ -156,26 +157,53 @@ class BallotSlider extends Component {
     this.props.updateVotes(value);
   };*/
 
-  increaseVotes = (event) => {
-    let value = this.state.value;
-    if(value + 1 > this.props.maxVotesAvailable){
-      value = this.props.maxVotesAvailable;
-    }
 
-    value++;
-    this.setState({value});
-    this.props.updateVotes(value);
+
+
+  increaseVotes = (event) => {
+    this.removeInterval();
+
+    const updateVotes = () => {
+      let value = this.state.value;
+      if(value + 1 > this.props.maxVotesAvailable){
+        value = this.props.maxVotesAvailable;
+      } else {
+        value++;
+      }
+      this.setState({value});
+      this.props.updateVotes(value);
+    };
+
+    updateVotes();
+
+    const interval = setInterval(updateVotes, 150);
+    this.setState({interval});
   }
 
   reduceVotes = (event) => {
-    let value = this.state.value;
-    if(value - 1 < 0){
-      value = 0;
-    }
+    this.removeInterval();
 
-    value--;
-    this.setState({value});
-    this.props.updateVotes(value);
+    const updateVotes = () => {
+      let value = this.state.value;
+      if(value - 1 < 0){
+        value = 0;
+      } else {  
+        value--;
+      }
+      this.setState({value});
+      this.props.updateVotes(value);
+
+    };
+
+    updateVotes();
+    const interval = setInterval(updateVotes, 150);
+    this.setState({interval});
+  }
+
+  removeInterval = () => {
+    clearInterval(this.state.interval);
+    this.setState({interval: null});
+
   }
 
   render(){
@@ -193,10 +221,10 @@ class BallotSlider extends Component {
                 <Typography component="p">{subtitle}</Typography>
                 <div className="customSlider">
                   <div className="nav1">
-                    <button onMouseDown={this.reduceVotes} disabled={percentage == 0 || cantVote || value == 0}><img src="images/slider-minus.svg" /></button>
+                    <button onMouseDown={this.reduceVotes} onMouseUp={this.removeInterval} disabled={percentage == 0 || cantVote || value == 0}><img src="images/slider-minus.svg" /></button>
                   </div>
                   <div className="nav2">
-                    <button onMouseDown={this.increaseVotes} disabled={percentage == 100 || cantVote || nextVote > maxVotesAvailable}><img src="images/slider-plus.svg" /></button>
+                    <button onMouseDown={this.increaseVotes} onMouseUp={this.removeInterval}  disabled={percentage == 100 || cantVote || nextVote > maxVotesAvailable}><img src="images/slider-plus.svg" /></button>
                   </div>
                   <div className="content">
                     <div className="progress progress-large">

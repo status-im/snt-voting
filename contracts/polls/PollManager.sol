@@ -71,7 +71,7 @@ contract PollManager is Controlled {
     {
         require(_endTime > block.timestamp, "End time must be greater than current timestamp");
         require(_startBlock >= block.number, "Start block must not be in the past");
-        require(_numBallots <= 15, "Only a max of 15 ballots are allowed");
+        require(_numBallots <= 50, "Only a max of 50 ballots are allowed");
 
         _idPoll = _polls.length;
         _polls.length ++;
@@ -98,7 +98,7 @@ contract PollManager is Controlled {
         public
     {
         require(_idPoll < _polls.length, "Invalid _idPoll");
-        require(_numBallots <= 15, "Only a max of 15 ballots are allowed");
+        require(_numBallots <= 50, "Only a max of 50 ballots are allowed");
 
         Poll storage p = _polls[_idPoll];
         require(p.startBlock > block.number, "You cannot modify an active poll");
@@ -252,8 +252,8 @@ contract PollManager is Controlled {
         bool _finalized,
         uint _voters,
         address _author,
-        uint[15] _tokenTotal,
-        uint[15] _quadraticVotes
+        uint[50] _tokenTotal,
+        uint[50] _quadraticVotes
     )
     {
         require(_idPoll < _polls.length, "Invalid _idPoll");
@@ -303,7 +303,7 @@ contract PollManager is Controlled {
     function getVote(uint _idPoll, address _voter) 
         public 
         view 
-        returns (uint[15] votes){
+        returns (uint[50] votes){
         require(_idPoll < _polls.length, "Invalid _idPoll");
         Poll storage p = _polls[_idPoll];
         for(uint8 i = 0; i < p.numBallots; i++){
