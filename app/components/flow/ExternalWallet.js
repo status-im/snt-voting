@@ -19,6 +19,9 @@ class ExternalWallet extends Component {
         const {history, polls, updateBalances, idPoll} = this.props;
         if(!polls || !polls.length) return;
 
+        // TODO: add EIP1102 behavior here
+
+        // TODO: extract this code to utils. It's repeated in ConnectYourWallt, ExternalWallet and HowVotingWorks
         const poll = polls[idPoll];
         const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
         const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));            

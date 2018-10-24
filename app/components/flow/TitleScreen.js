@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import Typography from '@material-ui/core/Typography'
 
 const pad = (n, width, z) => {
@@ -95,7 +95,9 @@ class TitleScreen extends Component {
     const description = polls[idPoll].content.description;
     const canceled = polls[idPoll]._canceled;
     
-    return (!canceled ? <div>
+    return <Fragment>
+      <div>
+    {!canceled && <div>
       <div className="section">
         <img src="images/status-logo.svg" width="36" />
         <Typography variant="headline">{title}</Typography>
@@ -129,7 +131,13 @@ class TitleScreen extends Component {
           <Link to={"/results/" + idPoll}><Button variant="contained" color="primary">View results</Button></Link>
         </div>
       </div> }
-    </div> : null);
+    </div>}
+    </div>
+    <div className="buttonNav footer">
+      <p>Status Holdings Pte. Ltd.  </p>
+    </div>
+    </Fragment>
+    ;
   }
 }
 

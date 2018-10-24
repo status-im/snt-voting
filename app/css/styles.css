@@ -467,3 +467,10 @@ button[disabled]{
 }
 
 .customSlider .clear   { clear:both; }
+
+#votingDapp div.buttonNav.footer {
+    background: #262A39;
+    text-align: center;
+    box-shadow: none;
+    color: #666666;
+}

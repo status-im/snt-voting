@@ -8,15 +8,16 @@ import PollManager from 'Embark/contracts/PollManager';
 
 class ConnectYourWallet extends Component {
   connectWallet = async () => {
-    const {history, polls, updateBalances, idPoll} = this.props;
+    // TODO: extract this to utils, this code is repeated here, in other wallets and in How voting works
 
-    // TODO:
-    web3.currentProvider.isStatus = true;
+    const {history, polls, updateBalances, idPoll} = this.props;
 
     const poll = polls[idPoll];
 
     const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
     const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));
+
+    // TODO: add EIP1102 behavior here
 
     if(window.ethereum)
       await ethereum.enable();

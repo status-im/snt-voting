@@ -1,11 +1,39 @@
-import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import React, {Fragment} from 'react';
+import React, {Component, Fragment} from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import { withRouter } from 'react-router-dom';
+import SNT from  'Embark/contracts/SNT';
+import PollManager from  'Embark/contracts/PollManager';
 
-const HowVotingWorks = (props) => <Fragment><div className="section">
+class HowVotingWorks extends Component {
+
+  checkWeb3 = async () => {
+    if(!window.web3){
+      this.props.history.push("/wallet/" + this.props.idPoll);
+      return;
+    }
+
+    const {history, polls, updateBalances, idPoll} = this.props;
+    if(!polls || !polls.length) return;
+
+    // TODO: add EIP1102 behavior here
+
+    // TODO: extract this code to utils. It's repeated in ConnectYourWallt, ExternalWallet and HowVotingWorks
+    const poll = polls[idPoll];
+    const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
+    const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));            
+    const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call();
+    const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
+    updateBalances(idPoll, tokenBalance, ethBalance, votes);
+
+    history.push('/votingCredits/' + idPoll);
+  }
+
+  render() {
+    const props = this.props;
+    return <Fragment><div className="section">
   <Typography variant="headline">How voting works</Typography>
   <Card className="card">
     <CardContent>
@@ -54,8 +82,11 @@ const HowVotingWorks = (props) => <Fragment><div className="section">
   </Card>
 </div>
 <div className="buttonNav">
-  <Link to={"/wallet/" + props.idPoll}><Button>Connect with your wallet</Button></Link>
+  <Button onClick={this.checkWeb3}>Connect with your wallet</Button>
 </div>
-</Fragment>;
 
-export default HowVotingWorks;
+</Fragment>;
+  }
+}
+
+export default withRouter(HowVotingWorks);
