@@ -221,10 +221,10 @@ class BallotSlider extends Component {
                 <Typography component="p">{subtitle}</Typography>
                 <div className="customSlider">
                   <div className="nav1">
-                    <button onMouseDown={this.reduceVotes} onMouseUp={this.removeInterval} disabled={percentage == 0 || cantVote || value == 0}><img src="images/slider-minus.svg" /></button>
+                    <button onMouseDown={this.reduceVotes} onMouseUp={this.removeInterval} onMouseLeave={this.removeInterval} disabled={percentage == 0 || cantVote || value == 0}><img src="images/slider-minus.svg" /></button>
                   </div>
                   <div className="nav2">
-                    <button onMouseDown={this.increaseVotes} onMouseUp={this.removeInterval}  disabled={percentage == 100 || cantVote || nextVote > maxVotesAvailable}><img src="images/slider-plus.svg" /></button>
+                    <button onMouseDown={this.increaseVotes} onMouseUp={this.removeInterval} onMouseLeave={this.removeInterval} disabled={percentage == 100 || cantVote || nextVote > maxVotesAvailable}><img src="images/slider-plus.svg" /></button>
                   </div>
                   <div className="content">
                     <div className="progress progress-large">
