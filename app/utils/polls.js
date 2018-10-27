@@ -21,11 +21,8 @@ export const getVote = async(idPoll) => {
 
 const fetchPollData = async (index, pollMethod) => {
   const poll = await pollMethod(index).call();
-  const balance = await getBalance(poll._startBlock);
-  const votes = await getVote(index);
   const blockInfo = await web3.eth.getBlock(poll._startBlock);
-  
-  return { ...poll, idPoll: index, balance, votes, blockInfo };
+  return { ...poll, idPoll: index, blockInfo };
 }
 
 export const getPolls = (number, pollMethod) => {

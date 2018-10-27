@@ -8,11 +8,8 @@ import SNT from  'Embark/contracts/SNT';
 import { VotingContext } from './context';
 import Web3Render from './components/standard/Web3Render';
 import { getPolls, omitPolls } from './utils/polls';
-import { HashRouter as Router, Route, Link } from "react-router-dom";
-
-
-
-window['Token'] = SNT;
+import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
+import OtherWallets from './components/flow/OtherWallets';
 
 import './dapp.css';
 
@@ -42,7 +39,6 @@ class App extends React.Component {
         // TODO: check the environment here
         if (netId !== MAINNET && netId !== TESTNET && netId < 5) this.setState({ web3Provider: false})
       })
-
       // fetchIdeas().then(ideaSites => { this.setState({ ideaSites })});
     })
   }
@@ -110,21 +106,44 @@ class App extends React.Component {
   }
 
   render(){
-    const { admin, web3Provider } = this.state;
+    let { web3Provider } = this.state;
     const { _getPolls, updatePoll, setPollOrder, appendToPoll } = this;
-    const toggleAdmin = () => this.setState({ admin: true });
-    const votingContext = { getPolls: _getPolls, toggleAdmin, updatePoll, appendToPoll, setPollOrder, ...this.state };
-    return (
-      <Web3Render ready={web3Provider}>
-        <Router>
-          <VotingContext.Provider value={votingContext}>
-            <Fragment>
-              <Route path="/" component={Voting}/>
-            </Fragment>
-          </VotingContext.Provider>
+    const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll, setPollOrder, ...this.state };
+    
+    if(web3Provider && !web3.eth.defaultAccount){
+      web3Provider = false;
+    }
+
+    if(web3Provider){
+      return <Router>
+          <Web3Render ready={web3Provider}>
+            <VotingContext.Provider value={votingContext}>
+              <Voting />
+            </VotingContext.Provider>
+          </Web3Render>
         </Router>
-      </Web3Render>
+    } else {
+      return (
+        <Router>
+          <Fragment>
+            <Switch>
+              <Route exact path="/" render={() => {
+                  return <Web3Render ready={web3Provider}>
+                  <VotingContext.Provider value={votingContext}>
+                    <Voting />
+                  </VotingContext.Provider>
+                  </Web3Render>
+                }
+              } />
+              <Route path="/connectOtherWallet" render={() => <div id="votingDapp"><OtherWallets noWeb3Provider={true}  /></div>} />
+            </Switch>
+          </Fragment>
+        </Router>
     );
+    }
+    
+    
+    
   }
 }
 

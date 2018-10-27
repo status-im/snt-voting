@@ -1,60 +1,92 @@
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import React, {Fragment} from 'react';
+import React, {Component, Fragment} from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
-const OtherWallets = (props) => <Fragment><div className="section">
-  <Typography variant="headline">Connect with another wallet</Typography>
-  <Typography variant="body1">Do you hold your SNT in another wallet? Don't worry, we've got you covered. You can also vote using the following wallets.</Typography>
-  <Card className="card">
-    <CardContent>
-      <Typography gutterBottom component="h2">
-        Connect on Desktop
-      </Typography>
-      <Typography component="p">
-        Send yourself a link to vote using a hardware wallet or a desktop browser extension.
-      </Typography>
-      <Link to={"/externalWallet/" + props.idPoll}>
-      <Button color="primary" variant="contained">
-        Send a link
-      </Button>
-      </Link>
-    </CardContent>
-  </Card>
-  <Card className="card">
-    <CardContent>
-      <Typography gutterBottom component="h2">
-      Connect on mobile
-      </Typography>
-      <Typography component="p">
-        Copy a link to use on a mobile Web3 browser
-      </Typography>
-      <Link to={"/externalWallet/" + props.idPoll}>
-      <Button color="primary" variant="contained">
-        Copy link
-      </Button>
-      </Link>
-    </CardContent>
-  </Card>
-  <Card className="card">
-    <CardContent>
-      <Typography gutterBottom component="h2">
-        SNT on Exchanges
-      </Typography>
-      <Typography component="p">
-      Sorry!, SNT held on exchanges don’t qualify for voting. 
-      </Typography>
-      <Typography component="p">
-      To vote in the next poll, move your tokens to a wallet where you control the private keys.
-      </Typography>
-    </CardContent>
-  </Card>
-  </div>
-  <div className="buttonNav back">
-    <Link to={"/wallet/" + props.idPoll}><Button variant="text">Back</Button></Link>
-  </div>
-</Fragment>
+// TODO: extract to utils
+Date.prototype.DDMMYYYYatHHMM = function () {
+  var yyyy = this.getFullYear().toString();
+  var MM = pad(this.getMonth() + 1,2);
+  var dd = pad(this.getDate(), 2);
+  var hh = pad(this.getHours(), 2);
+  var mm = pad(this.getMinutes(), 2)
+
+  return dd + '/' + MM + '/' + yyyy + ' at ' +  hh + ':' + mm + (this.getHours() > 12 ? 'pm' : 'am');
+};
+
+function getDate() {
+  d = new Date();
+  alert(d.YYYYMMDDHHMMSS());
+}
+
+function pad(number, length) {
+
+  var str = '' + number;
+  while (str.length < length) {
+      str = '0' + str;
+  }
+
+  return str;
+
+}
+
+class OtherWallets extends Component {
+  render() {
+    const props = this.props;
+
+     if(!props.polls || !props.polls.length){
+       return null;
+     }
+
+    const poll = this.props.polls[this.props.idPoll];
+
+    const d = new Date(poll.blockInfo.timestamp * 1000);
+
+    return <Fragment><div className="section">
+    <Typography variant="headline">Connect with a wallet with SNT in it.</Typography>
+    { !props.noWeb3Provider && 
+      <Typography variant="body1" className="pollTime">Poll creation date: <b>{d.DDMMYYYYatHHMM()}</b></Typography>
+    }
+    <Typography variant="body1">Using your desktop computer</Typography>
+    <Card className="card">
+      <CardContent>
+        <Typography gutterBottom component="h2">
+        MetaMask
+        </Typography>
+        <Typography component="p">
+        If you keep your SNT in MetaMask, please open vote.status.im in Google Chrome and make sure you are connected to the account where you keep your SNT. 
+        </Typography>
+      </CardContent>
+    </Card>
+    <Card className="card">
+      <CardContent>
+        <Typography gutterBottom component="h2">
+        Ledger or Trezor
+        </Typography>
+        <Typography component="p">
+        If you keep your SNT in a Ledger or Trezor, please connect the device to MetaMask. Then open vote.status.im in Google Chrome with your hardware wallet’s account selected in metamask. 
+        </Typography>
+      </CardContent>
+    </Card>
+    <Card className="card">
+      <CardContent>
+        <Typography gutterBottom component="h2">
+          SNT on Exchanges
+        </Typography>
+        <Typography component="p">
+        We are sorry. SNT held on exchanges don’t qualify for voting. 
+        To vote in the next poll, move your SNT to a wallet where you control the private keys. 
+        </Typography>
+      </CardContent>
+    </Card>
+    </div>
+    <div className="buttonNav back">
+      <Link to={props.idPoll !== undefined ? "/wallet/" + props.idPoll : '/'}><Button variant="text">Back</Button></Link>
+    </div>
+  </Fragment>
+  }
+}
 
 export default OtherWallets;

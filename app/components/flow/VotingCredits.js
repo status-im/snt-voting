@@ -6,6 +6,24 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { withRouter } from 'react-router-dom'
 
+
+
+Date.prototype.DDMMYYYY = function () {
+  var yyyy = this.getFullYear().toString();
+  var MM = pad(this.getMonth() + 1,2);
+  var dd = pad(this.getDate(), 2);
+
+  return dd + '/' + MM + '/' + yyyy ;
+};
+
+function pad(number, length) {
+  var str = '' + number;
+  while (str.length < length) {
+      str = '0' + str;
+  }
+  return str;
+}
+
 class VotingCredits extends Component {
 
   componentDidMount(){
@@ -24,7 +42,11 @@ class VotingCredits extends Component {
     let description = polls[idPoll].content.description;
     let ethBalance = web3.utils.fromWei(balances[idPoll].ethBalance, "ether");
     let tokenBalance = Math.floor(web3.utils.fromWei(balances[idPoll].tokenBalance, "ether"));
-    
+  
+
+   const d = new Date(polls[idPoll].blockInfo.timestamp * 1000);
+
+
     return (polls ? <Fragment><div className="section">
         <Typography variant="headline">{title}</Typography>
         <Typography variant="body1" component="div" dangerouslySetInnerHTML={{__html: description}}></Typography>
@@ -36,7 +58,7 @@ class VotingCredits extends Component {
             </Typography>
             { tokenBalance > 0 &&
             <Typography component="p" className="text">
-                You get one credit for each SNT held in your wallet <b>at the time of poll was created</b>. They are usable only in this poll.
+            You get one credit for each SNT held in your wallet <b>at the time of poll was created ({d.DDMMYYYY()})</b>. They are usable only in this poll.
             </Typography> }
             { tokenBalance == 0 &&
               <div className="warning">
@@ -44,7 +66,7 @@ class VotingCredits extends Component {
                   No SNT in your wallet
                 </Typography>
                 <Typography component="p">
-                  To vote, you need to connect with a wallet that holds SNT tokens.
+                  To vote, you need to connect with a wallet that holds SNT tokens <b>when the poll was created ({d.DDMMYYYY()})</b>.
                 </Typography>
               </div>
             }

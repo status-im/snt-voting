@@ -9,7 +9,7 @@ const NoWeb3 = () => (
 
 const Web3Render = ({ ready, children }) => (
   <Fragment>
-    {ready ? <Fragment>{children}</Fragment> : <NoConnection />}
+    {ready ? <Fragment>{children}</Fragment> : <div id="votingDapp"><NoConnection /></div> }
   </Fragment>
 );
 

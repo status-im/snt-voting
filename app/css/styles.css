@@ -495,3 +495,10 @@ button[disabled]{
     float: right;
     display: block;
   }
+
+.pollTime {
+    background: #EEF2F5;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 25px 0 !important;
+}
