@@ -111,14 +111,14 @@
 
 #votingDapp div.credits div .title {
     display: inline-block;
-    width: 150px;
+    width: 130px;
     padding: 15px;
 }
 
 #votingDapp div.credits div .value {
     font-weight: bold;
     text-align: right;
-    width: 150px;
+    width: 130px;
     float: right;
     padding: 15px;
 }
@@ -214,6 +214,13 @@
 #votingDapp div.warning h2 {
     background: url(../images/warning.svg) no-repeat center left;
     padding-left: 25px;
+    white-space: nowrap;
+}
+
+#votingDapp div.warning p {
+    display: block;
+    float: left;
+    margin-bottom: 15px;
 }
 
 #votingDapp div.card.review,
