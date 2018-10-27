@@ -156,9 +156,8 @@ class BallotSlider extends Component {
     interval: null
   }
 
-  componentWillReceiveProps(prevProps){
-    if(this.props.votes != prevProps.votes)
-      this.setState({value: prevProps.votes || 0})
+  componentDidMount(){
+    this.setState({value: this.props.votes || 0});
   }
 
   /*
