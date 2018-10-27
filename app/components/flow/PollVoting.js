@@ -35,11 +35,19 @@ const arraysEqual = (arr1, arr2) => {
   return true;
 }
 
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
+  }
+}
+
 class PollVoting extends Component {
 
   state = {
     votes: [],
     originalVotes: [],
+    voteOrder: [],
     t: new Date()
   }
 
@@ -54,13 +62,18 @@ class PollVoting extends Component {
     const poll = polls[idPoll];
 
     const votes = [];
+    const voteOrder = [];
     if(originalVotes.length){
       for(let i = 0; i < poll._numBallots; i++){
         votes[i] = originalVotes[i];
+        voteOrder.push(i);
       }
     }
 
+    shuffleArray(voteOrder);
+
     this.setState({
+      voteOrder,
       originalVotes,
       votes
     });
@@ -79,7 +92,7 @@ class PollVoting extends Component {
 
   render(){
     const {polls, classes, balances, idPoll, back} = this.props;
-    const {originalVotes, votes} = this.state;
+    const {originalVotes, votes, voteOrder} = this.state;
     const {fromWei} = web3.utils;
 
     if(!polls || !polls.length){
@@ -121,9 +134,9 @@ class PollVoting extends Component {
     return <Fragment>
     <div className="section">
         <Typography variant="headline">{title}</Typography>
-      { votes.map((v, i) => {
-          const item = ballots[i];
-          return <BallotSlider key={i} title={item.title} subtitle={item.subtitle} symbol={symbol} classes={classes} votes={v} cantVote={cantVote} balance={balance} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[i]} updateVotes={this.updateVotes(i)} />
+      { voteOrder.map((v, i) => {
+          const item = ballots[v];
+          return <BallotSlider key={i} title={item.title} subtitle={item.subtitle} symbol={symbol} classes={classes} votes={votes[v]} cantVote={cantVote} balance={balance} maxVotes={maxVotes} maxVotesAvailable={maxValuesForBallots[v]} updateVotes={this.updateVotes(v)} />
 
       })}
     </div>

@@ -6,6 +6,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import PollManager from 'Embark/contracts/PollManager';
 import { withRouter } from 'react-router-dom'
+
 class ReviewVotes extends Component {
 
   state = {
@@ -27,7 +28,7 @@ class ReviewVotes extends Component {
 
     const balance4Voting = ballots.reduce((prev, curr) => prev.add(curr), toBN("0"));
 
-    const toSend = balance4Voting == 0 ? unvote(idPoll) : vote(idPoll, ballots);
+    const toSend = balance4Voting == 0 ? unvote(idPoll) : vote(idPoll, ballots.map(x => x.toString()));
 
     toSend.estimateGas()
       .then(gasEstimated => {
