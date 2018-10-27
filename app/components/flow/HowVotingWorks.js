@@ -40,7 +40,7 @@ class HowVotingWorks extends Component {
       <div className="left">
         <span><img src="images/wallet.svg" width="23" /></span>
       </div>
-      <div>
+      <div className="right">
         <Typography gutterBottom component="h2">
           Any wallet with SNT can vote
         </Typography>
@@ -55,7 +55,7 @@ class HowVotingWorks extends Component {
       <div className="left">
         <span><img src="images/happy-face.svg" width="23" /></span>
       </div>
-      <div>
+      <div className="right">
         <Typography gutterBottom component="h2">
           You don't spend your SNT!
         </Typography>
@@ -70,7 +70,7 @@ class HowVotingWorks extends Component {
       <div className="left">
         <span><img src="images/envelope.svg" width="23" /></span>
       </div>
-      <div>
+      <div className="right">
         <Typography gutterBottom component="h2">
         Your vote counts
         </Typography>

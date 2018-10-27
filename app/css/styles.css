@@ -193,6 +193,13 @@
     height: 75px;
 }
 
+#votingDapp div.right {
+    display: block;
+    float: left;
+    width: 75%;
+    margin-bottom: 15px;
+}
+
 #votingDapp div.left span {
     background-color: #ECEFFC;
     width:44px;
@@ -341,6 +348,7 @@ button[disabled]{
     background: url(../images/arrow-down.svg) no-repeat center right;
     width: 100%;
     margin-top: .7rem;
+    cursor: pointer;
 }
 
 #votingDapp div.ballotResult .collapse {
@@ -474,3 +482,9 @@ button[disabled]{
     box-shadow: none;
     color: #666666;
 }
+
+
+.SNTBalance {
+    float: right;
+    display: block;
+  }
