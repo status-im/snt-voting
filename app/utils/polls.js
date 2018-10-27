@@ -23,15 +23,16 @@ const fetchPollData = async (index, pollMethod) => {
   const poll = await pollMethod(index).call();
   const balance = await getBalance(poll._startBlock);
   const votes = await getVote(index);
-
-  return { ...poll, idPoll: index, balance, votes };
+  const blockInfo = await web3.eth.getBlock(poll._startBlock);
+  
+  return { ...poll, idPoll: index, balance, votes, blockInfo };
 }
 
 export const getPolls = (number, pollMethod) => {
-  const polls = [];
-  for (let i = number-1; i >= 0; i--) {
-    polls.push(fetchPollData(i, pollMethod));
-  }
+    const polls = [];
+  // for (let i = number-1; i >= 0; i--) {
+    polls.push(fetchPollData(number - 1, pollMethod));
+  // }
   return Promise.all(polls.reverse());
 }
 
