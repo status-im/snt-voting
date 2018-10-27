@@ -67,3 +67,7 @@ input.form-control {
   float: right;
   display: block;
 }
+
+.ballotResult .progress {
+  cursor: pointer;
+}

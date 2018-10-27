@@ -112,7 +112,7 @@ class BallotResult extends Component {
     const votePercentage = totalVotes > 0 ? parseInt(quadraticVotes) / totalVotes * 100 : 0;
 
     return (<div className="ballotResult">
-    <div className={show ? 'collapse progress progress-large' : 'progress progress-large'}>
+    <div className={show ? 'collapse progress progress-large' : 'progress progress-large'} onClick={this.showDetails}>
       <span style={{width: votePercentage +'%'}}>
         <Typography gutterBottom component="h2" onClick={this.showDetails}><span>{votePercentage.toFixed(2)}%</span> {title}</Typography>
       </span>
