@@ -70,7 +70,7 @@ class PollVoting extends Component {
       }
     }
 
-    shuffleArray(voteOrder);
+    //shuffleArray(voteOrder);
 
     this.setState({
       voteOrder,
