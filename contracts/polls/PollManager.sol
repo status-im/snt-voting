@@ -17,6 +17,7 @@ contract PollManager is Controlled {
         mapping(uint8 => mapping(address => uint)) ballots;
         mapping(uint8 => uint) qvResults;
         mapping(uint8 => uint) results;
+        mapping(uint8 => uint) votersByBallot;
         address author;
     }
 
@@ -71,7 +72,7 @@ contract PollManager is Controlled {
     {
         require(_endTime > block.timestamp, "End time must be greater than current timestamp");
         require(_startBlock >= block.number, "Start block must not be in the past");
-        require(_numBallots <= 50, "Only a max of 50 ballots are allowed");
+        require(_numBallots <= 100, "Only a max of 100 ballots are allowed");
 
         _idPoll = _polls.length;
         _polls.length ++;
@@ -98,7 +99,7 @@ contract PollManager is Controlled {
         public
     {
         require(_idPoll < _polls.length, "Invalid _idPoll");
-        require(_numBallots <= 50, "Only a max of 50 ballots are allowed");
+        require(_numBallots <= 100, "Only a max of 100 ballots are allowed");
 
         Poll storage p = _polls[_idPoll];
         require(p.startBlock > block.number, "You cannot modify an active poll");
@@ -186,6 +187,7 @@ contract PollManager is Controlled {
             if(_ballots[i] != 0){
                 p.qvResults[i] += sqrt(_ballots[i] / 1 ether);
                 p.results[i] += _ballots[i];
+                p.votersByBallot[i]++;
             }
         }
 
@@ -215,6 +217,7 @@ contract PollManager is Controlled {
             if(ballotAmount != 0){
                 p.qvResults[i] -= sqrt(ballotAmount / 1 ether);
                 p.results[i] -= ballotAmount;
+                p.votersByBallot[i]--;
             }
         }
 
@@ -252,8 +255,9 @@ contract PollManager is Controlled {
         bool _finalized,
         uint _voters,
         address _author,
-        uint[50] _tokenTotal,
-        uint[50] _quadraticVotes
+        uint[100] _tokenTotal,
+        uint[100] _quadraticVotes,
+        uint[100] _votersByBallot
     )
     {
         require(_idPoll < _polls.length, "Invalid _idPoll");
@@ -273,6 +277,7 @@ contract PollManager is Controlled {
         for(uint8 i = 0; i < p.numBallots; i++){
             _tokenTotal[i] = p.results[i];
             _quadraticVotes[i] = p.qvResults[i];
+            _votersByBallot[i] = p.votersByBallot[i];
         }
     }
 
@@ -303,7 +308,7 @@ contract PollManager is Controlled {
     function getVote(uint _idPoll, address _voter) 
         public 
         view 
-        returns (uint[50] votes){
+        returns (uint[100] votes){
         require(_idPoll < _polls.length, "Invalid _idPoll");
         Poll storage p = _polls[_idPoll];
         for(uint8 i = 0; i < p.numBallots; i++){

@@ -85,7 +85,7 @@ class Results extends Component {
     <div className="section">
       { !isError && <Fragment>
         <Typography variant="headline" gutterBottom>{title}</Typography>
-        { ballots.map((item, i) => <BallotResult title={item.title} totalVotes={totalVotes} quadraticVotes={poll._quadraticVotes[i]} tokenTotal={poll._tokenTotal[i]} key={i} />) }
+        { ballots.map((item, i) => <BallotResult title={item.title} totalVotes={totalVotes} quadraticVotes={poll._quadraticVotes[i]} tokenTotal={poll._tokenTotal[i]} totalVoters={poll._votersByBallot[i]} key={i} />) }
         </Fragment>
       }
     </div>
@@ -106,7 +106,7 @@ class BallotResult extends Component {
   }
 
   render(){
-    const {title, quadraticVotes, tokenTotal, totalVotes} = this.props;
+    const {title, quadraticVotes, tokenTotal, totalVotes, totalVoters} = this.props;
     const {show} = this.state;
 
     const votePercentage = totalVotes > 0 ? parseInt(quadraticVotes) / totalVotes * 100 : 0;
@@ -118,7 +118,7 @@ class BallotResult extends Component {
       </span>
 </div>
       {show && <ul>
-        <Typography component="li">Voters: <span>N/A</span></Typography>
+        <Typography component="li">Voters: <span>{totalVoters}</span></Typography>
         <Typography component="li">Total votes: <span>{quadraticVotes}</span></Typography>
         <Typography component="li" className="noBorder">Total SNT: <span>{web3.utils.fromWei(tokenTotal, "ether")}</span></Typography>
       </ul>}
