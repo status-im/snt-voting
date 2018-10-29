@@ -33,12 +33,20 @@ class ReviewVotes extends Component {
     toSend.estimateGas()
       .then(gasEstimated => {
         console.log("voting gas estimated: " + gasEstimated);
-        const transaction = toSend.send({gas: gasEstimated + 100000});
-        transaction.on('transactionHash', hash => {
-          this.props.setTransactionHash(hash);
-        })
-        this.props.setTransactionPromise(transaction);
-        history.push('/results/' + idPoll);
+
+          const transaction = toSend.send({gas: gasEstimated + 100000});
+
+          transaction.on('transactionHash', hash => {
+            this.props.setTransactionHash(hash);
+            this.props.setTransactionPromise(transaction);
+            history.push('/results/' + idPoll);
+          });
+
+          transaction.catch(err => {
+            this.setState({isSubmitting: false});
+          })
+          
+
       });
   }
 

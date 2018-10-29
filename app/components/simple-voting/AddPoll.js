@@ -259,20 +259,44 @@ const AddPoll = withFormik({
       const gasEstimated = await toSend.estimateGas();
       console.log("addPoll gas estimated: "+ gasEstimated);
     
-      EmbarkJS.Utils.secureSend(web3, toSend, {gas: gasEstimated + 100000, from: web3.eth.defaultAccount}, false, (err, res) => {
-        console.log('sucess:', res);
-        resetForm();
-        props.getPolls();
-        setSubmitting(false);
-        props.togglePoll();
+
+      // This does not work
+      // const res = await toSend.send({gas: gasEstimated + 100000, from: web3.eth.defaultAccount})
+
+
+      // This does not work either
+      /*
+      const res = await EmbarkJS.Utils.secureSend(web3, toSend, {gas: gasEstimated + 100000, from: web3.eth.defaultAccount}, false);
+      console.log('sucess:', res);
+      */
+
+      let req = false;
+      toSend.send({gas: gasEstimated + 100000, from: web3.eth.defaultAccount})
+      .on('transactionHash', transactionHash => {
+        let interval = setInterval(async () => {
+          if(req) return;
+
+          req = true;
+          const receipt = await web3.eth.getTransactionReceipt(transactionHash);
+          if(receipt){
+            clearInterval(interval);
+            resetForm();
+            props.getPolls();
+            setSubmitting(false);
+            props.togglePoll();
+          }
+          req = false;
+        }, 100);
       });
+
 
     } catch (err) {
       console.log('fail:', err);
       setErrors({ 'description': err.message.split('Error:').pop().trim() });
+      setSubmitting(false);
+
     }
 
-    setSubmitting(false);
   }
 })(StyledForm)
 

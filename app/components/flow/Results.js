@@ -28,32 +28,35 @@ class Results extends Component {
   }
 
   componentDidMount(){
-    const {transaction, idPoll} = this.props;
+    const {transaction, idPoll, transactionHash} = this.props;
 
     EmbarkJS.onReady(() => {
       this.updatePoll();
 
       if(transaction){
-        transaction.then(receipt => {
-          this.setState({isPending: false});
-          this.updatePoll();
-        })
-        .catch(err => {
+        
+        transaction.catch(x => {
           this.setState({isError: true});
-        });
+        })
 
-        const interval = setInterval(function () {
-          web3.eth.getTransactionReceipt(this.props.transactionHash,  (err, receipt) => {
-            if (!err && !receipt) {
-              return;
-            }
-console.log("A");
-            this.setState({isPending: false});
-            this.updatePoll();
+        let req = false;
+        let interval = setInterval(async () => {
+          if(req || !transactionHash) return;
+
+          req = true;
+          const receipt = await web3.eth.getTransactionReceipt(transactionHash);
+          if(receipt){
             clearInterval(interval);
-          });
+            
+            if(receipt.status || receipt.status == "0x1"){
+              this.setState({isPending: false});
+              this.updatePoll();
+            } else {
+              this.setState({isError: true});
+            }
+          }
+          req = false;
         }, 100);
-
 
       }
     });
