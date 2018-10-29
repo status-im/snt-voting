@@ -79,7 +79,7 @@ class Results extends Component {
       { isError && <div className="errorTrx">
         <div className="image"><img src="images/sad-face.svg" width="24" /></div>
         <Typography variant="headline">Transaction failed</Typography>
-        <Typography variant="body1">Copy with apologies and invitation to try again</Typography>
+        <Typography variant="body1">Your transaction failed to be written to the blockchain. This is usually because of network congestion. Please try again</Typography>
         <Link to={"/review/" + idPoll}>
           <Button color="primary" variant="contained">Try again</Button>
         </Link>
