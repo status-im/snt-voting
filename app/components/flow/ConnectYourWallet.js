@@ -12,7 +12,7 @@ class ConnectYourWallet extends Component {
 
     const {history, polls, updateBalances, idPoll} = this.props;
 
-    const poll = polls[idPoll];
+    const poll = polls[polls.length - 1];
 
     const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
     const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));

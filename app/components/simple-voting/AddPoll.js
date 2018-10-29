@@ -258,12 +258,14 @@ const AddPoll = withFormik({
     try {
       const gasEstimated = await toSend.estimateGas();
       console.log("addPoll gas estimated: "+ gasEstimated);
-      const res = await toSend.send({gas: gasEstimated + 100000});
-      console.log('sucess:', res);
-      resetForm();
-      props.getPolls();
-      setSubmitting(false);
-      props.togglePoll();
+    
+      EmbarkJS.Utils.secureSend(web3, toSend, {gas: gasEstimated + 100000, from: web3.eth.defaultAccount}, false, (err, res) => {
+        console.log('sucess:', res);
+        resetForm();
+        props.getPolls();
+        setSubmitting(false);
+        props.togglePoll();
+      });
 
     } catch (err) {
       console.log('fail:', err);

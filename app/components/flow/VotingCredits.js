@@ -38,13 +38,15 @@ class VotingCredits extends Component {
 
     if(!polls || !balances) return null;
 
-    let title = polls[idPoll].content.title;
-    let description = polls[idPoll].content.description;
+    const poll = polls[polls.length - 1]; 
+
+    let title = poll.content.title;
+    let description = poll.content.description;
     let ethBalance = web3.utils.fromWei(balances[idPoll].ethBalance, "ether");
     let tokenBalance = Math.floor(web3.utils.fromWei(balances[idPoll].tokenBalance, "ether"));
   
 
-   const d = new Date(polls[idPoll].blockInfo.timestamp * 1000);
+   const d = new Date(poll.blockInfo.timestamp * 1000);
 
 
     return (polls ? <Fragment><div className="section">

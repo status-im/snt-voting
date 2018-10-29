@@ -102,9 +102,7 @@ module.exports = {
         address: "0xc55cf4b03948d7ebc8b9e8bad92643703811d162"
       },
       "PollManager": {
-        args: ["$SNT"],
-        gasPrice: 5000000000,
-        from: "0x00000...."
+        address: "0x172baf2624e8f52a6c6f2de914169e0864a14344"
 
       }
     }
@@ -177,7 +175,7 @@ module.exports = {
         "address": "0x744d70fdbe2ba4cf95131626614a1763df805b9e"
       },
       "PollManager": 	{
-        "address": "0x0e222932911b9a558104b4b4b2f330398561436f"
+        "address": "0x167c7c3d434315e4415eb802f0beb9ea44cd1546"
       }
     }
   },

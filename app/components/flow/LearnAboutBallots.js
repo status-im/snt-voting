@@ -34,8 +34,10 @@ class LearnAboutBallots extends Component {
 
     if(!polls || !polls.length) return null;
 
-    const title = polls[idPoll].content.title;
-    const ballots = polls[idPoll].content.ballots;
+    const poll = polls[polls.length - 1];
+
+    const title = poll.content.title;
+    const ballots = poll.content.ballots;
   
     return (<Fragment>
     <div className="section">

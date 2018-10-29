@@ -17,7 +17,7 @@ class Results extends Component {
     super(props);
 
     if(props.polls && props.polls.length)
-      this.state.poll = props.polls[props.idPoll]; 
+      this.state.poll = props.polls[props.polls.length - 1]; 
   }
 
   updatePoll(){
@@ -41,6 +41,20 @@ class Results extends Component {
         .catch(err => {
           this.setState({isError: true});
         });
+
+        const interval = setInterval(function () {
+          web3.eth.getTransactionReceipt(this.props.transactionHash,  (err, receipt) => {
+            if (!err && !receipt) {
+              return;
+            }
+console.log("A");
+            this.setState({isPending: false});
+            this.updatePoll();
+            clearInterval(interval);
+          });
+        }, 100);
+
+
       }
     });
 
@@ -54,8 +68,8 @@ class Results extends Component {
       return null;
     }
     
-    const title = polls[idPoll].content.title;
-    const ballots = polls[idPoll].content.ballots;
+    const title = polls[polls.length - 1].content.title;
+    const ballots = polls[polls.length - 1].content.ballots;
     const totalVotes = poll._quadraticVotes.map(x => parseInt(x, 10)).reduce((x, y) => x + y, 0);
 
     return <Fragment>

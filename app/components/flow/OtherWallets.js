@@ -36,14 +36,15 @@ class OtherWallets extends Component {
   render() {
     const props = this.props;
 
+    let d = new Date();
     if(!props.noWeb3Provider){
       if(!props.polls || !props.polls.length){
         return null;
       }
-      const poll = this.props.polls[this.props.idPoll];
-      const d = new Date(poll.blockInfo.timestamp * 1000);
+      const poll = this.props.polls[this.props.polls.length - 1];
+      d = new Date(poll.blockInfo.timestamp * 1000);
     }
-
+console.log(props);
     return <Fragment><div className="section">
     <Typography variant="headline">Connect with a wallet with SNT in it.</Typography>
     { !props.noWeb3Provider && 

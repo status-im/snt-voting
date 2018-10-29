@@ -13,6 +13,8 @@ import OtherWallets from './components/flow/OtherWallets';
 
 import './dapp.css';
 
+window.PollManager = PollManager;
+
 const MAINNET = 1;
 const TESTNET = 3;
 

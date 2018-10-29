@@ -73,8 +73,8 @@ class TitleScreen extends Component {
 
     this.setState({initTimer: true});
     
-    const idPoll = this.props.polls[this.props.polls.length - 1].idPoll;
-    const seconds = this.props.polls[idPoll]._endTime - (new Date()).getTime() / 1000
+    const idPoll = this.props.polls.length - 1;
+    const seconds = this.props.polls[this.props.polls.length - 1]._endTime - (new Date()).getTime() / 1000
     if(seconds > 0){
       let timeLeftVar = this.secondsToTime(seconds);
       this.setState({ time: timeLeftVar, seconds });
@@ -90,10 +90,14 @@ class TitleScreen extends Component {
 
     if(!polls || !polls.length) return null;
 
-    const  idPoll = polls[polls.length - 1].idPoll;
-    const title = polls[idPoll].content.title;
-    const description = polls[idPoll].content.description;
-    const canceled = polls[idPoll]._canceled;
+    const poll = polls[polls.length -1];
+
+
+    const  idPoll = poll.idPoll;
+
+    const title = poll.content.title;
+    const description = poll.content.description;
+    const canceled = poll._canceled;
     
     return <Fragment>
       <div>

@@ -21,7 +21,6 @@ import Results from './flow/Results';
 import { withRouter } from 'react-router-dom'
 
 
-
 class Voting extends PureComponent {
   state = { 
     addPoll: false,

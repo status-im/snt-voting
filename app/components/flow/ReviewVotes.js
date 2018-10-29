@@ -60,7 +60,7 @@ class ReviewVotes extends Component {
       return null;
     }
 
-    const poll = polls[idPoll];
+    const poll = polls[polls.length - 1];
     const ballots = poll.content.ballots
     const balance = fromWei(balances[idPoll].tokenBalance, "ether");
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);

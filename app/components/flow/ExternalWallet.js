@@ -22,7 +22,7 @@ class ExternalWallet extends Component {
         // TODO: add EIP1102 behavior here
 
         // TODO: extract this code to utils. It's repeated in ConnectYourWallt, ExternalWallet and HowVotingWorks
-        const poll = polls[idPoll];
+        const poll = polls[polls.length - 1];
         const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
         const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));            
         const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call();
