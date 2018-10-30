@@ -14,21 +14,31 @@ class ConnectYourWallet extends Component {
 
     const poll = polls[polls.length - 1];
 
-    const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
-    const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));
 
-    // TODO: add EIP1102 behavior here
+    let cont = true;
+    if (window.ethereum) {
+      try {
+          await ethereum.enable();
+          web3.setProvider(ethereum);
+          const accounts = await web3.eth.getAccounts();
+          web3.eth.defaultAccount = accounts[0];
+      } catch (error) {
+        cont = false;
+      }
+    }
 
-    if(window.ethereum)
-      await ethereum.enable();
+    if(cont){
+      const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
+      const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));
 
-    if(web3.currentProvider.isStatus){
-      const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call();
-      const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
-      updateBalances(idPoll, tokenBalance, ethBalance, votes);
-      history.push('/votingCredits/' + idPoll);
-    } else {
-      window.location.href = "https://get.status.im/browse/" + location.href.replace(/^http(s?):\/\//, '');
+      if(web3.currentProvider.isStatus){
+        const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call();
+        const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
+        updateBalances(idPoll, tokenBalance, ethBalance, votes);
+        history.push('/votingCredits/' + idPoll);
+      } else {
+        window.location.href = "https://get.status.im/browse/" + location.href.replace(/^http(s?):\/\//, '');
+      }
     }
   }
 
