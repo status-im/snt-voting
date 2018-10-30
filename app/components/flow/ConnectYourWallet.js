@@ -28,11 +28,11 @@ class ConnectYourWallet extends Component {
     }
 
     if(cont){
-      const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();  
+      const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});  
       const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));
 
       if(web3.currentProvider.isStatus){
-        const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call();
+        const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call({from: web3.eth.defaultAccount});
         const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
         updateBalances(idPoll, tokenBalance, ethBalance, votes);
         history.push('/votingCredits/' + idPoll);

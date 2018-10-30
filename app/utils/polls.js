@@ -20,7 +20,7 @@ export const getVote = async(idPoll) => {
 }
 
 const fetchPollData = async (index, pollMethod) => {
-  const poll = await pollMethod(index).call();
+  const poll = await pollMethod(index).call({from: web3.eth.defaultAccount});
   const blockInfo = await web3.eth.getBlock(poll._startBlock);
   return { ...poll, idPoll: index, blockInfo };
 }

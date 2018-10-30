@@ -29,19 +29,22 @@ class App extends React.Component {
     EmbarkJS.onReady((err) => {
       if (err) this.setState({ web3Provider: false });
       else {
+        if(!web3.eth.defaultAccount){
+          web3.eth.defaultAccount = "0x0000000000000000000000000000000000000000";
+        }
+
         this._getPolls();
-        this._setAccounts();
+       /* this._setAccounts();
 
         SNT.methods.symbol().call().then((symbol) => {
           this.setState({symbol});
-        })
+        })*/
 
       }
       web3.eth.net.getId((err, netId) => {
         // TODO: check the environment here
         if (netId !== MAINNET && netId !== TESTNET && netId < 5) this.setState({ web3Provider: false})
       })
-      // fetchIdeas().then(ideaSites => { this.setState({ ideaSites })});
     })
   }
 
@@ -63,7 +66,7 @@ class App extends React.Component {
   _getPolls = async () => {
     this.setState({ loading: true })
     const { nPolls, poll } = PollManager.methods;
-    const polls = await nPolls().call();
+    const polls = await nPolls().call({from: web3.eth.defaultAccount});
     if (polls) getPolls(polls, poll).then(omitPolls).then(rawPolls => { 
       this._loadIPFSContent(rawPolls);
     });
@@ -111,10 +114,6 @@ class App extends React.Component {
     let { web3Provider } = this.state;
     const { _getPolls, updatePoll, setPollOrder, appendToPoll } = this;
     const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll, setPollOrder, ...this.state };
-    
-    if(web3Provider && !web3.eth.defaultAccount){
-      web3Provider = false;
-    }
 
     if(web3Provider){
       return <Router>
