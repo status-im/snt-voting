@@ -4,6 +4,7 @@ import React, {Component, Fragment} from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import HelpDialog from './HelpDialog';
 
 // TODO: extract to utils
 Date.prototype.DDMMYYYYatHHMM = function () {
@@ -33,6 +34,18 @@ function pad(number, length) {
 }
 
 class OtherWallets extends Component {
+  state = {
+    open: false,
+  };
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
   render() {
     const props = this.props;
 
@@ -82,10 +95,12 @@ class OtherWallets extends Component {
         </Typography>
       </CardContent>
     </Card>
+    <p className="helpLink">Need help? <a onClick={this.handleClickOpen}>Chat with us</a></p>
     </div>
     <div className="buttonNav back">
       <Link to={props.idPoll !== undefined ? "/wallet/" + props.idPoll : '/'}><Button variant="text">Back</Button></Link>
     </div>
+    <HelpDialog open={this.state.open} handleClose={this.handleClose} />
   </Fragment>
   }
 }

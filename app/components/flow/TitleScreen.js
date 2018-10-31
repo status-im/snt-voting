@@ -137,9 +137,6 @@ class TitleScreen extends Component {
       </div> }
     </div>}
     </div>
-    <div className="buttonNav footer">
-      <p>Status Holdings Pte. Ltd.  </p>
-    </div>
     </Fragment>
     ;
   }

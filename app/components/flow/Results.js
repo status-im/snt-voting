@@ -37,6 +37,8 @@ class Results extends Component {
         
         transaction.catch(x => {
           this.setState({isError: true});
+        }).then(() => {
+          this.updatePoll();
         })
 
         let req = false;

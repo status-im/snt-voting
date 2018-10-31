@@ -505,3 +505,14 @@ button[disabled]{
     border-radius: 8px;
     margin: 25px 0 !important;
 }
+
+.helpLink {
+    width: 100%;
+    text-align: center;
+    font-size: .85rem;
+    margin-top: 10vh;
+}
+
+.helpLink a {
+    cursor: pointer;
+}
