@@ -102,7 +102,7 @@ class TitleScreen extends Component {
     return <Fragment>
       <div>
     {!canceled && <div>
-      <div className="section">
+      <div className="section" style={{marginBottom: 0}}>
         <img src="images/status-logo.svg" width="36" />
         <Typography variant="headline">{title}</Typography>
         <Typography variant="body1" component="div" dangerouslySetInnerHTML={{__html: description}}></Typography>
