@@ -86,9 +86,14 @@ class Results extends Component {
           <Button color="primary" variant="contained">Try again</Button>
         </Link>
       </div> }
+
       { !isError && transaction && <div className="transactionArea">
         { isPending && <div className="pending">
-          <img src="images/pending.svg" width="40" />
+           <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
           <Typography variant="headline">Your vote will be posted once the transaction is complete.</Typography>
           <Typography variant="body1">Your vote is in the process of being confirmed in the blockchain</Typography>
         </div>
