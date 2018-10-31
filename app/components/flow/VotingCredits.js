@@ -45,6 +45,10 @@ class VotingCredits extends Component {
     }
   }
 
+  redirectToConnect = () => {
+    this.props.history.push('/wallet/' + this.props.idPoll);
+  }
+
   render(){
     const {polls, balances, idPoll} = this.props;
 
@@ -64,22 +68,22 @@ class VotingCredits extends Component {
     return (polls ? <Fragment><div className="section">
         <Typography variant="headline">{title}</Typography>
         <Typography variant="body1" component="div" dangerouslySetInnerHTML={{__html: description}}></Typography>
-      <Card className="card credits">
+      <Card className="card credits" onClick={this.redirectToConnect}>
         <CardContent>
-            <Typography component="div">
+            <Typography component="div" onClick={this.redirectToConnect}>
               <span className="title">Voting Credits</span>
               <span className="value">{tokenBalance}</span>
             </Typography>
             { tokenBalance > 0 &&
-            <Typography component="p" className="text">
+            <Typography component="p" className="text" onClick={this.redirectToConnect}>
             You get one credit for each SNT held in your wallet <b>at the time of poll was created ({d.DDMMYYYY()})</b>. They are usable only in this poll.
             </Typography> }
             { tokenBalance == 0 &&
               <div className="warning">
-                <Typography component="h2" >
+                <Typography component="h2" onClick={this.redirectToConnect}>
                   No SNT in your wallet
                 </Typography>
-                <Typography component="p">
+                <Typography component="p" onClick={this.redirectToConnect}>
                   To vote, you need to connect with a wallet that holds SNT tokens <b>when the poll was created ({d.DDMMYYYY()})</b>.
                 </Typography>
               </div>
@@ -88,15 +92,15 @@ class VotingCredits extends Component {
       </Card>
       { ethBalance == 0 && <Card className="card credits">
         <CardContent>
-            <Typography component="div">
+            <Typography component="div" onClick={this.redirectToConnect}>
               <span className="title">ETH</span>
               <span className="value">{ethBalance}</span>
             </Typography>
             <div className="warning">
-              <Typography component="h2">
+              <Typography component="h2" onClick={this.redirectToConnect}>
                 Not enough ETH in your wallet
               </Typography>
-              <Typography component="p">
+              <Typography component="p" onClick={this.redirectToConnect}>
                 You will sign a transaction to confirm your vote. No tokens are sent, but you need ETH to pay for gas (Ethereum network fee).
               </Typography>
             </div>
