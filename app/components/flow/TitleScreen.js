@@ -125,7 +125,8 @@ class TitleScreen extends Component {
           </li>
         </ul>
         <div className="action">
-          <Link to={"/learn/" + idPoll}><Button variant="contained" color="primary">Get started</Button></Link>
+          <Link to={"/learn/" + idPoll}><Button variant="contained" color="primary">Get started</Button></Link><br />
+          <p><Link to={"/results/" + idPoll}>See ongoing results</Link></p>
         </div>
       </div>}
       { seconds < 0 && <div className="pollClosed">
