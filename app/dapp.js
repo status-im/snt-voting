@@ -65,11 +65,15 @@ class App extends React.Component {
   }
 
   _loadIPFSContent = async (polls) => {
-    let promises = polls.map((item,i) => EmbarkJS.Storage.get(web3.utils.toAscii(item._description)));
-    let ipfsContent = await Promise.all(promises);
-    
+
+
     for(let i = 0; i < polls.length; i++){
-      polls[i].content = JSON.parse(ipfsContent[i]);
+      try {
+        let ipfsContent = await EmbarkJS.Storage.get(web3.utils.toAscii(polls[i]._description));
+        polls[i].content = JSON.parse(ipfsContent);
+      } catch(err){
+        console.log(err);
+      }
     }
 
     let oPolls = {};
