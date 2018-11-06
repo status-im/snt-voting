@@ -19,6 +19,14 @@ window.PollManager = PollManager;
 const MAINNET = 1;
 const TESTNET = 3;
 
+// #38
+setTimeout(() => {
+  if(!(window.web3 || window.ethereum)){
+    window.location.reload(true);
+  }
+}, 5000);
+
+
 class App extends React.Component {
 
   constructor(props) {
@@ -64,17 +72,25 @@ class App extends React.Component {
       polls[i].content = JSON.parse(ipfsContent[i]);
     }
 
-    this.setState({ rawPolls: polls, loading: false });
+    let oPolls = {};
+    for(let i = 0; i < polls.length; i++){
+      oPolls[polls[i].idPoll] = polls[i];
+    }
+    this.setState({ rawPolls: oPolls, loading: false });
   }
 
   _getPolls = async () => {
     this.setState({ loading: true })
     const { nPolls, poll } = PollManager.methods;
     const polls = await nPolls().call({from: web3.eth.defaultAccount});
-    if (polls) getPolls(polls, poll).then(omitPolls).then(rawPolls => { 
-      this._loadIPFSContent(rawPolls);
-    });
-    else this.setState({ rawPolls: [], loading: false });
+    if (polls) 
+      getPolls(polls, poll)
+        .then(omitPolls)
+        .then(rawPolls => { 
+          this._loadIPFSContent(rawPolls);
+        });
+    else 
+      this.setState({ rawPolls: [], loading: false });
   }
 
   _setAccounts() {

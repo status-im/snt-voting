@@ -54,12 +54,16 @@ class PollVoting extends Component {
   componentDidMount(){
     const {polls, originalVotes, idPoll, history} = this.props;
 
-    if(!polls || !polls.length){
+    if(!polls){
       history.push('/');
       return;
     }
 
-    const poll = polls[polls.length - 1];
+    const poll = polls[idPoll];
+    if(!poll){
+      history.push('/');
+      return;
+    }
 
     const votes = [];
     const voteOrder = [];
@@ -95,14 +99,15 @@ class PollVoting extends Component {
     const {originalVotes, votes, voteOrder} = this.state;
     const {fromWei} = web3.utils;
 
-    if(!polls || !polls.length){
+    if(!polls){
       return null;
     }
 
     const symbol = "SNT"; // TODO:
 
-    const poll = polls[polls.length - 1];
-
+    const poll = polls[idPoll];
+    if(!poll) return null;
+    
     const title = poll.content.title;
     const ballots = poll.content.ballots
     

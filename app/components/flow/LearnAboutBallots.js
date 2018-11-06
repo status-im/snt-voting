@@ -32,9 +32,10 @@ class LearnAboutBallots extends Component {
   render(){
     const {polls, idPoll} = this.props;
 
-    if(!polls || !polls.length) return null;
-
-    const poll = polls[polls.length - 1];
+    if(!polls) return null;
+    
+    const poll = polls[idPoll];
+    if(!poll) return null;
 
     const title = poll.content.title;
     const ballots = poll.content.ballots;

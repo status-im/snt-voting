@@ -53,10 +53,16 @@ class ReviewVotes extends Component {
   componentDidMount(){
     const {polls, originalVotes, idPoll, history} = this.props;
 
-    if(!polls || !polls.length){
+    if(!polls){
       history.push('/');
       return;
     }
+
+    const poll = polls[idPoll];
+    if(!poll) {
+      history.push('/');
+      return;
+    };
   }
 
   render(){
@@ -64,11 +70,13 @@ class ReviewVotes extends Component {
     const {isSubmitting} = this.state;
     const {fromWei} = web3.utils;
 
-    if(!polls || !polls.length || !balances[idPoll]){
+    if(!polls|| !balances[idPoll]){
       return null;
     }
 
-    const poll = polls[polls.length - 1];
+    const poll = polls[idPoll];
+    if(!poll) return null;
+    
     const ballots = poll.content.ballots
     const balance = fromWei(balances[idPoll].tokenBalance, "ether");
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);

@@ -60,7 +60,7 @@ class Voting extends PureComponent {
             {loading && <LinearProgress />}
             <div id="votingDapp">
               <Switch>
-                <Route exact path="/" render={() => <TitleScreen polls={rawPolls} />} />
+                <Route exact path="/" render={props => <TitleScreen polls={rawPolls}  />} />
                 <Route path="/learn/:id" render={props => <LearnAboutBallots polls={rawPolls} idPoll={props.match.params.id} />} />
                 <Route path="/votingHelp/:id" render={props => <HowVotingWorks idPoll={props.match.params.id} polls={rawPolls} updateBalances={this.updatePollBalance} />} />
                 <Route path="/wallet/:id" render={props => <ConnectYourWallet polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} />} />

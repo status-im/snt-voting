@@ -10,18 +10,26 @@ class Results extends Component {
     isError: false,
     poll: null,
     isPending: true,
+    netId: 3
 
   }
 
   constructor(props){
     super(props);
 
-    if(props.polls && props.polls.length)
-      this.state.poll = props.polls[props.polls.length - 1]; 
+    if(props.polls)
+      this.state.poll = props.polls[props.idPoll]; 
+  }
+
+  componentDidUpdate(prevProps){
+    if (this.props.idPoll !== prevProps.idPoll) {
+      this.updatePoll();
+    }
   }
 
   updatePoll(){
     const idPoll = this.props.idPoll; 
+
     PollManager.methods.poll(idPoll).call().then(poll => {
       this.setState({poll});
     })
@@ -33,8 +41,11 @@ class Results extends Component {
     EmbarkJS.onReady(() => {
       this.updatePoll();
 
+      web3.eth.net.getId((err, netId) => {
+        this.setState({netId});
+      });
+
       if(transaction){
-        
         transaction.catch(x => {
           this.setState({isError: true});
         }).then(() => {
@@ -67,15 +78,16 @@ class Results extends Component {
 
   render(){
     const {polls, idPoll, transaction, transactionHash} = this.props;
-    let {isError, poll, isPending} = this.state;
+    let {isError, poll, isPending, netId} = this.state;
 
     if(!poll || !polls){
       return null;
     }
-    
-    const title = polls[polls.length - 1].content.title;
-    const ballots = polls[polls.length - 1].content.ballots;
+
+    const title = polls[idPoll].content.title;
+    const ballots = polls[idPoll].content.ballots;
     const totalVotes = poll._quadraticVotes.map(x => parseInt(x, 10)).reduce((x, y) => x + y, 0);
+    const etherscanURL = netId == 1 ? 'https://ropsten.etherscan.io/tx/' : ( netId == 1 ? "https://etherscan.io/tx/" : '');
 
     return <Fragment>
       { isError && <div className="errorTrx">
@@ -103,7 +115,7 @@ class Results extends Component {
         <Typography variant="headline">Transaction confirmed!<br />
         Your vote was posted.</Typography>
       </div>}
-        { transactionHash && <Typography variant="body1"><a href={"https://etherscan.io/tx/" + transactionHash}>View details on Etherscan</a></Typography> }
+        { transactionHash && etherscanURL && <Typography variant="body1"><a href={ etherscanURL + transactionHash}>View details on Etherscan</a></Typography> }
         </div>
       }
     <div className="section">
@@ -135,18 +147,20 @@ class BallotResult extends Component {
 
     const votePercentage = totalVotes > 0 ? parseInt(quadraticVotes) / totalVotes * 100 : 0;
 
-    return (<div className="ballotResult">
-    <div className={show ? 'collapse progress progress-large' : 'progress progress-large'} onClick={this.showDetails}>
-      <span style={{width: votePercentage +'%'}}>
-        <Typography gutterBottom component="h2" onClick={this.showDetails}><span>{votePercentage.toFixed(2)}%</span> {title}</Typography>
-      </span>
-</div>
-      {show && <ul>
-        <Typography component="li">Voters: <span>{totalVoters}</span></Typography>
-        <Typography component="li">Total votes: <span>{quadraticVotes}</span></Typography>
-        <Typography component="li" className="noBorder">Total SNT: <span>{web3.utils.fromWei(tokenTotal, "ether")}</span></Typography>
-      </ul>}
-    </div>);
+    return (<Fragment>
+      <Typography gutterBottom component="h2" className="ballotResultTitle" onClick={this.showDetails}>{title}</Typography>
+      <div className="ballotResult" onClick={this.showDetails}>
+        <div className="progress progress-large result-progress" onClick={this.showDetails}>
+          <span style={{width: votePercentage +'%'}}></span>
+        </div>
+        <span className={show ? 'collapse percentage' : 'percentage'}>{votePercentage.toFixed(2)}%</span>   
+    </div>
+    {show && <ul className="ballotResultData">
+      <Typography component="li">Voters: <span>{totalVoters}</span></Typography>
+      <Typography component="li">Total votes: <span>{quadraticVotes}</span></Typography>
+      <Typography component="li" className="noBorder">Total SNT: <span>{web3.utils.fromWei(tokenTotal, "ether")}</span></Typography>
+    </ul>}
+    </Fragment>);
   }
 
 }

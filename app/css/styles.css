@@ -352,32 +352,50 @@ button[disabled]{
 
 #votingDapp div.ballotResult {
     margin-bottom: 30px;
+    margin-right: 115px;
 }
 
 #votingDapp div.ballotResult .progress {
-    background: url(../images/arrow-down.svg) no-repeat center right;
-    width: 100%;
-    margin-top: .7rem;
+    background:#EEF2F5;
     cursor: pointer;
+    width: 100%;
+    float: left;
+    clear: left;
+    height: 6px;
+    
+}
+
+#votingDapp div.ballotResult .progress span {
+    background: #4360DF;
+    padding: 0;
 }
 
 #votingDapp div.ballotResult .collapse {
     background: url(../images/arrow-up.svg) no-repeat center right;
 }
 
-#votingDapp div.ballotResult h2 span {
+#votingDapp h2.ballotResultTitle {
+    width: 100%;
+    display: block;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+#votingDapp h2.ballotResultTitle span {
     font-weight: bold;
     margin-right: 5px;
 }
 
-#votingDapp div.ballotResult ul {
+#votingDapp .ballotResultData {
     margin: 0;
     padding: 0;
     list-style-type: none;
     margin-bottom: .8rem;
+    width: 100%;
+    clear: left;
 }
 
-#votingDapp div.ballotResult ul li {
+#votingDapp .ballotResultData li {
     border-bottom: 1px solid #EEF2F5;
     color: #939BA1;
     margin: 0;
@@ -385,7 +403,7 @@ button[disabled]{
 
 }
 
-#votingDapp div.ballotResult ul li span {
+#votingDapp .ballotResultData li span {
     float: right;
 }
 
@@ -417,10 +435,28 @@ button[disabled]{
     position: relative;
     width: auto;
     min-width: 5px;
-    max-width: 89%;
+    max-width: 100%;
     padding: 5px 0 5px 20px;
     border-radius: 8px;
-    white-space: nowrap;
+  }
+
+  .progress-large span {
+      white-space: nowrap;
+  }
+
+  .ballotResult .percentage {
+      width: 115px;
+      cursor: pointer;
+      margin-right: -115px;
+      float: left;
+      text-align: right;
+      background: url(../images/arrow-down.svg) no-repeat center right;
+      padding-right: 30px;
+      font-weight: bold;
+  }
+
+  .ballotResult .percentage.collapse {
+    background: url(../images/arrow-down.svg) no-repeat center right;
   }
 
 
@@ -565,4 +601,15 @@ button[disabled]{
       -webkit-transform: scale(1.0);
       transform: scale(1.0);
     }
+  }
+
+  .helpDialog h1 {
+    font-size: 1rem;
+    margin-top: 1.2em;
+    font-weight: bold;
+    padding: 5px 20px;
+  }
+
+  .helpDialog p {
+      padding: 5px 20px;
   }

@@ -51,10 +51,12 @@ class OtherWallets extends Component {
 
     let d = new Date();
     if(!props.noWeb3Provider){
-      if(!props.polls || !props.polls.length){
+      if(!props.polls){
         return null;
       }
-      const poll = this.props.polls[this.props.polls.length - 1];
+      const poll = props.polls[props.idPoll];
+      if(!poll) return null;
+      
       d = new Date(poll.blockInfo.timestamp * 1000);
     }
     

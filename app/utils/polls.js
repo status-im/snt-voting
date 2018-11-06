@@ -27,9 +27,9 @@ const fetchPollData = async (index, pollMethod) => {
 
 export const getPolls = (number, pollMethod) => {
     const polls = [];
-  // for (let i = number-1; i >= 0; i--) {
-    polls.push(fetchPollData(number - 1, pollMethod));
-  // }
+   for (let i = number-1; i >= 0; i--) {
+    polls.push(fetchPollData(i, pollMethod));
+   }
   return Promise.all(polls.reverse());
 }
 

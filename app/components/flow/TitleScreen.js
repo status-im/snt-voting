@@ -57,24 +57,28 @@ class TitleScreen extends Component {
   }
 
   componentDidMount(){
-    if(this.props.polls && this.props.polls.length){
+    if(this.props.polls){
       this.initTimer();
     }
   }
 
   componentDidUpdate(prevProps){
-    if (this.props.polls !== prevProps.polls && this.props.polls && this.props.polls.length) {
+    if (this.props.polls !== prevProps.polls && this.props.polls) {
       this.initTimer();
     }
   }
 
   initTimer(){
+    const ids = Object.keys(this.props.polls);
+    if(!ids.length) return;
+
     if(this.state.initTimer) return;
 
     this.setState({initTimer: true});
-    
-    const idPoll = this.props.polls.length - 1;
-    const seconds = this.props.polls[this.props.polls.length - 1]._endTime - (new Date()).getTime() / 1000
+
+    const idPoll = ids[ids.length - 1];
+
+    const seconds = this.props.polls[idPoll]._endTime - (new Date()).getTime() / 1000
     if(seconds > 0){
       let timeLeftVar = this.secondsToTime(seconds);
       this.setState({ time: timeLeftVar, seconds });
@@ -88,12 +92,13 @@ class TitleScreen extends Component {
     const {time, seconds} = this.state;
     const {polls} = this.props;
 
-    if(!polls || !polls.length) return null;
+    if(!polls) return null;
 
-    const poll = polls[polls.length -1];
-
-
-    const  idPoll = poll.idPoll;
+    const ids = Object.keys(this.props.polls);
+    if(!ids.length) return null; 
+    
+    const idPoll = ids[ids.length - 1];
+    const poll = polls[idPoll];
 
     const title = poll.content.title;
     const description = poll.content.description;

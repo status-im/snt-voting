@@ -36,7 +36,7 @@ class HowVotingWorks extends Component {
     }
 
     const {history, polls, updateBalances, idPoll} = this.props;
-    if(!polls || !polls.length) return;
+    if(!polls) return;
 
     let cont = true;
     if (window.ethereum) {
@@ -52,7 +52,9 @@ class HowVotingWorks extends Component {
 
     if(cont){
       // TODO: extract this code to utils. It's repeated in ConnectYourWallt, ExternalWallet and HowVotingWorks
-      const poll = polls[polls.length - 1];
+      const poll = polls[idPoll];
+      if(!poll) return null;
+      
       const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});  
       const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));            
       const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call({from: web3.eth.defaultAccount});

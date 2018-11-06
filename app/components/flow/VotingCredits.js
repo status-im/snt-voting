@@ -40,7 +40,7 @@ class VotingCredits extends Component {
 
   componentDidMount(){
     const {polls, balances, history} = this.props;
-    if(!polls || !balances || !polls.length || !balances.length){
+    if(!polls || !balances || !balances.length){
       history.push('/');
     }
   }
@@ -54,8 +54,9 @@ class VotingCredits extends Component {
 
     if(!polls || !balances) return null;
 
-    const poll = polls[polls.length - 1]; 
-
+    const poll = polls[idPoll];
+    if(!poll) return null;
+    
     let title = poll.content.title;
     let description = poll.content.description;
     let ethBalance = web3.utils.fromWei(balances[idPoll].ethBalance, "ether");
@@ -106,12 +107,12 @@ class VotingCredits extends Component {
             </div>
           </CardContent>
       </Card> }
-      <p className="helpLink">Need help? <a onClick={this.handleClickOpen}>Chat with us</a></p>
     </div>
     <div className={(ethBalance == 0 || tokenBalance == 0) ? 'buttonNav back' : 'buttonNav'}>
       { (ethBalance == 0 || tokenBalance == 0) && <Link to={"/wallet/" + idPoll}><Button variant="text">Back</Button></Link> }
       { (ethBalance > 0 && tokenBalance > 0) && <Link to={"/voting/" + idPoll}><Button variant="text">Vote</Button></Link> }
     </div>
+    <p className="helpLink">Need help? <a onClick={this.handleClickOpen}>Chat with us</a></p>
     <HelpDialog open={this.state.open} handleClose={this.handleClose} />
     </Fragment> : null);
   }

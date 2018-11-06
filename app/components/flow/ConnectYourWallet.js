@@ -12,8 +12,7 @@ class ConnectYourWallet extends Component {
 
     const {history, polls, updateBalances, idPoll} = this.props;
 
-    const poll = polls[polls.length - 1];
-
+    const poll = polls[idPoll];
 
     let cont = true;
     if (window.ethereum) {

@@ -6,7 +6,7 @@ import PollManager from  'Embark/contracts/PollManager';
 class ExternalWallet extends Component {
     
     componentDidUpdate(prevProps){
-        if (this.props.polls !== prevProps.polls && this.props.polls && this.props.polls.length) {
+        if (this.props.polls !== prevProps.polls && this.props.polls) {
             this.connectWallet();
         }
     }
@@ -17,7 +17,10 @@ class ExternalWallet extends Component {
 
     connectWallet = async () => {
         const {history, polls, updateBalances, idPoll} = this.props;
-        if(!polls || !polls.length) return;
+        if(!polls) return;
+
+        const poll = polls[idPoll];
+        if(!poll) return null;
 
 
         let cont = true;
@@ -34,7 +37,6 @@ class ExternalWallet extends Component {
         
         if(cont){
             // TODO: extract this code to utils. It's repeated in ConnectYourWallt, ExternalWallet and HowVotingWorks
-            const poll = polls[polls.length - 1];
             const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});  
             const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));            
             const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call({from: web3.eth.defaultAccount});
