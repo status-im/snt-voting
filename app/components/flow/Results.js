@@ -115,7 +115,7 @@ class Results extends Component {
         <Typography variant="headline">Transaction confirmed!<br />
         Your vote was posted.</Typography>
       </div>}
-        { transactionHash && etherscanURL && <Typography variant="body1"><a href={ etherscanURL + transactionHash}>View details on Etherscan</a></Typography> }
+        { transactionHash && etherscanURL && <Typography variant="body1"><a target="_blank" href={ etherscanURL + transactionHash}>View details on Etherscan</a></Typography> }
         </div>
       }
     <div className="section">
