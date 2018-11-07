@@ -87,7 +87,7 @@ class Results extends Component {
     const title = polls[idPoll].content.title;
     const ballots = polls[idPoll].content.ballots;
     const totalVotes = poll._quadraticVotes.map(x => parseInt(x, 10)).reduce((x, y) => x + y, 0);
-    const etherscanURL = netId == 1 ? 'https://ropsten.etherscan.io/tx/' : ( netId == 1 ? "https://etherscan.io/tx/" : '');
+    const etherscanURL = netId == 3 ? 'https://ropsten.etherscan.io/tx/' : ( netId == 1 ? "https://etherscan.io/tx/" : '');
 
     return <Fragment>
       { isError && <div className="errorTrx">
