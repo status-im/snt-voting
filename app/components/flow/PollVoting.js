@@ -90,8 +90,15 @@ class PollVoting extends Component {
   }
 
   sendToReview = () => {
-    this.props.setVotesToReview(this.state.votes);
-    this.props.history.push('/review/' + this.props.idPoll);
+
+    const seconds = this.props.polls[this.props.idPoll]._endTime - (new Date()).getTime() / 1000;
+    if(seconds <= 0){
+      alert("Poll is expired");
+      this.props.history.push('/');
+    } else {
+      this.props.setVotesToReview(this.state.votes);
+      this.props.history.push('/review/' + this.props.idPoll);
+    }
   }
 
   render(){

@@ -20,6 +20,14 @@ class ReviewVotes extends Component {
     const { votes, history, idPoll} = this.props;
     const { toWei, toBN } = web3.utils;
     
+
+    const seconds = this.props.polls[this.props.idPoll]._endTime - (new Date()).getTime() / 1000;
+    if(seconds <= 0){
+      alert("Poll is expired");
+      this.props.history.push('/');
+      return;
+    }
+
     const ballots = votes.map(el => {
       let num = toBN(el);
       num = num.mul(num);
