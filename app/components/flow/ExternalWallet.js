@@ -19,7 +19,7 @@ class ExternalWallet extends Component {
         const {history, polls, updateBalances, idPoll} = this.props;
         if(!polls) return;
 
-        const poll = polls[idPoll];
+        const poll = polls.find(p => p.idPoll == idPoll);
         if(!poll) return null;
 
 

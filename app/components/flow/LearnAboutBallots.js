@@ -34,7 +34,7 @@ class LearnAboutBallots extends Component {
 
     if(!polls) return null;
     
-    const poll = polls[idPoll];
+    const poll = polls.find(p => p.idPoll == idPoll);
     if(!poll) return null;
 
     const title = poll.content.title;

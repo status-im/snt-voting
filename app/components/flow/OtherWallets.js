@@ -54,7 +54,9 @@ class OtherWallets extends Component {
       if(!props.polls){
         return null;
       }
-      const poll = props.polls[props.idPoll];
+
+      
+      const poll = props.polls.find(p => p.idPoll == props.idPoll);
       if(!poll) return null;
       
       d = new Date(poll.blockInfo.timestamp * 1000);

@@ -66,7 +66,7 @@ class ReviewVotes extends Component {
       return;
     }
 
-    const poll = polls[idPoll];
+    const poll = polls.find(p => p.idPoll == idPoll);
     if(!poll) {
       history.push('/');
       return;
@@ -82,7 +82,7 @@ class ReviewVotes extends Component {
       return null;
     }
 
-    const poll = polls[idPoll];
+    const poll = polls.find(p => p.idPoll == idPoll);;
     if(!poll) return null;
     
     const ballots = poll.content.ballots

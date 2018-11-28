@@ -54,7 +54,7 @@ class VotingCredits extends Component {
 
     if(!polls || !balances) return null;
 
-    const poll = polls[idPoll];
+    const poll = polls.find(p => p.idPoll == idPoll);
     if(!poll) return null;
     
     let title = poll.content.title;

@@ -18,7 +18,7 @@ class Results extends Component {
     super(props);
 
     if(props.polls)
-      this.state.poll = props.polls[props.idPoll]; 
+      this.state.poll = props.polls.find(p => p.idPoll == props.idPoll);
   }
 
   componentDidUpdate(prevProps){
@@ -84,8 +84,10 @@ class Results extends Component {
       return null;
     }
 
-    const title = polls[idPoll].content.title;
-    const ballots = polls[idPoll].content.ballots;
+    const p = polls.find(p => p.idPoll == idPoll);
+
+    const title = p.content.title;
+    const ballots = p.content.ballots;
     const totalVotes = poll._quadraticVotes.map(x => parseInt(x, 10)).reduce((x, y) => x + y, 0);
     const etherscanURL = netId == 3 ? 'https://ropsten.etherscan.io/tx/' : ( netId == 1 ? "https://etherscan.io/tx/" : '');
 

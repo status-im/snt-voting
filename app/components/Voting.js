@@ -18,6 +18,7 @@ import VotingCredits from './flow/VotingCredits';
 import PollVoting from './flow/PollVoting';
 import ReviewVotes from './flow/ReviewVotes';
 import Results from './flow/Results';
+import LandingPage from './flow/LandingPage';
 import { withRouter } from 'react-router-dom'
 
 
@@ -54,13 +55,14 @@ class Voting extends PureComponent {
 
     return (
       <VotingContext.Consumer>
-        {({ getPolls, rawPolls, loading, symbol }) =>
+        {({ getPolls, rawPolls, loading, symbol, replacePoll, loadPollContent }) =>
           <div>
             <CssBaseline />
             {loading && <LinearProgress />}
             <div id="votingDapp">
               <Switch>
-                <Route exact path="/" render={props => <TitleScreen polls={rawPolls}  />} />
+                <Route exact path="/" render={props => <LandingPage polls={rawPolls} replacePoll={replacePoll}  />} />
+                <Route path="/titleScreen/:id" render={props => <TitleScreen polls={rawPolls} idPoll={props.match.params.id} loadPollContent={loadPollContent}  />} />
                 <Route path="/learn/:id" render={props => <LearnAboutBallots polls={rawPolls} idPoll={props.match.params.id} />} />
                 <Route path="/votingHelp/:id" render={props => <HowVotingWorks idPoll={props.match.params.id} polls={rawPolls} updateBalances={this.updatePollBalance} />} />
                 <Route path="/wallet/:id" render={props => <ConnectYourWallet polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} />} />

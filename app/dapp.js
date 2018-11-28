@@ -32,7 +32,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
   }
-  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, symbol: "SNT", networkName: "" };
+  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, symbol: "SNT", networkName: "" , rawPolls: []};
 
   componentDidMount(){
     EmbarkJS.onReady((err) => {
@@ -91,7 +91,10 @@ class App extends React.Component {
       getPolls(polls, poll)
         .then(omitPolls)
         .then(rawPolls => { 
-          this._loadIPFSContent(rawPolls);
+         
+         
+          // this._loadIPFSContent(rawPolls);
+          this.setState({rawPolls, loading: false});          
         });
     else 
       this.setState({ rawPolls: [], loading: false });
@@ -134,10 +137,31 @@ class App extends React.Component {
     </Fragment>;
   }
 
+
+  replacePoll = (poll) => {
+    let rawPolls = this.state.rawPolls;
+    for(let i = 0; i < rawPolls.length; i++){
+      if(rawPolls[i].idPoll == poll.idPoll){
+        rawPolls[i] = poll;
+        this.setState({rawPolls});
+        break;
+      }
+    }
+  }
+
+  loadPollContent = async (poll) => {
+    let ipfsContent = await EmbarkJS.Storage.get(web3.utils.toAscii(poll._description));
+    poll.content = JSON.parse(ipfsContent);
+    this.replacePoll(poll);
+  }
+
   render(){
     let { web3Provider, networkName } = this.state;
-    const { _getPolls, updatePoll, setPollOrder, appendToPoll } = this;
-    const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll, setPollOrder, ...this.state };
+    const { _getPolls, updatePoll, setPollOrder, appendToPoll, replacePoll, loadPollContent } = this;
+    const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll,  setPollOrder, replacePoll, loadPollContent, ...this.state };
+
+
+    console.log(this.state.rawPolls);
 
     if(web3Provider){
       return <Router>
