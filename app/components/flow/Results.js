@@ -20,10 +20,18 @@ class Results extends Component {
     if(props.polls)
       this.state.poll = props.polls.find(p => p.idPoll == props.idPoll);
   }
+  
 
   componentDidUpdate(prevProps){
     if (this.props.idPoll !== prevProps.idPoll) {
       this.updatePoll();
+    }
+
+    if(this.props.polls !== prevProps.polls){
+      const poll = this.props.polls.find(p => p.idPoll == this.props.idPoll);
+      if(poll && !poll.content){
+        this.props.loadPollContent(poll);
+      }
     }
   }
 
@@ -79,12 +87,13 @@ class Results extends Component {
   render(){
     const {polls, idPoll, transaction, transactionHash} = this.props;
     let {isError, poll, isPending, netId} = this.state;
-
-    if(!poll || !polls){
+    if(!poll || !poll){
       return null;
     }
 
     const p = polls.find(p => p.idPoll == idPoll);
+
+    if(!p || !p.content) return null;
 
     const title = p.content.title;
     const ballots = p.content.ballots;
