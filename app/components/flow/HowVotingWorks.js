@@ -29,6 +29,17 @@ class HowVotingWorks extends Component {
     this.setState({ open: false });
   };
 
+
+  componentDidUpdate(prevProps){
+    if (this.props.polls !== prevProps.polls && this.props.polls) {
+      // TODO: see how to extract this. Maybe a higher order component?
+      const poll = this.props.polls.find(p => p.idPoll == this.props.idPoll);
+      if(poll && !poll.content){
+        this.props.loadPollContent(poll);
+      }
+    }
+  }
+
   checkWeb3 = async () => {
     if(!window.web3){
       this.props.history.push("/wallet/" + this.props.idPoll);

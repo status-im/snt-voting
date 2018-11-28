@@ -91,8 +91,6 @@ class App extends React.Component {
       getPolls(polls, poll)
         .then(omitPolls)
         .then(rawPolls => { 
-         
-         
           // this._loadIPFSContent(rawPolls);
           this.setState({rawPolls, loading: false});          
         });
@@ -159,9 +157,6 @@ class App extends React.Component {
     let { web3Provider, networkName } = this.state;
     const { _getPolls, updatePoll, setPollOrder, appendToPoll, replacePoll, loadPollContent } = this;
     const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll,  setPollOrder, replacePoll, loadPollContent, ...this.state };
-
-
-    console.log(this.state.rawPolls);
 
     if(web3Provider){
       return <Router>

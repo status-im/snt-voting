@@ -66,6 +66,7 @@ class TitleScreen extends Component {
     if (this.props.polls !== prevProps.polls && this.props.polls) {
       this.initTimer();
 
+      // TODO: see how to extract this. Maybe a higher order component?
       const poll = this.props.polls.find(p => p.idPoll == this.props.idPoll);
       if(poll && !poll.content){
         this.props.loadPollContent(poll);

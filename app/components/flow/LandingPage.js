@@ -11,30 +11,36 @@ class LandingPage extends Component {
         closedPoll: null
     }
 
+    componentDidMount(){
+        this.loadLatestPolls();
+    }
+
+    loadLatestPolls = () => {
+        let polls = this.props.polls;
+        if(polls && polls.length){
+            polls = polls.sort((x,y) => x.idPoll < y.idPoll);
+        }
+
+        if(polls && polls.length){
+            const openPoll = polls.find(x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000);
+            EmbarkJS.Storage.get(web3.utils.toAscii(openPoll._description)).then(content => {
+                openPoll.content = JSON.parse(content);
+                this.setState({openPoll})
+
+                this.props.replacePoll(openPoll);
+            })
+            const closedPoll = polls.find(x => !x._cancelled || x._endTime < (new Date()).getTime() / 1000);
+            EmbarkJS.Storage.get(web3.utils.toAscii(closedPoll._description)).then(content => {
+                closedPoll.content = JSON.parse(content);
+                this.setState({closedPoll});
+                this.props.replacePoll(openPoll);
+            })
+        }
+    }
+
     componentDidUpdate(prevProps) {
         if (this.props.polls !== prevProps.polls) {
-
-            let polls = this.props.polls;
-            if(polls && polls.length){
-                polls = polls.sort((x,y) => x.idPoll < y.idPoll);
-            }
-    
-            if(polls && polls.length){
-                const openPoll = polls.find(x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000);
-                EmbarkJS.Storage.get(web3.utils.toAscii(openPoll._description)).then(content => {
-                    openPoll.content = JSON.parse(content);
-                    this.setState({openPoll})
-
-                    this.props.replacePoll(openPoll);
-                })
-                const closedPoll = polls.find(x => !x._cancelled || x._endTime < (new Date()).getTime() / 1000);
-                EmbarkJS.Storage.get(web3.utils.toAscii(closedPoll._description)).then(content => {
-                    closedPoll.content = JSON.parse(content);
-                    this.setState({closedPoll});
-                    this.props.replacePoll(openPoll);
-                })
-            }
-
+            this.loadLatestPolls();
         }
     }
 
