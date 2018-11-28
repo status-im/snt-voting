@@ -1,8 +1,9 @@
 import Button from '@material-ui/core/Button';
 import React, {Component, Fragment} from 'react';
 import Typography from '@material-ui/core/Typography';
-import { withRouter } from 'react-router-dom'
 import {Link} from "react-router-dom";
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 class LandingPage extends Component {
 
@@ -23,13 +24,15 @@ class LandingPage extends Component {
 
         if(polls && polls.length){
             const openPoll = polls.find(x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000);
+            if(openPoll)
             EmbarkJS.Storage.get(web3.utils.toAscii(openPoll._description)).then(content => {
                 openPoll.content = JSON.parse(content);
                 this.setState({openPoll})
 
                 this.props.replacePoll(openPoll);
             })
-            const closedPoll = polls.find(x => !x._cancelled || x._endTime < (new Date()).getTime() / 1000);
+            const closedPoll = polls.find(x => x._cancelled || x._endTime < (new Date()).getTime() / 1000);
+            if(closedPoll)
             EmbarkJS.Storage.get(web3.utils.toAscii(closedPoll._description)).then(content => {
                 closedPoll.content = JSON.parse(content);
                 this.setState({closedPoll});
@@ -56,16 +59,19 @@ class LandingPage extends Component {
             </div>
 
             { openPoll && openPoll.content &&
-                <div>
-                    <h2>Open Polls</h2>
-                    <div>
-                        <h3>{openPoll.content.title}</h3>
+                <div className="section" style={{paddingTop: 0}}> 
+                    <h2 className="pollTypeTitle">Open Polls</h2>
+                    <Card className="card poll">
+                    <CardContent>
+                        <Typography gutterBottom component="h2">{openPoll.content.title}</Typography>
+                        <p>
                         [Closes: 12/12/2018]
                         Voters: 300
                         Total SNT: 50.000
-                        {openPoll._description}
-                        <Link to={"/titleScreen/" + openPoll.idPoll}><Button variant="contained" color="primary">Vote now</Button></Link>
-                    </div>
+                        </p>
+                        <Link to={"/titleScreen/" + openPoll.idPoll} className="arrowRightLink">VOTE NOW</Link>
+                    </CardContent>
+                    </Card>
                     <p>More Open Polls</p>
                 </div>
                 }

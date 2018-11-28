@@ -175,13 +175,18 @@
     text-decoration: none;
 }
 
-#votingDapp div.buttonNav button {
+#votingDapp div.buttonNav button,
+.arrowRightLink {
     background: url(../images/medium-arrow.svg) center right no-repeat;
     padding-right: 15px;
     text-decoration: none;
     text-transform: capitalize;
     color: #4360DF;
     font-size: 0.75rem;
+}
+
+.upperCase {
+    text-transform: uppercase !important;
 }
 
 #votingDapp div.buttonNav.back button {
@@ -612,4 +617,26 @@ button[disabled]{
 
   .helpDialog p {
       padding: 5px 20px;
+  }
+
+
+  .pollTypeTitle {
+      text-transform: uppercase;
+      color: #939BA1;
+      font-size: .8rem;
+      font-weight: normal;
+  }
+
+  div.card.poll h2 {
+      font-size: 1rem;
+  }
+
+  div.card.poll p {
+      color: #939BA1;
+  }
+
+  .otherPollsTitle small {
+      font-size: .85rem;
+      color: #939BA1;
+      font-weight: normal;
   }
