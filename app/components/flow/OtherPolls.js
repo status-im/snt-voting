@@ -31,19 +31,20 @@ Date.prototype.DDMMYYYY = function () {
 class OtherPolls extends Component {
 
     state = {
-        start: 0,
-        end: pollsPerLoad
+        loading: true
     }
 
     loadIPFSpollContent = async () => {
         for(let i = this.props.start; i < this.props.end; i++){
             await this.props.loadPollContent(this.props.polls[i]);
+            this.setState({loading: false})
         } 
     }
     
-    loadMorePolls = () => {
+    loadMorePolls = async () => {
+        this.setState({loading: true})
         this.props.loadMorePolls();
-        this.loadIPFSpollContent();
+        await this.loadIPFSpollContent();
     }
 
     componentDidUpdate(prevProps){
@@ -56,6 +57,17 @@ class OtherPolls extends Component {
         if(this.props.polls && this.props.polls.find(x => x.content != null)){
             this.loadIPFSpollContent();
         }
+
+        // Test scroll
+        /*
+        window.addEventListener("scroll", () => {
+            if(this.state.loading) return;
+            const d = document.getElementById('votingDapp');
+            if (d.scrollTop + d.clientHeight >= d.scrollHeight) {
+                this.loadMorePolls()
+            }
+        });
+        */
     }
 
     render() {
@@ -115,7 +127,7 @@ class OtherPolls extends Component {
                 }
 
                 <div style={{textAlign:"center", marginTop: "40px"}}>
-                { polls && polls.length > this.props.end && 
+                { polls && polls.length > this.props.end && !this.state.loading && 
                     <a onClick={this.loadMorePolls}  className="landingPageButton">Show more polls</a> }
                 </div>
            </div>
