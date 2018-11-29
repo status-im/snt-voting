@@ -148,6 +148,8 @@ class App extends React.Component {
   }
 
   loadPollContent = async (poll) => {
+    if(!poll) return;
+    
     let ipfsContent = await EmbarkJS.Storage.get(web3.utils.toAscii(poll._description));
     poll.content = JSON.parse(ipfsContent);
     this.replacePoll(poll);

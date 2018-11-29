@@ -4,12 +4,46 @@ import Typography from '@material-ui/core/Typography';
 import {Link} from "react-router-dom";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+
+const pollsPerLoad = 3;
+
+
+function pad(number, length) {
+
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+  
+    return str;
+  
+  }
+
+// TODO: extract to utils
+Date.prototype.DDMMYYYY = function () {
+    var yyyy = this.getFullYear().toString();
+    var MM = pad(this.getMonth() + 1,2);
+    var dd = pad(this.getDate(), 2);
+  
+    return dd + '/' + MM + '/' + yyyy ;
+  };
+
 class OtherPolls extends Component {
 
+    state = {
+        start: 0,
+        end: pollsPerLoad
+    }
+
     loadIPFSpollContent = async () => {
-        for(let i = 0; i < 3; i++){
+        for(let i = this.props.start; i < this.props.end; i++){
             await this.props.loadPollContent(this.props.polls[i]);
         } 
+    }
+    
+    loadMorePolls = () => {
+        this.props.loadMorePolls();
+        this.loadIPFSpollContent();
     }
 
     componentDidUpdate(prevProps){
@@ -37,7 +71,7 @@ class OtherPolls extends Component {
             if(pollType == 'open'){
                 polls = polls.filter(x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000);
             } else {
-                polls = polls.filter(x => !x._cancelled || x._endTime < (new Date()).getTime() / 1000);
+                polls = polls.filter(x => x._cancelled || x._endTime < (new Date()).getTime() / 1000);
             }
         }
 
@@ -46,6 +80,9 @@ class OtherPolls extends Component {
                 <Typography variant="headline" className="otherPollsTitle">{pollType == 'open' ? 'Open polls' : 'Closed polls'} <small>({polls.length})</small></Typography>               
                {
                     polls.map((p, i) => {
+
+                        if(i >= this.props.end) return null;
+
                         p._tokenSum = 0;
                         p._votesSum = 0;
                         for(let i = 0; i < p._numBallots; i++){
@@ -57,7 +94,7 @@ class OtherPolls extends Component {
                             <CardContent>
                                 <Typography gutterBottom component="h2">{p.content.title}</Typography>
                                 <Typography component="p" dangerouslySetInnerHTML={{__html: p.content.description}}></Typography>
-                                {pollType == "open" && <span className="pollClosingDate">Closes: 00/00/0000</span> }
+                                {pollType == "open" && <span className="pollClosingDate">Closes: {new Date(p._endTime * 1000).DDMMYYYY()}</span> }
                                 <p className="stats">
                                 Voters: {p._voters}<br />
                                 Total votes: {p._votesSum}<br />
@@ -76,6 +113,11 @@ class OtherPolls extends Component {
                         }
                     })
                 }
+
+                <div style={{textAlign:"center", marginTop: "40px"}}>
+                { polls && polls.length > this.props.end && 
+                    <a onClick={this.loadMorePolls}  className="landingPageButton">Show more polls</a> }
+                </div>
            </div>
         </Fragment>;
     }

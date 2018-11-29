@@ -5,6 +5,28 @@ import {Link} from "react-router-dom";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 
+// TODO: extract to utils
+
+function pad(number, length) {
+
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+  
+    return str;
+  
+  }
+
+Date.prototype.DDMMYYYY = function () {
+    var yyyy = this.getFullYear().toString();
+    var MM = pad(this.getMonth() + 1,2);
+    var dd = pad(this.getDate(), 2);
+  
+    return dd + '/' + MM + '/' + yyyy ;
+  };
+
+
 class LandingPage extends Component {
 
     state = {
@@ -82,7 +104,7 @@ class LandingPage extends Component {
                     <Card className="card poll">
                     <CardContent>
                         <Typography gutterBottom component="h2">{openPoll.content.title}</Typography>
-                        <span className="pollClosingDate">Closes: 00/00/0000</span>
+                        <span className="pollClosingDate">Closes: {new Date(openPoll._endTime * 1000).DDMMYYYY()} </span>
                         <p className="stats">
                         Voters: {openPoll._voters}<br />
                         Total votes: {openPoll._votesSum}<br />
