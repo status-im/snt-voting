@@ -49,7 +49,25 @@ class LandingPage extends Component {
 
     render(){
         const { openPoll, closedPoll } = this.state;
-        
+
+        if(openPoll){
+            openPoll._tokenSum = 0;
+            openPoll._votesSum = 0;
+            for(let i = 0; i < openPoll._numBallots; i++){
+                openPoll._tokenSum += parseInt(web3.utils.fromWei(openPoll._tokenTotal[i], "ether"), 10);
+                openPoll._votesSum += parseInt(web3.utils.fromWei(openPoll._quadraticVotes[i], "ether"), 10);
+            }
+        }
+
+        if(closedPoll){
+            closedPoll._tokenSum = 0;
+            closedPoll._votesSum = 0;
+            for(let i = 0; i < closedPoll._numBallots; i++){
+                closedPoll._tokenSum += parseInt(web3.utils.fromWei(closedPoll._tokenTotal[i], "ether"), 10);
+                closedPoll._votesSum += parseInt(closedPoll._quadraticVotes[i], 10);
+            }
+        }
+
         return <Fragment>
         <div>
             <div className="section" style={{marginBottom: 0}}>
@@ -59,35 +77,43 @@ class LandingPage extends Component {
             </div>
 
             { openPoll && openPoll.content &&
-                <div className="section" style={{paddingTop: 0}}> 
+                <div className="section" style={{paddingTop: 0, marginBottom: "15px"}}> 
                     <h2 className="pollTypeTitle">Open Polls</h2>
                     <Card className="card poll">
                     <CardContent>
                         <Typography gutterBottom component="h2">{openPoll.content.title}</Typography>
-                        <p>
-                        [Closes: 12/12/2018]
-                        Voters: 300
-                        Total SNT: 50.000
+                        <span className="pollClosingDate">Closes: 00/00/0000</span>
+                        <p className="stats">
+                        Voters: {openPoll._voters}<br />
+                        Total votes: {openPoll._votesSum}<br />
+                        Total SNT: {openPoll._tokenSum}<br />
                         </p>
                         <Link to={"/titleScreen/" + openPoll.idPoll} className="arrowRightLink">VOTE NOW</Link>
                     </CardContent>
                     </Card>
-                    <p>More Open Polls</p>
+                    <div style={{textAlign: "center", marginTop: "35px"}}>
+                        <Link to={"/otherPolls/open"} className="landingPageButton">More open polls</Link>
+                    </div>
                 </div>
                 }
             
             { closedPoll && closedPoll.content &&
-                <div>
-                    <h2>Closed Polls</h2>
-                    <div>
-                        <h3>{closedPoll.content.title}</h3>
-                        [Closes: 12/12/2018]
-                        Voters: 300
-                        Total SNT: 50.000
-                        {closedPoll._description}
-                        Vote Now
+                <div className="section" style={{paddingTop: 0}}> 
+                    <h2 className="pollTypeTitle">Closed Polls</h2>
+                    <Card className="card poll">
+                    <CardContent>
+                        <Typography gutterBottom component="h2">{openPoll.content.title}</Typography>
+                        <p className="stats">
+                        Voters: {openPoll._voters}<br />
+                        Total votes: {openPoll._votesSum}<br />
+                        Total SNT: {openPoll._tokenSum}<br />
+                        </p>
+                        <Link to={"/results/" + openPoll.idPoll} className="arrowRightLink">See results</Link>
+                    </CardContent>
+                    </Card>
+                    <div style={{textAlign: "center", marginTop: "35px"}}>
+                        <Link to={"/otherPolls/closed"} className="landingPageButton">More closed polls</Link>
                     </div>
-                    <p>More Closed Polls</p>
                 </div>
                 }
         </div>

@@ -635,8 +635,42 @@ button[disabled]{
       color: #939BA1;
   }
 
+  div.card.poll .stats {
+    font-size: .85rem;
+    margin-top: 5px;
+  }
+
   .otherPollsTitle small {
       font-size: .85rem;
       color: #939BA1;
       font-weight: normal;
+  }
+
+  .landingPageButton {
+      text-align: center;
+      color:#4360DF;
+      font-weight: normal;
+      background: #ECEFFC;
+      border: none;
+      text-decoration: none;
+      padding: 10px 30px;
+      font-size: .8rem;
+      border-radius: 5px;
+  }
+
+  .landingPageButton:hover {
+    background: rgb(212, 216, 233);
+  }
+
+  div.poll span.pollClosingDate {
+    background: #ECEFFC;
+    text-transform: uppercase;
+    font-size: .7rem;
+    font-weight: normal;
+    padding: 5px 7px;
+    border-radius: 15px;
+    margin: 10px 0px;
+    width: 150px;
+    display: block;
+    text-align: center;
   }
