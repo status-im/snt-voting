@@ -92,6 +92,9 @@ class App extends React.Component {
         .then(omitPolls)
         .then(rawPolls => { 
           // this._loadIPFSContent(rawPolls);
+          rawPolls = rawPolls.sort((a,b) => {
+            if(a.idPoll > b.idPoll) return -1; else if(a.idPoll < b.idPoll) return 1; else return 0;
+          });
           this.setState({rawPolls, loading: false});          
         });
     else 
@@ -141,7 +144,7 @@ class App extends React.Component {
     for(let i = 0; i < rawPolls.length; i++){
       if(rawPolls[i].idPoll == poll.idPoll){
         rawPolls[i] = poll;
-        this.setState({rawPolls});
+        this.setState({rawPolls, t: new Date().getTime()});
         break;
       }
     }
