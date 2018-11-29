@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import {Link} from "react-router-dom";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import { withRouter } from 'react-router-dom'
 
 // TODO: extract to utils
 
@@ -37,6 +38,12 @@ class LandingPage extends Component {
     componentDidMount(){
         this.loadLatestPolls();
     }
+
+    gotoOtherPolls = (type) => () => {
+        this.props.resetPollCounter();
+        this.props.history.push('/otherPolls/' + type);
+    }
+   
 
     loadLatestPolls = () => {
         let polls = this.props.polls;
@@ -112,7 +119,7 @@ class LandingPage extends Component {
                     </CardContent>
                     </Card>
                     <div style={{textAlign: "center", marginTop: "35px"}}>
-                        <Link to={"/otherPolls/open"} className="landingPageButton">More open polls</Link>
+                        <a className="landingPageButton" onClick={this.gotoOtherPolls('open')}>More open polls</a>
                     </div>
                 </div>
                 }
@@ -132,7 +139,7 @@ class LandingPage extends Component {
                     </CardContent>
                     </Card>
                     <div style={{textAlign: "center", marginTop: "35px"}}>
-                        <Link to={"/otherPolls/closed"} className="landingPageButton">More closed polls</Link>
+                        <a className="landingPageButton" onClick={this.gotoOtherPolls('closed')}>More closed polls</a>
                     </div>
                 </div>
                 }
@@ -144,4 +151,4 @@ class LandingPage extends Component {
     }
 }
 
-export default LandingPage;
+export default withRouter(LandingPage);

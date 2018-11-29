@@ -31,43 +31,37 @@ Date.prototype.DDMMYYYY = function () {
 class OtherPolls extends Component {
 
     state = {
-        loading: true
+        firstLoad: true
     }
 
     loadIPFSpollContent = async () => {
-        for(let i = this.props.start; i < this.props.end; i++){
-            await this.props.loadPollContent(this.props.polls[i]);
-            this.setState({loading: false})
-        } 
+        let filterFn;
+        if(this.props.pollType == 'open'){
+            filterFn = x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000;
+        } else {
+            filterFn = x => x._cancelled || x._endTime < (new Date()).getTime() / 1000;
+        }
+        this.props.loadPollRange(filterFn, this.props.start, this.props.end);
     }
     
-    loadMorePolls = async () => {
-        this.setState({loading: true})
-        this.props.loadMorePolls();
-        await this.loadIPFSpollContent();
-    }
-
-    componentDidUpdate(prevProps){
-        if(this.props.polls !== prevProps.polls){
-            this.loadIPFSpollContent();
-        }
-    }
-
-    componentDidMount(){
-        if(this.props.polls && this.props.polls.find(x => x.content != null)){
-            this.loadIPFSpollContent();
+    loadMorePollsHandle = async () => {
+        let filterFn;
+        if(this.props.pollType == 'open'){
+            filterFn = x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000;
+        } else {
+            filterFn = x => x._cancelled || x._endTime < (new Date()).getTime() / 1000;
         }
 
-        // Test scroll
-        /*
-        window.addEventListener("scroll", () => {
-            if(this.state.loading) return;
-            const d = document.getElementById('votingDapp');
-            if (d.scrollTop + d.clientHeight >= d.scrollHeight) {
-                this.loadMorePolls()
-            }
-        });
-        */
+        this.props.loadMorePolls(filterFn);
+    }
+
+
+
+    componentWillMount(){
+        if(this.state.firstLoad){
+            this.setState({firstLoad: false});
+            this.loadIPFSpollContent();
+        }
     }
 
     render() {
@@ -79,7 +73,6 @@ class OtherPolls extends Component {
         if(!pollType) pollType = 'open';
 
         if(polls && polls.length){
-            polls = polls.sort((x,y) => x.idPoll < y.idPoll);
             if(pollType == 'open'){
                 polls = polls.filter(x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000);
             } else {
@@ -127,8 +120,8 @@ class OtherPolls extends Component {
                 }
 
                 <div style={{textAlign:"center", marginTop: "40px"}}>
-                { polls && polls.length > this.props.end && !this.state.loading && 
-                    <a onClick={this.loadMorePolls}  className="landingPageButton">Show more polls</a> }
+                { polls && polls.length > this.props.end && 
+                    <a onClick={this.loadMorePollsHandle}  className="landingPageButton">Show more polls</a> }
                 </div>
            </div>
         </Fragment>;

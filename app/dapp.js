@@ -26,13 +26,15 @@ setTimeout(() => {
   }
 }, 5000);
 
+const pollsPerLoad = 3;
 
 class App extends React.Component {
 
   constructor(props) {
     super(props);
   }
-  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, symbol: "SNT", networkName: "" , rawPolls: []};
+  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, symbol: "SNT", networkName: "" , rawPolls: [], pollsRequested: [],    start: 0,
+  end: pollsPerLoad};
 
   componentDidMount(){
     EmbarkJS.onReady((err) => {
@@ -153,15 +155,67 @@ class App extends React.Component {
   loadPollContent = async (poll) => {
     if(!poll) return;
     
+    let pollsRequested = this.state.pollsRequested;
+    if(!pollsRequested.includes(poll.idPoll)) pollsRequested.push(poll.idPoll);
+    this.setState({pollsRequested});
+
     let ipfsContent = await EmbarkJS.Storage.get(web3.utils.toAscii(poll._description));
     poll.content = JSON.parse(ipfsContent);
     this.replacePoll(poll);
   }
 
+
+  loadMorePolls = async (filterFn) => {
+    let start = this.state.start + pollsPerLoad;
+    let end = this.state.end + pollsPerLoad;
+
+    this.setState({start, end});
+    this.loadPollRange(filterFn, start, end);
+  }
+
+  resetPollCounter = () => {
+    this.setState({start: 0, end: pollsPerLoad});
+  }
+
+
+  loadPollRange = async (filterFn, start, end) => {
+    let rawPolls = this.state.rawPolls;
+
+    let polls = rawPolls.filter(filterFn).slice(start, end);
+    if(!polls.length) return;
+
+    let pollsRequested = this.state.pollsRequested;
+
+    if(!pollsRequested) return;
+
+    for(let i = 0; i < polls.length; i++){11
+      if(pollsRequested.includes(polls[i].idPoll)) continue;
+      
+      pollsRequested.push(polls[i].idPoll);
+
+      let ipfsContent = await EmbarkJS.Storage.get(web3.utils.toAscii(polls[i]._description));
+      polls[i].content = JSON.parse(ipfsContent);
+
+      for(let i = 0; i < rawPolls.length; i++){
+        for(let j = 0; j < polls.length; j++){
+          if(rawPolls[i].idPoll == polls[j].idPoll){
+            rawPolls[i] = polls[j];
+            break;
+          }
+        }
+      }
+
+      this.setState({rawPolls, pollsRequested});
+    }
+  }
+
+
+
+
   render(){
-    let { web3Provider, networkName } = this.state;
-    const { _getPolls, updatePoll, setPollOrder, appendToPoll, replacePoll, loadPollContent } = this;
-    const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll,  setPollOrder, replacePoll, loadPollContent, ...this.state };
+    let { web3Provider, networkName, } = this.state;
+    const { _getPolls, updatePoll, setPollOrder, appendToPoll, replacePoll, loadPollContent, resetPollCounter, loadPollRange, loadMorePolls } = this;
+    const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll,  setPollOrder, resetPollCounter, replacePoll, loadPollContent, loadPollRange, loadMorePolls, ...this.state };
 
     if(web3Provider){
       return <Router>

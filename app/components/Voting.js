@@ -20,7 +20,6 @@ import Results from './flow/Results';
 import LandingPage from './flow/LandingPage';
 import OtherPolls from './flow/OtherPolls';
 
-const pollsPerLoad = 3;
 
 class Voting extends PureComponent {
   state = { 
@@ -28,9 +27,7 @@ class Voting extends PureComponent {
     pollTokenBalances: [],
     votes: [],
     transaction: null,
-    transactionHash: '',
-    start: 0,
-    end: pollsPerLoad
+    transactionHash: ''
   };
 
   updatePollBalance = (pollId, tokenBalance, ethBalance, votes) => {
@@ -51,25 +48,24 @@ class Voting extends PureComponent {
     this.setState({transaction});
   }
 
-  loadMorePolls = () => {
-    this.setState({start: this.state.start + pollsPerLoad, end: this.state.end + pollsPerLoad});
-  }
 
   render(){
     const { addPoll, pollTokenBalances, votes, transaction, transactionHash, start, end } = this.state;
     const togglePoll = () => { this.setState({ addPoll: !addPoll })};
-
+1
     return (
       <VotingContext.Consumer>
-        {({ getPolls, rawPolls, loading, symbol, replacePoll, loadPollContent }) =>
+        {({ getPolls, rawPolls, loading, symbol, replacePoll, loadPollContent, loadPollRange, loadMorePolls, start, resetPollCounter,  end }) =>
           <div>
             <CssBaseline />
             {loading && <LinearProgress />}
             <div id="votingDapp">
               <Switch>
-                <Route exact path="/" render={props => <LandingPage polls={rawPolls} replacePoll={replacePoll}  />} />
+                <Route exact path="/" render={props => <LandingPage polls={rawPolls} replacePoll={replacePoll} resetPollCounter={resetPollCounter}  />} />
                 <Route path="/titleScreen/:id" render={props => <TitleScreen polls={rawPolls} idPoll={props.match.params.id} loadPollContent={loadPollContent} />} />
-                <Route path="/otherPolls/:pollType?" render={props => <OtherPolls polls={rawPolls} pollType={props.match.params.pollType} loadPollContent={loadPollContent} loadMorePolls={this.loadMorePolls} start={start} end={end} />} />
+                
+                <Route path="/otherPolls/:pollType?" render={props => <OtherPolls polls={rawPolls} pollType={props.match.params.pollType} loadPollContent={loadPollContent} loadMorePolls={loadMorePolls} start={start} end={end} addHandlerKey={true} loadPollRange={loadPollRange} />} />
+                
                 <Route path="/learn/:id" render={props => <LearnAboutBallots polls={rawPolls} idPoll={props.match.params.id} loadPollContent={loadPollContent} />} />
                 <Route path="/votingHelp/:id" render={props => <HowVotingWorks idPoll={props.match.params.id} polls={rawPolls} updateBalances={this.updatePollBalance} loadPollContent={loadPollContent}  />} />
                 <Route path="/votingCredits/:id" render={props => <VotingCredits polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} loadPollContent={loadPollContent} />} />
