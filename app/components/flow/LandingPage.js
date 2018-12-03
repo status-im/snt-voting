@@ -129,13 +129,13 @@ class LandingPage extends Component {
                     <h2 className="pollTypeTitle">Closed Polls</h2>
                     <Card className="card poll">
                     <CardContent>
-                        <Typography gutterBottom component="h2">{openPoll.content.title}</Typography>
+                        <Typography gutterBottom component="h2">{closedPoll.content.title}</Typography>
                         <p className="stats">
-                        Voters: {openPoll._voters}<br />
-                        Total votes: {openPoll._votesSum}<br />
-                        Total SNT: {openPoll._tokenSum}<br />
+                        Voters: {closedPoll._voters}<br />
+                        Total votes: {closedPoll._votesSum}<br />
+                        Total SNT: {closedPoll._tokenSum}<br />
                         </p>
-                        <Link to={"/results/" + openPoll.idPoll} className="arrowRightLink">See results</Link>
+                        <Link to={"/results/" + closedPoll.idPoll} className="arrowRightLink">See results</Link>
                     </CardContent>
                     </Card>
                     <div style={{textAlign: "center", marginTop: "35px"}}>

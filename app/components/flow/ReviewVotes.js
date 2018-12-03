@@ -45,8 +45,8 @@ class ReviewVotes extends Component {
           const transaction = toSend.send({gas: gasEstimated + 100000});
 
           transaction.on('transactionHash', hash => {
-            this.props.setTransactionHash(hash);
-            this.props.setTransactionPromise(transaction);
+            this.props.setTransactionHash(idPoll, hash);
+            this.props.setTransactionPromise(idPoll, transaction);
             history.push('/results/' + idPoll);
           });
 

@@ -26,8 +26,8 @@ class Voting extends PureComponent {
     addPoll: false,
     pollTokenBalances: [],
     votes: [],
-    transaction: null,
-    transactionHash: ''
+    transaction: {},
+    transactionHash: {}
   };
 
   updatePollBalance = (pollId, tokenBalance, ethBalance, votes) => {
@@ -40,12 +40,17 @@ class Voting extends PureComponent {
     this.setState({votes});
   }
   
-  setTransactionHash = (transactionHash) => {
-    this.setState({transactionHash});
+  setTransactionHash = (idPoll, transactionHash) => {
+    const stHash = this.state.transactionHash;
+    stHash[idPoll] = transactionHash;
+    
+    this.setState({transactionHash: stHash[idPoll]});
   }
 
-  setTransactionPromise = (transaction) => {
-    this.setState({transaction});
+  setTransactionPromise = (idPoll, transaction) => {
+    const sTrx = this.state.transaction;
+    sTrx[idPoll] = transaction;
+    this.setState({transaction: sTrx});
   }
 
 

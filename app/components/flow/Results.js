@@ -53,8 +53,8 @@ class Results extends Component {
         this.setState({netId});
       });
 
-      if(transaction){
-        transaction.catch(x => {
+      if(transaction[idPoll]){
+        transaction[idPoll].catch(x => {
           this.setState({isError: true});
         }).then(() => {
           this.updatePoll();
@@ -62,10 +62,10 @@ class Results extends Component {
 
         let req = false;
         let interval = setInterval(async () => {
-          if(req || !transactionHash) return;
+          if(req || !transactionHash[idPoll]) return;
 
           req = true;
-          const receipt = await web3.eth.getTransactionReceipt(transactionHash);
+          const receipt = await web3.eth.getTransactionReceipt(transactionHash[idPoll]);
           if(receipt){
             clearInterval(interval);
             
@@ -110,7 +110,7 @@ class Results extends Component {
         </Link>
       </div> }
 
-      { !isError && transaction && <div className="transactionArea">
+      { !isError && transaction[idPoll] && <div className="transactionArea">
         { isPending && <div className="pending">
            <div className="spinner">
             <div className="bounce1"></div>
@@ -121,12 +121,12 @@ class Results extends Component {
           <Typography variant="body1">Your vote is in the process of being confirmed in the blockchain</Typography>
         </div>
         }
-        { !isPending && transaction && <div className="confirmed">
+        { !isPending && transaction[idPoll] && <div className="confirmed">
         <img src="images/confirmed.svg" width="40" />
         <Typography variant="headline">Transaction confirmed!<br />
         Your vote was posted.</Typography>
       </div>}
-        { transactionHash && etherscanURL && <Typography variant="body1"><a target="_blank" href={ etherscanURL + transactionHash}>View details on Etherscan</a></Typography> }
+        { transactionHash[idPoll] && etherscanURL && <Typography variant="body1"><a target="_blank" href={ etherscanURL + transactionHash[idPoll]}>View details on Etherscan</a></Typography> }
         </div>
       }
     <div className="section">
