@@ -710,3 +710,49 @@ button[disabled]{
       margin-right: 20px;
       margin-top: 20px;
   }
+
+  .pollOption {
+    border: 1px solid #edf2f5;
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .pollOption button {
+      visibility: hidden;
+  }
+
+  .pollOption:hover button {
+      visibility: visible;
+  }
+
+  .pollOption h1 {
+      font-size: .8rem !important;
+      margin: 0 !important;
+      color: #000;
+  }
+
+  .pollOption p {
+      font-size: .7rem !important;
+      color: #939BA1 !important;
+  }
+
+  .pollOption button {
+      position: absolute;
+      top: 0px;
+      right: 10px;
+  }
+
+  .addOption {
+    margin: 10px 0px 30px 0px;
+    display: block;
+    cursor: pointer;
+    color: #4360DF;
+  }
+
+  .addOption img {
+    position: relative;
+    margin-right: 15px;
+    top: 10px;
+  }

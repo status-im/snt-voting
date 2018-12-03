@@ -17,6 +17,11 @@ class PollDescription extends Component {
         if(this.props.poll.description !== undefined){
             this.setState({description: this.props.poll.description});
         }
+
+        if(!this.props.poll.title){
+            const {history} = this.props;
+            history.push('/poll/title');
+        }
     }
 
     handleChange = (event) => {

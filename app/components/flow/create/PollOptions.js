@@ -11,17 +11,21 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 
 
-const SortableItem = SortableElement(({value}) =>
-  <li>{value.title}</li>
+const SortableItem = SortableElement(({value, removeOption}) =>
+    <div className="pollOption">
+        <Typography variant="display1">{value.title}</Typography>
+        <Typography variant="body2">{value.content}</Typography>
+        <Button onClick={removeOption}>X</Button>
+    </div>
 );
 
-const SortableList = SortableContainer(({items}) => {
+const SortableList = SortableContainer(({items, removeOption}) => {
   return (
-    <ul>
+    <div>
       {items.map((value, index) => (
-        <SortableItem key={`item-${index}`} index={index} value={value} />
+        <SortableItem key={`item-${index}`} index={index} value={value} removeOption={removeOption(index)} />
       ))}
-    </ul>
+    </div>
   );
 });
 
@@ -53,13 +57,21 @@ class PollOptions extends Component {
     };
 
     addOption = () => {
-        const options = this.state.options;
-        options.push({title: this.state.optionTitle, content: this.state.optionContent});
-        this.setState({ open: false, optionTitle: '', optionContent: '' });
+        if(this.state.optionTitle.trim() == ''){
+            this.setState({error: 'Required'});
+        } else {
+            const options = this.state.options;
+            options.push({title: this.state.optionTitle, content: this.state.optionContent});
+            this.setState({ open: false, optionTitle: '', optionContent: '', error: '' });
+        }
     }
     
     handleClose = () => {
         this.setState({ open: false });
+    }
+
+    removeOption = i => () => {
+        this.setState({options: this.state.options.splice(i, 1)});
     }
 
     continue = () => {
@@ -74,15 +86,20 @@ class PollOptions extends Component {
         }
     }
 
+    componentDidMount(){
+        if(!this.props.poll.description){
+            const {history} = this.props;
+            history.push('/poll/title');
+        }
+    }
+
     render() {
         return <Fragment>
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
-            <Typography variant="body1">Add options to the poll</Typography>
-            <Button onClick={this.handleClickOpen}>Add option</Button>
-
-
-            <SortableList items={this.state.options} onSortEnd={this.onSortEnd} />
+            <Typography variant="body1" style={{marginTop: '20px'}}>Add options to the poll</Typography>
+            <a onClick={this.handleClickOpen} className="addOption"><img src="../images/plus-button.svg" width="40" />Add option</a>
+            <SortableList items={this.state.options} removeOption={this.removeOption} onSortEnd={this.onSortEnd} />
 
         </div>
         <div className="buttonNav">
@@ -107,7 +124,7 @@ class PollOptions extends Component {
                 <TextField
                     label="Option title"
                     autoFocus
-                    error={false}
+                    error={this.state.error != ''}
                     className="inputTxt"
                     fullWidth
                     margin="normal"
@@ -117,14 +134,17 @@ class PollOptions extends Component {
                     shrink: true,
                     }}      
                 />
+                {this.state.error && <FormHelperText className="errorText">{this.state.error}</FormHelperText>}
+
                 <TextField
                     id="standard-multiline-flexible"
                     label="Poll Description"
                     multiline
                     fullWidth
-                    autoFocus
                     className="inputTxt"
                     margin="normal"
+                    value={this.state.optionContent}
+                    onChange={this.handleChange('optionContent')}
                     InputLabelProps={{
                     shrink: true,
                     }}

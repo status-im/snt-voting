@@ -47,7 +47,7 @@ class PollTitle extends Component {
             <TextField
                 label="Poll name"
                 multiline
-                autoFocus
+                autoFocus={true}
                 error={this.state.error != ''}
                 className="inputTxt"
                 placeholder="E.g. What is the best ice cream flavor?"
