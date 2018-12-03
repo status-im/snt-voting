@@ -13,9 +13,16 @@ class PollDescription extends Component {
         error: ''
     }
 
+    componentDidMount(){
+        if(this.props.poll.description !== undefined){
+            this.setState({description: this.props.poll.description});
+        }
+    }
+
     handleChange = (event) => {
         this.setState({error: ''});
         if(event.target.value.length <= 500){
+            this.props.assignToPoll({description: event.target.value});
             this.setState({description: event.target.value});
         }
     }
@@ -42,6 +49,7 @@ class PollDescription extends Component {
                 multiline
                 error={this.state.error != ''}
                 fullWidth
+                autoFocus
                 className="inputTxt"
                 margin="normal"
                 InputLabelProps={{
@@ -54,7 +62,7 @@ class PollDescription extends Component {
             <small>{this.state.description.length} of 500</small>
         </div>
         <div className="buttonNav">
-            <Button onClick={this.continue}>Next</Button>
+            <Button onClick={this.continue} disabled={this.state.description.trim().length == 0}>Next</Button>
         </div>
         </Fragment>;
     }

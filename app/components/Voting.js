@@ -23,6 +23,7 @@ import OtherPolls from './flow/OtherPolls';
 import PollCreationCredits from './flow/create/PollCreationCredits';
 import PollTitle from './flow/create/PollTitle';
 import PollDescription from './flow/create/PollDescription';
+import PollOptions from './flow/create/PollOptions';
 
 
 
@@ -97,8 +98,9 @@ class Voting extends PureComponent {
                 <Route path="/addPoll" render={() => <AddPoll togglePoll={togglePoll} getPolls={getPolls} />} />
 
                 <Route path="/poll/create" render={() => <PollCreationCredits poll={this.state.pollCr} resetPoll={this.resetPoll} />} />
-                <Route path="/poll/title" render={() => <PollTitle assignToPoll={this.assignToPoll}  />} />
+                <Route path="/poll/title" render={() => <PollTitle assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
                 <Route path="/poll/description" render={() => <PollDescription assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
+                <Route path="/poll/options" render={() => <PollOptions assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
 
               </Switch>
             </div>

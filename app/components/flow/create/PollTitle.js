@@ -14,9 +14,16 @@ class PollTitle extends Component {
         error: ''
     }
 
+    componentDidMount(){
+        if(this.props.poll.title !== undefined){
+            this.setState({title: this.props.poll.title});
+        }
+    }
+
     handleChange = (event) => {
         this.setState({error: ''});
         if(event.target.value.length <= 70){
+            this.props.assignToPoll({title: event.target.value});
             this.setState({title: event.target.value});
         }
     }
@@ -40,6 +47,7 @@ class PollTitle extends Component {
             <TextField
                 label="Poll name"
                 multiline
+                autoFocus
                 error={this.state.error != ''}
                 className="inputTxt"
                 placeholder="E.g. What is the best ice cream flavor?"
@@ -56,7 +64,7 @@ class PollTitle extends Component {
             <small>{this.state.title.length} of 70</small>
         </div>
         <div className="buttonNav">
-            <Button onClick={this.continue}>Next</Button>
+            <Button onClick={this.continue} disabled={this.state.title.trim().length == 0}>Next</Button>
         </div>
         </Fragment>;
     }
