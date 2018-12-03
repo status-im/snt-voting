@@ -8,28 +8,59 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
+
+
+const SortableItem = SortableElement(({value}) =>
+  <li>{value.title}</li>
+);
+
+const SortableList = SortableContainer(({items}) => {
+  return (
+    <ul>
+      {items.map((value, index) => (
+        <SortableItem key={`item-${index}`} index={index} value={value} />
+      ))}
+    </ul>
+  );
+});
 
 class PollOptions extends Component {
 
     state = {
         error: '',
-        open: false
+        open: false,
+        options: [],
+        optionTitle: '',
+        optionContent: ''
     }
 
-    handleChange = (event) => {
+    onSortEnd = ({oldIndex, newIndex}) => {
+        this.setState({
+          options: arrayMove(this.state.options, oldIndex, newIndex),
+        });
+      };
+
+    handleChange = name => event => {
         this.setState({error: ''});
-        if(event.target.value.length <= 70){
-            this.setState({title: event.target.value});
-        }
+        const state = {};
+        state[name] = event.target.value;
+        this.setState(state);
     }
 
     handleClickOpen = () => {
         this.setState({ open: true });
     };
+
+    addOption = () => {
+        const options = this.state.options;
+        options.push({title: this.state.optionTitle, content: this.state.optionContent});
+        this.setState({ open: false, optionTitle: '', optionContent: '' });
+    }
     
     handleClose = () => {
-    this.setState({ open: false });
-    };
+        this.setState({ open: false });
+    }
 
     continue = () => {
         const {title} = this.state;
@@ -49,6 +80,10 @@ class PollOptions extends Component {
             <Typography variant="headline">Create a Poll</Typography>
             <Typography variant="body1">Add options to the poll</Typography>
             <Button onClick={this.handleClickOpen}>Add option</Button>
+
+
+            <SortableList items={this.state.options} onSortEnd={this.onSortEnd} />
+
         </div>
         <div className="buttonNav">
             <Button onClick={this.continue}>Next</Button>
@@ -63,7 +98,7 @@ class PollOptions extends Component {
             <Button onClick={this.handleClose} color="primary">
                 X
             </Button>
-            <Button onClick={this.handleClose} color="primary" autoFocus>
+            <Button onClick={this.addOption} color="primary">
                 Save
             </Button>
             </DialogActions>
@@ -76,6 +111,8 @@ class PollOptions extends Component {
                     className="inputTxt"
                     fullWidth
                     margin="normal"
+                    value={this.state.optionTitle}
+                    onChange={this.handleChange('optionTitle')}
                     InputLabelProps={{
                     shrink: true,
                     }}      
