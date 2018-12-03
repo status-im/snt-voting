@@ -85,11 +85,11 @@ class VotingCredits extends Component {
               <span className="title">Voting Credits</span>
               <span className="value">{tokenBalance}</span>
             </Typography>
-            { tokenBalance > 0 &&
+            { tokenBalance >= 1 &&
             <Typography component="p" className="text" onClick={this.redirectToConnect}>
             You get one credit for each SNT held in your wallet <b>at the time of poll was created ({d.DDMMYYYY()})</b>. They are usable only in this poll.
             </Typography> }
-            { tokenBalance == 0 &&
+            { tokenBalance < 1 &&
               <div className="warning">
                 <Typography component="h2" onClick={this.redirectToConnect}>
                   No SNT in your wallet
