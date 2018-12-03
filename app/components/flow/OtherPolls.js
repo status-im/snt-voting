@@ -99,7 +99,7 @@ class OtherPolls extends Component {
                             <CardContent>
                                 <Typography gutterBottom component="h2">{p.content.title}</Typography>
                                 <Typography component="p" dangerouslySetInnerHTML={{__html: p.content.description}}></Typography>
-                                {pollType == "open" && <span className="pollClosingDate">Closes: {new Date(p._endTime * 1000).DDMMYYYY()}</span> }
+                                <span className="pollClosingDate">{pollType == "open" ? "Closes: " : "Closed: "} {new Date(p._endTime * 1000).DDMMYYYY()}</span>
                                 <p className="stats">
                                 Voters: {p._voters}<br />
                                 Total votes: {p._votesSum}<br />
