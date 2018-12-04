@@ -4,7 +4,15 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-
+Date.prototype.DDMMYYYYatHHMM = function () {
+    var yyyy = this.getFullYear().toString();
+    var MM = pad(this.getMonth() + 1,2);
+    var dd = pad(this.getDate(), 2);
+    var hh = pad(this.getHours(), 2);
+    var mm = pad(this.getMinutes(), 2)
+  
+    return dd + '/' + MM + '/' + yyyy + ' at ' +  hh + ':' + mm + (this.getHours() > 12 ? 'pm' : 'am');
+  };
 class PollReview extends Component {
 
     state = {
@@ -51,10 +59,35 @@ class PollReview extends Component {
     
 
     render() {
+        const {poll} = this.props;
+
+        if(!poll.options) return null;
+
         return <Fragment>
         <LinearProgress variant="determinate" value={96} />
         <div className="section pollCreation">
             <Typography variant="headline">Review details</Typography>
+
+            <div className="reviewDetails">
+                <Typography variant="h3">{poll.title}<br /><br /></Typography>
+                <Typography variant="body1">{poll.description}<br /><br /><br /></Typography>
+                <div className="pollOption ">
+                    <Typography variant="h3" className="grayHeader">Poll starts:</Typography>
+                    <Typography variant="body2" className="detail">Today (upon publishing)<br /><br /></Typography>
+                    <Typography variant="h3" className="grayHeader">Poll ends:</Typography>
+                    <Typography  variant="body2"  className="detail">{poll.endDate.DDMMYYYYatHHMM()}</Typography>
+                </div>
+
+                <Typography variant="h3" className="grayHeader"><br /><br />Options</Typography>
+                {
+                    poll.options.map((item, i) => {
+                        return  <div className="pollOption" key={i}>
+                            <Typography variant="display1">{item.title}</Typography>
+                            <Typography variant="body2">{item.content}</Typography>
+                        </div>
+                    })
+                }
+            </div>
         </div>
         <div className="buttonNav">
             <Button onClick={this.sign} disabled={this.isSubmitting}>Sign to confirm</Button>
