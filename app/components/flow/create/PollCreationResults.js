@@ -3,6 +3,24 @@ import { withRouter } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import {Link} from "react-router-dom";
 
+function pad(number, length) {
+  var str = '' + number;
+  while (str.length < length) {
+      str = '0' + str;
+  }
+  return str;
+}
+
+Date.prototype.DDMMYYYYatHHMM = function () {
+    var yyyy = this.getFullYear().toString();
+    var MM = pad(this.getMonth() + 1,2);
+    var dd = pad(this.getDate(), 2);
+    var hh = pad(this.getHours(), 2);
+    var mm = pad(this.getMinutes(), 2)
+  
+    return dd + '/' + MM + '/' + yyyy + ' at ' +  hh + ':' + mm + (this.getHours() > 12 ? 'pm' : 'am');
+  };
+
 class PollCreationResults extends Component {
 
     state = {
@@ -20,6 +38,8 @@ class PollCreationResults extends Component {
           history.push('/');
           return;
         }
+
+        this.setState({poll: Object.assign({}, this.props.poll)});
 
         EmbarkJS.onReady(() => {  
           web3.eth.net.getId((err, netId) => {
@@ -66,16 +86,16 @@ class PollCreationResults extends Component {
         let url = window.location.href.replace(window.location.hash, '');
         url += '?d=' + (new Date()).getTime() + '#/titleScreen/' + id; 
 
-console.log(url);
-
         window.location.href = url;
       }
 
       render(){
         const {pollTransaction, pollTransactionHash} = this.props;
-        let {isError, isPending, netId, idPoll} = this.state;
+        let {isError, isPending, netId, idPoll, poll} = this.state;
 
         const etherscanURL = netId == 3 ? 'https://ropsten.etherscan.io/tx/' : ( netId == 1 ? "https://etherscan.io/tx/" : '');
+
+        if(poll.options == null) return null;
 
         return <Fragment>
          
@@ -110,6 +130,29 @@ console.log(url);
         
         </div>
       }
+      <div class="section">
+      <div className="reviewDetails">
+          <Typography variant="h3">{poll.title}<br /><br /></Typography>
+          <Typography variant="body1">{poll.description}<br /><br /><br /></Typography>
+          <div className="pollOption ">
+              <Typography variant="h3" className="grayHeader">Poll starts:</Typography>
+              <Typography variant="body2" className="detail">Today (upon publishing)<br /><br /></Typography>
+              <Typography variant="h3" className="grayHeader">Poll ends:</Typography>
+              <Typography  variant="body2"  className="detail">{poll.endDate.DDMMYYYYatHHMM()}</Typography>
+          </div>
+
+          <Typography variant="h3" className="grayHeader"><br /><br />Options</Typography>
+          {
+              poll.options.map((item, i) => {
+                  return  <div className="pollOption" key={i}>
+                      <Typography variant="display1">{item.title}</Typography>
+                      <Typography variant="body2">{item.content}</Typography>
+                  </div>
+              })
+          }
+      </div>
+      </div>
+      
         </Fragment>;
       }
 }

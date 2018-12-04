@@ -4,6 +4,17 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
+function pad(number, length) {
+
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+  
+    return str;
+  
+  }
+  
 Date.prototype.DDMMYYYYatHHMM = function () {
     var yyyy = this.getFullYear().toString();
     var MM = pad(this.getMonth() + 1,2);
