@@ -28,7 +28,7 @@ class PollSchedule extends Component {
 
         if(!this.props.poll.options){
             const {history} = this.props;
-            history.push('/poll/title');
+            history.push('/');
         }
     }
 

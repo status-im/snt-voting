@@ -112,7 +112,7 @@ class PollOptions extends Component {
 
         if(!this.props.poll.description){
             const {history} = this.props;
-            history.push('/poll/title');
+            history.push('/');
         }
     }
 

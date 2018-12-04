@@ -1,75 +1,63 @@
 import React, {Component, Fragment} from 'react';
 import { withRouter } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 
 class PollReview extends Component {
 
     state = {
-        description: '',
-        error: ''
+        isSubmitting : false
     }
 
     componentDidMount(){
-        if(this.props.poll.description !== undefined){
-            this.setState({description: this.props.poll.description});
-        }
-
-        if(!this.props.poll.title){
+        if(this.props.poll.endDate === null || this.props.poll.endDate === undefined){
             const {history} = this.props;
-            history.push('/poll/title');
+            history.push('/');
         }
     }
 
-    handleChange = (event) => {
-        this.setState({error: ''});
-        if(event.target.value.length <= 500){
-            this.props.assignToPoll({description: event.target.value});
-            this.setState({description: event.target.value});
-        }
-    }
+    sign = async () => {
+        this.setState({isSubmitting: true});
+    
+        const {history, poll} = this.props;
+        const addPollOnlyEndTime = PollManager.methods["addPoll(uint256,bytes,uint8)"];
 
-    continue = () => {
-        const {description} = this.state;
-        const {history} = this.props;
-
-        if(description.trim() != ''){
-            this.props.assignToPoll({description});
-            history.push('/poll/options');
-        } else {
-            this.setState({error: "Required"})
+        const endTime = parseInt(poll.endDate.getTime() / 1000, 10);
+        const pollObj = {
+            'title': poll.title,
+            'description': poll.description,
+            'ballots': poll.options
         }
+        const pollObjString = JSON.stringify(pollObj);
+
+        const ipfsHash = await EmbarkJS.Storage.saveText(pollObjString);
+        const encodedDesc = web3.utils.toHex(ipfsHash);
+        const toSend = addPollOnlyEndTime(endTime, encodedDesc, pollObj.ballots.length || 0);
+        const gasEstimated = await toSend.estimateGas();
+        const transaction = toSend.send({gas: gasEstimated + 100000});
+
+        transaction.on('transactionHash', hash => {
+            this.props.setPollTransactionHash(hash);
+            this.props.setPollTransactionPromise(transaction);
+            history.push('/poll/results/');
+        });
+
+        transaction.catch(err => {
+            this.setState({isSubmitting: false});
+        });
     }
+    
 
     render() {
         return <Fragment>
-        <LinearProgress variant="determinate" value={38} />
+        <LinearProgress variant="determinate" value={96} />
         <div className="section pollCreation">
-            <Typography variant="headline">Create a Poll</Typography>
-            <TextField
-                id="standard-multiline-flexible"
-                label="Poll Description"
-                multiline
-                error={this.state.error != ''}
-                fullWidth
-                autoFocus
-                className="inputTxt"
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true,
-                }}      
-                value={this.state.description}
-                onChange={this.handleChange}
-            />
-            {this.state.error && <FormHelperText className="errorText">{this.state.error}</FormHelperText>}
-            <small>{this.state.description.length} of 500</small>
+            <Typography variant="headline">Review details</Typography>
         </div>
         <div className="buttonNav">
-            <Button onClick={this.continue} disabled={this.state.description.trim().length == 0}>Next</Button>
+            <Button onClick={this.sign} disabled={this.isSubmitting}>Sign to confirm</Button>
         </div>
         </Fragment>;
     }

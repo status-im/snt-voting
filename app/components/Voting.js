@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import 'typeface-roboto';
-import AddPoll from './simple-voting/AddPoll';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { VotingContext } from '../context';
 import { Route, Switch } from "react-router-dom";
@@ -27,6 +26,8 @@ import PollTitle from './flow/create/PollTitle';
 import PollDescription from './flow/create/PollDescription';
 import PollOptions from './flow/create/PollOptions';
 import PollSchedule from './flow/create/PollSchedule';
+import PollReview from './flow/create/PollReview';
+import PollCreationResults from './flow/create/PollCreationResults';
 
 
 
@@ -37,6 +38,8 @@ class Voting extends PureComponent {
     votes: [],
     transaction: {},
     transactionHash: {},
+    pollTransaction: null,
+    pollTransactionHash: null,
     pollCr: {}
   };
 
@@ -63,6 +66,15 @@ class Voting extends PureComponent {
     this.setState({transaction: sTrx});
   }
 
+  setPollTransactionHash = (transactionHash) => {
+    this.setState({pollTransactionHash: transactionHash});
+  }
+
+  setPollTransactionPromise = (transaction) => {
+    this.setState({pollTransaction: transaction});
+  }
+
+
   assignToPoll = (newData) => {
     const pollCr = Object.assign(this.state.pollCr, newData);
     this.setState({pollCr});
@@ -72,10 +84,8 @@ class Voting extends PureComponent {
     this.setState({pollCr: {}});
   }
 
-
   render(){
     const { addPoll, pollTokenBalances, votes, transaction, transactionHash, start, end } = this.state;
-    const togglePoll = () => { this.setState({ addPoll: !addPoll })};
 
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -99,14 +109,14 @@ class Voting extends PureComponent {
                 <Route path="/voting/:id/:back?" render={props => <PollVoting polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} originalVotes={votes} back={!!props.match.params.back} setVotesToReview={this.setVotesToReview} />} />
                 <Route path="/review/:id" render={props => <ReviewVotes polls={rawPolls} idPoll={props.match.params.id} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} setTransactionHash={this.setTransactionHash} />} />
                 <Route path="/admin" render={() => <AdminView />} />
-                <Route path="/addPoll" render={() => <AddPoll togglePoll={togglePoll} getPolls={getPolls} />} />
 
                 <Route path="/poll/create" render={() => <PollCreationCredits poll={this.state.pollCr} resetPoll={this.resetPoll} />} />
                 <Route path="/poll/title" render={() => <PollTitle assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
                 <Route path="/poll/description" render={() => <PollDescription assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
                 <Route path="/poll/options" render={() => <PollOptions assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
                 <Route path="/poll/schedule" render={() => <PollSchedule assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
-
+                <Route path="/poll/review" render={() => <PollReview poll={this.state.pollCr} setPollTransactionHash={this.setPollTransactionHash} setPollTransactionPromise={this.setPollTransactionPromise} />} />
+                <Route path="/poll/results" render={() => <PollCreationResults loadPollContent={loadPollContent} getPolls={getPolls} resetPoll={this.resetPoll} poll={this.state.pollCr} pollTransactionHash={this.state.pollTransactionHash} pollTransaction={this.state.pollTransaction} />} />
               </Switch>
             </div>
           </div>
