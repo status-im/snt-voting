@@ -19,11 +19,14 @@ import ReviewVotes from './flow/ReviewVotes';
 import Results from './flow/Results';
 import LandingPage from './flow/LandingPage';
 import OtherPolls from './flow/OtherPolls';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider } from 'material-ui-pickers';
 
 import PollCreationCredits from './flow/create/PollCreationCredits';
 import PollTitle from './flow/create/PollTitle';
 import PollDescription from './flow/create/PollDescription';
 import PollOptions from './flow/create/PollOptions';
+import PollSchedule from './flow/create/PollSchedule';
 
 
 
@@ -73,8 +76,9 @@ class Voting extends PureComponent {
   render(){
     const { addPoll, pollTokenBalances, votes, transaction, transactionHash, start, end } = this.state;
     const togglePoll = () => { this.setState({ addPoll: !addPoll })};
-1
+
     return (
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <VotingContext.Consumer>
         {({ getPolls, rawPolls, loading, symbol, replacePoll, loadPollContent, loadPollRange, loadMorePolls, start, resetPollCounter,  end }) =>
           <div>
@@ -101,12 +105,15 @@ class Voting extends PureComponent {
                 <Route path="/poll/title" render={() => <PollTitle assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
                 <Route path="/poll/description" render={() => <PollDescription assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
                 <Route path="/poll/options" render={() => <PollOptions assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
+                <Route path="/poll/schedule" render={() => <PollSchedule assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
 
               </Switch>
             </div>
           </div>
         }
       </VotingContext.Consumer>
+      </MuiPickersUtilsProvider>
+
     )
   }
 }

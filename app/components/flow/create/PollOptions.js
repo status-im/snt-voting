@@ -57,6 +57,7 @@ class PollOptions extends Component {
     handleClickOpen = () => {
         this.setState({ open: true });
     };
+    
 
     addOption = () => {
         if(this.state.optionTitle.trim() == ''){
@@ -69,6 +70,7 @@ class PollOptions extends Component {
             } else {
                 options.push({title: this.state.optionTitle, content: this.state.optionContent});
             }
+            this.props.assignToPoll({options});
 
             this.setState({ open: false, edit: null, optionTitle: '', optionContent: '', error: '' });
         }
@@ -92,18 +94,22 @@ class PollOptions extends Component {
     }
 
     continue = () => {
-        const {title} = this.state;
+        const {options} = this.state;
         const {history} = this.props;
 
-        if(title.trim() != ''){
-            this.props.assignToPoll({title});
-            history.push('/poll/description');
+        if(options.length != 0){
+            this.props.assignToPoll({options});
+            history.push('/poll/schedule');
         } else {
             this.setState({error: "Required"})
         }
     }
 
     componentDidMount(){
+        if(this.props.poll.options !== undefined){
+            this.setState({options: this.props.poll.options});
+        }
+
         if(!this.props.poll.description){
             const {history} = this.props;
             history.push('/poll/title');
