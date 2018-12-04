@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 
 class PollDescription extends Component {
@@ -46,6 +47,7 @@ class PollDescription extends Component {
 
     render() {
         return <Fragment>
+        <LinearProgress variant="determinate" value={38} />
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
             <TextField

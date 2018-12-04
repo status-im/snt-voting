@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
-
+import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
 
 
@@ -42,6 +42,7 @@ class PollTitle extends Component {
 
     render() {
         return <Fragment>
+        <LinearProgress variant="determinate" value={19} />
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
             <TextField

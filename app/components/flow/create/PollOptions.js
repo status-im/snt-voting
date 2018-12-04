@@ -9,21 +9,22 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 
-const SortableItem = SortableElement(({value, removeOption}) =>
-    <div className="pollOption">
+const SortableItem = SortableElement(({value, removeOption, editOption}) =>
+    <div className="pollOption" onDoubleClick={editOption}>
         <Typography variant="display1">{value.title}</Typography>
         <Typography variant="body2">{value.content}</Typography>
-        <Button onClick={removeOption}>X</Button>
+        <Button onClick={removeOption} className="delete">X</Button>
     </div>
 );
 
-const SortableList = SortableContainer(({items, removeOption}) => {
+const SortableList = SortableContainer(({items, removeOption, editOption}) => {
   return (
     <div>
       {items.map((value, index) => (
-        <SortableItem key={`item-${index}`} index={index} value={value} removeOption={removeOption(index)} />
+        <SortableItem key={`item-${index}`} index={index} value={value} editOption={editOption(index)} removeOption={removeOption(index)} />
       ))}
     </div>
   );
@@ -36,7 +37,8 @@ class PollOptions extends Component {
         open: false,
         options: [],
         optionTitle: '',
-        optionContent: ''
+        optionContent: '',
+        edit: null
     }
 
     onSortEnd = ({oldIndex, newIndex}) => {
@@ -61,17 +63,32 @@ class PollOptions extends Component {
             this.setState({error: 'Required'});
         } else {
             const options = this.state.options;
-            options.push({title: this.state.optionTitle, content: this.state.optionContent});
-            this.setState({ open: false, optionTitle: '', optionContent: '', error: '' });
+
+            if(this.state.edit !== null){
+                options[this.state.edit] = {title: this.state.optionTitle, content: this.state.optionContent};
+            } else {
+                options.push({title: this.state.optionTitle, content: this.state.optionContent});
+            }
+
+            this.setState({ open: false, edit: null, optionTitle: '', optionContent: '', error: '' });
         }
     }
     
     handleClose = () => {
-        this.setState({ open: false });
+        this.setState({ open: false, edit: null, optionContent: '', optionTitle: '' });
     }
 
     removeOption = i => () => {
         this.setState({options: this.state.options.splice(i, 1)});
+    }
+
+    editOption = i => () => {
+        const state = {};
+        state.open = true;
+        state.optionContent = this.state.options[i].content;
+        state.optionTitle = this.state.options[i].title;
+        state.edit = i;
+        this.setState(state);
     }
 
     continue = () => {
@@ -95,15 +112,16 @@ class PollOptions extends Component {
 
     render() {
         return <Fragment>
+        <LinearProgress variant="determinate" value={57} />
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
             <Typography variant="body1" style={{marginTop: '20px'}}>Add options to the poll</Typography>
             <a onClick={this.handleClickOpen} className="addOption"><img src="../images/plus-button.svg" width="40" />Add option</a>
-            <SortableList items={this.state.options} removeOption={this.removeOption} onSortEnd={this.onSortEnd} />
+            <SortableList lockAxis={"y"} distance={10} items={this.state.options} editOption={this.editOption} removeOption={this.removeOption} onSortEnd={this.onSortEnd} />
 
         </div>
         <div className="buttonNav">
-            <Button onClick={this.continue}>Next</Button>
+            <Button onClick={this.continue} disabled={this.state.options.length == 0}>Next</Button>
         </div>
         <Dialog
         fullScreen={true}
@@ -119,7 +137,7 @@ class PollOptions extends Component {
                 Save
             </Button>
             </DialogActions>
-            <DialogTitle id="responsive-dialog-title">Add new poll option</DialogTitle>
+            <DialogTitle id="responsive-dialog-title">{ this.state.edit !== null ? "Edit poll option" : "Add new poll option" }</DialogTitle>
             <DialogContent>
                 <TextField
                     label="Option title"

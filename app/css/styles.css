@@ -692,7 +692,8 @@ button[disabled]{
     margin-bottom: 10px;
   }
 
-  .pollCreation .inputTxt div {
+  .pollCreation .inputTxt textarea,
+  .pollCreation .inputTxt input {
     background: #EEF2F5;
     border-radius: 10px;
     padding: 8px;
@@ -719,13 +720,6 @@ button[disabled]{
     position: relative;
   }
 
-  .pollOption button {
-      visibility: hidden;
-  }
-
-  .pollOption:hover button {
-      visibility: visible;
-  }
 
   .pollOption h1 {
       font-size: .8rem !important;
@@ -738,9 +732,15 @@ button[disabled]{
       color: #939BA1 !important;
   }
 
-  .pollOption button {
+  .pollOption button.edit {
+    position: absolute;
+    top: -10px;
+    right: 80px;
+}
+
+  .pollOption button.delete {
       position: absolute;
-      top: 0px;
+      top: -10px;
       right: 10px;
   }
 
@@ -749,6 +749,17 @@ button[disabled]{
     display: block;
     cursor: pointer;
     color: #4360DF;
+    padding: 0 10px 20px 10px;
+    border-radius: 10px;
+    width: 170px;
+  }
+
+  .addOption:hover {
+    background: #EEF2F5;
+  }
+
+  .addOption:active {
+      background: #939BA1;
   }
 
   .addOption img {
