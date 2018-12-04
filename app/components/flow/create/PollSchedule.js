@@ -1,11 +1,9 @@
 import React, {Component, Fragment} from 'react';
 import { withRouter } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { DateTimePicker } from 'material-ui-pickers';
+import { InlineDateTimePicker } from 'material-ui-pickers';
 
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
@@ -17,13 +15,15 @@ Date.prototype.addDays = function(days) {
 class PollSchedule extends Component {
 
     state = {
-        selectedDate: (new Date()).addDays(90),
+        endDate: null,
         error: '',
     }
 
     componentDidMount(){
-        if(this.props.poll.selectedDate !== undefined){
-            this.setState({endDate: this.props.poll.selectedDate});
+        if(this.props.poll.endDate !== undefined){
+            this.setState({endDate: this.props.poll.endDate});
+        } else {
+            this.setState({endDate: (new Date()).addDays(90) });
         }
 
         if(!this.props.poll.options){
@@ -33,37 +33,38 @@ class PollSchedule extends Component {
     }
 
     handleDateChange = date => {
-        this.setState({ selectedDate: date });
+        this.props.assignToPoll({endDate: date});
+        this.setState({ endDate: date });
     };
 
     continue = () => {
-        /*const {description} = this.state;
+        const {endDate} = this.state;
         const {history} = this.props;
-
-        if(description.trim() != ''){
-            this.props.assignToPoll({description});
-            history.push('/poll/options');
+        if(endDate != null){
+            this.props.assignToPoll({endDate: endDate});
+            history.push('/poll/review');
         } else {
             this.setState({error: "Required"})
-        }*/
+        }
     }
 
     render() {
-        const { selectedDate } = this.state;
+        const { endDate } = this.state;
 
         return <Fragment>
-        <LinearProgress variant="determinate" value={77} />
+        <LinearProgress variant="determinate" value={77} id="p" />
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
-            <DateTimePicker
-                value={selectedDate}
+            <Typography variant="body1" style={{marginTop: '20px'}}>Set the end date and time for the poll.</Typography>
+            <InlineDateTimePicker
+                value={endDate}
                 disablePast
                 autoOk
+                minDate={new Date()}
                 ampm={false}
+                format="dd/MM/yyyy HH:mm"
                 onChange={this.handleDateChange}
-                showTodayButton
             />
-            
         </div>
         <div className="buttonNav">
             <Button onClick={this.continue}>Next</Button>
