@@ -75,7 +75,7 @@ class PollReview extends Component {
         if(!poll.options) return null;
 
         return <Fragment>
-        <LinearProgress variant="determinate" value={96} />
+        <LinearProgress variant={this.state.isSubmitting ? "indeterminate" : "determinate"} value={this.state.isSubmitting ? 100 : 96} />
         <div className="section pollCreation">
             <Typography variant="headline">Review details</Typography>
 
@@ -101,7 +101,7 @@ class PollReview extends Component {
             </div>
         </div>
         <div className="buttonNav">
-            <Button onClick={this.sign} disabled={this.isSubmitting}>Sign to confirm</Button>
+            <Button onClick={this.sign} disabled={this.state.isSubmitting}>Sign to confirm</Button>
         </div>
         </Fragment>;
     }

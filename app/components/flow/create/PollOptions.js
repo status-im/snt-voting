@@ -122,7 +122,7 @@ class PollOptions extends Component {
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
             <Typography variant="body1" style={{marginTop: '20px'}}>Add options to the poll</Typography>
-            <a onClick={this.handleClickOpen} className="addOption"><img src="../images/plus-button.svg" width="40" />Add option</a>
+            <a onClick={this.handleClickOpen} className="addOption"><img src="images/plus-button.svg" width="40" />Add option</a>
             <SortableList lockAxis={"y"} distance={10} items={this.state.options} editOption={this.editOption} removeOption={this.removeOption} onSortEnd={this.onSortEnd} />
 
         </div>
