@@ -59,7 +59,7 @@ Assuming you would like to use the voting dapp with a MiniMeToken which represen
 
 To create a new token:
 ```
-"SNT": {
+"DappToken": {
     "instanceOf": "MiniMeToken",
     "args": [
         "$MiniMeTokenFactory",
@@ -75,7 +75,7 @@ To create a new token:
 
 If you wish to point to an existing token address:
 ```
-“SNT”: {
+“DappToken”: {
     “instanceOf”: “MiniMeToken”,
     “address”: “0x1234567890123456789012345678901234567890”
 }
