@@ -29,13 +29,24 @@ class LearnAboutBallots extends Component {
     this.setState({ open: false });
   };
 
+
+  componentDidUpdate(prevProps){
+    if (this.props.polls !== prevProps.polls && this.props.polls) {
+      // TODO: see how to extract this. Maybe a higher order component?
+      const poll = this.props.polls.find(p => p.idPoll == this.props.idPoll);
+      if(poll && !poll.content){
+        this.props.loadPollContent(poll);
+      }
+    }
+  }
+
   render(){
     const {polls, idPoll} = this.props;
 
     if(!polls) return null;
     
-    const poll = polls[idPoll];
-    if(!poll) return null;
+    const poll = polls.find(p => p.idPoll == idPoll);
+    if(!poll || !poll.content) return null;
 
     const title = poll.content.title;
     const ballots = poll.content.ballots;

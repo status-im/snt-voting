@@ -65,20 +65,25 @@ class TitleScreen extends Component {
   componentDidUpdate(prevProps){
     if (this.props.polls !== prevProps.polls && this.props.polls) {
       this.initTimer();
+
+      // TODO: see how to extract this. Maybe a higher order component?
+      const poll = this.props.polls.find(p => p.idPoll == this.props.idPoll);
+      if(poll && !poll.content){
+        this.props.loadPollContent(poll);
+      }
     }
   }
 
   initTimer(){
-    const ids = Object.keys(this.props.polls);
-    if(!ids.length) return;
+    if(!this.props.polls || !this.props.polls.length) return;
 
     if(this.state.initTimer) return;
 
     this.setState({initTimer: true});
 
-    const idPoll = ids[ids.length - 1];
+    const poll = this.props.polls.find(p => p.idPoll == this.props.idPoll);
 
-    const seconds = this.props.polls[idPoll]._endTime - (new Date()).getTime() / 1000
+    const seconds = poll._endTime - (new Date()).getTime() / 1000
     if(seconds > 0){
       let timeLeftVar = this.secondsToTime(seconds);
       this.setState({ time: timeLeftVar, seconds });
@@ -90,19 +95,19 @@ class TitleScreen extends Component {
 
   render(){
     const {time, seconds} = this.state;
-    const {polls} = this.props;
+    const {polls, idPoll} = this.props;
 
-    if(!polls) return null;
-
-    const ids = Object.keys(this.props.polls);
-    if(!ids.length) return null; 
+    if(!polls || !polls.length) return null;
     
-    const idPoll = ids[ids.length - 1];
-    const poll = polls[idPoll];
+    const poll = polls.find(p => p.idPoll == idPoll);
+    if(!poll) return null;
+
+    if(!poll.content) return null;
 
     const title = poll.content.title;
     const description = poll.content.description;
     const canceled = poll._canceled;
+
     
     return <Fragment>
       <div>

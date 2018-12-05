@@ -45,6 +45,16 @@ class VotingCredits extends Component {
     }
   }
 
+  componentDidUpdate(prevProps){
+    if (this.props.polls !== prevProps.polls && this.props.polls) {
+      // TODO: see how to extract this. Maybe a higher order component?
+      const poll = this.props.polls.find(p => p.idPoll == this.props.idPoll);
+      if(poll && !poll.content){
+        this.props.loadPollContent(poll);
+      }
+    }
+  }
+
   redirectToConnect = () => {
     this.props.history.push('/wallet/' + this.props.idPoll);
   }
@@ -54,8 +64,8 @@ class VotingCredits extends Component {
 
     if(!polls || !balances) return null;
 
-    const poll = polls[idPoll];
-    if(!poll) return null;
+    const poll = polls.find(p => p.idPoll == idPoll);
+    if(!poll || !poll.content) return null;
     
     let title = poll.content.title;
     let description = poll.content.description;

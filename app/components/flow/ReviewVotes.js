@@ -45,8 +45,8 @@ class ReviewVotes extends Component {
           const transaction = toSend.send({gas: gasEstimated + 100000});
 
           transaction.on('transactionHash', hash => {
-            this.props.setTransactionHash(hash);
-            this.props.setTransactionPromise(transaction);
+            this.props.setTransactionHash(idPoll, hash);
+            this.props.setTransactionPromise(idPoll, transaction);
             history.push('/results/' + idPoll);
           });
 
@@ -66,7 +66,7 @@ class ReviewVotes extends Component {
       return;
     }
 
-    const poll = polls[idPoll];
+    const poll = polls.find(p => p.idPoll == idPoll);
     if(!poll) {
       history.push('/');
       return;
@@ -82,7 +82,7 @@ class ReviewVotes extends Component {
       return null;
     }
 
-    const poll = polls[idPoll];
+    const poll = polls.find(p => p.idPoll == idPoll);;
     if(!poll) return null;
     
     const ballots = poll.content.ballots

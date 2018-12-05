@@ -18,12 +18,20 @@ class Results extends Component {
     super(props);
 
     if(props.polls)
-      this.state.poll = props.polls[props.idPoll]; 
+      this.state.poll = props.polls.find(p => p.idPoll == props.idPoll);
   }
+  
 
   componentDidUpdate(prevProps){
     if (this.props.idPoll !== prevProps.idPoll) {
       this.updatePoll();
+    }
+
+    if(this.props.polls !== prevProps.polls){
+      const poll = this.props.polls.find(p => p.idPoll == this.props.idPoll);
+      if(poll && !poll.content){
+        this.props.loadPollContent(poll);
+      }
     }
   }
 
@@ -45,8 +53,8 @@ class Results extends Component {
         this.setState({netId});
       });
 
-      if(transaction){
-        transaction.catch(x => {
+      if(transaction[idPoll]){
+        transaction[idPoll].catch(x => {
           this.setState({isError: true});
         }).then(() => {
           this.updatePoll();
@@ -54,10 +62,10 @@ class Results extends Component {
 
         let req = false;
         let interval = setInterval(async () => {
-          if(req || !transactionHash) return;
+          if(req || !transactionHash[idPoll]) return;
 
           req = true;
-          const receipt = await web3.eth.getTransactionReceipt(transactionHash);
+          const receipt = await web3.eth.getTransactionReceipt(transactionHash[idPoll]);
           if(receipt){
             clearInterval(interval);
             
@@ -79,13 +87,16 @@ class Results extends Component {
   render(){
     const {polls, idPoll, transaction, transactionHash} = this.props;
     let {isError, poll, isPending, netId} = this.state;
-
-    if(!poll || !polls){
+    if(!poll || !poll){
       return null;
     }
 
-    const title = polls[idPoll].content.title;
-    const ballots = polls[idPoll].content.ballots;
+    const p = polls.find(p => p.idPoll == idPoll);
+
+    if(!p || !p.content) return null;
+
+    const title = p.content.title;
+    const ballots = p.content.ballots;
     const totalVotes = poll._quadraticVotes.map(x => parseInt(x, 10)).reduce((x, y) => x + y, 0);
     const etherscanURL = netId == 3 ? 'https://ropsten.etherscan.io/tx/' : ( netId == 1 ? "https://etherscan.io/tx/" : '');
 
@@ -99,7 +110,7 @@ class Results extends Component {
         </Link>
       </div> }
 
-      { !isError && transaction && <div className="transactionArea">
+      { !isError && transaction[idPoll] && <div className="transactionArea">
         { isPending && <div className="pending">
            <div className="spinner">
             <div className="bounce1"></div>
@@ -110,12 +121,12 @@ class Results extends Component {
           <Typography variant="body1">Your vote is in the process of being confirmed in the blockchain</Typography>
         </div>
         }
-        { !isPending && transaction && <div className="confirmed">
+        { !isPending && transaction[idPoll] && <div className="confirmed">
         <img src="images/confirmed.svg" width="40" />
         <Typography variant="headline">Transaction confirmed!<br />
         Your vote was posted.</Typography>
       </div>}
-        { transactionHash && etherscanURL && <Typography variant="body1"><a target="_blank" href={ etherscanURL + transactionHash}>View details on Etherscan</a></Typography> }
+        { transactionHash[idPoll] && etherscanURL && <Typography variant="body1"><a target="_blank" href={ etherscanURL + transactionHash[idPoll]}>View details on Etherscan</a></Typography> }
         </div>
       }
     <div className="section">

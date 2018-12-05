@@ -59,7 +59,7 @@ class PollVoting extends Component {
       return;
     }
 
-    const poll = polls[idPoll];
+    const poll = polls.find(p => p.idPoll == idPoll);
     if(!poll){
       history.push('/');
       return;
@@ -112,7 +112,7 @@ class PollVoting extends Component {
 
     const symbol = "SNT"; // TODO:
 
-    const poll = polls[idPoll];
+    const poll = polls.find(p => p.idPoll == idPoll);
     if(!poll) return null;
     
     const title = poll.content.title;
