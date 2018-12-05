@@ -44,8 +44,26 @@ class LandingPage extends Component {
         this.props.history.push('/otherPolls/' + type);
     }
 
-    createPoll = () => {
-        this.props.history.push('/poll/create');
+    createPoll = async () => {
+            if(!window.web3){
+              this.props.history.push("/wallet/poll-creation");
+              return;
+            }
+        
+            let cont = true;
+            if (window.ethereum) {
+              try {
+                  await ethereum.enable();
+                  web3.setProvider(ethereum);
+                  const accounts = await web3.eth.getAccounts();
+                  web3.eth.defaultAccount = accounts[0];
+              } catch (error) {
+                cont = false;
+              }
+            }
+
+            if(cont)
+                this.props.history.push('/poll/create');
     }
    
 
@@ -85,6 +103,7 @@ class LandingPage extends Component {
             openPoll._tokenSum = 0;
             openPoll._votesSum = 0;
             for(let i = 0; i < openPoll._numBallots; i++){
+                // TODO: use decimals
                 openPoll._tokenSum += parseInt(web3.utils.fromWei(openPoll._tokenTotal[i], "ether"), 10);
                 openPoll._votesSum += parseInt(web3.utils.fromWei(openPoll._quadraticVotes[i], "ether"), 10);
             }
@@ -94,6 +113,7 @@ class LandingPage extends Component {
             closedPoll._tokenSum = 0;
             closedPoll._votesSum = 0;
             for(let i = 0; i < closedPoll._numBallots; i++){
+                // TODO: use decimals
                 closedPoll._tokenSum += parseInt(web3.utils.fromWei(closedPoll._tokenTotal[i], "ether"), 10);
                 closedPoll._votesSum += parseInt(closedPoll._quadraticVotes[i], 10);
             }
@@ -104,7 +124,7 @@ class LandingPage extends Component {
             <div className="section" style={{marginBottom: 0}}>
                 <img src="images/status-logo.svg" width="36" />
                 <Button className="createPollBtn" onClick={this.createPoll}><img src="images/create-poll.svg" width="23" /></Button>
-                <Typography variant="headline">Status SNT Voting</Typography>
+                <Typography variant="headline">Status {this.props.symbol} Voting</Typography>
                 <Typography variant="body1" component="div">Create a poll or vote in one. Your vote helps us decide our product and community direction.</Typography>
             </div>
 
@@ -118,7 +138,7 @@ class LandingPage extends Component {
                         <p className="stats">
                         Voters: {openPoll._voters}<br />
                         Total votes: {openPoll._votesSum}<br />
-                        Total SNT: {openPoll._tokenSum}<br />
+                        Total {this.props.symbol}: {openPoll._tokenSum}<br />
                         </p>
                         <Link to={"/titleScreen/" + openPoll.idPoll} className="arrowRightLink">VOTE NOW</Link>
                     </CardContent>
@@ -139,7 +159,7 @@ class LandingPage extends Component {
                         <p className="stats">
                         Voters: {closedPoll._voters}<br />
                         Total votes: {closedPoll._votesSum}<br />
-                        Total SNT: {closedPoll._tokenSum}<br />
+                        Total {this.props.symbol}: {closedPoll._tokenSum}<br />
                         </p>
                         <Link to={"/results/" + closedPoll.idPoll} className="arrowRightLink">See results</Link>
                     </CardContent>

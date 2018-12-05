@@ -39,9 +39,9 @@ const HelpDialog = (props) => <Dialog
             </Toolbar>
           </AppBar>
           <Typography variant="display1">What are voting credits?</Typography>
-          <Typography variant="body1">Voting Credits are used to purchase votes. The amount of voting credits equals the amount of SNT you had in the wallet address used to open the Voting Dapp when the poll was created.</Typography>
+          <Typography variant="body1">Voting Credits are used to purchase votes. The amount of voting credits equals the amount of {props.symbol} you had in the wallet address used to open the Voting Dapp when the poll was created.</Typography>
           <Typography variant="display1">Why do I have zero voting credits?</Typography>
-          <Typography variant="body1">You have zero voting credits because the wallet used to open the voting dapp had zero SNT in it at the time the poll was created.</Typography>
+          <Typography variant="body1">You have zero voting credits because the wallet used to open the voting dapp had zero {props.symbol} in it at the time the poll was created.</Typography>
           <Typography variant="display1">Why do votes cost more voting credits for every additional vote?</Typography>
           <Typography variant="body1">The price of votes equals its square in voting credits. This means purchasing the first vote on a ballot costs 1 voting credit, the second vote will require a total of 4 voting credits, the third vote will cost 9 voting credits in total.</Typography>
           <Typography variant="body1">This is done to prevent domination of the vote by large token holders.</Typography>

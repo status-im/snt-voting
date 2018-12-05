@@ -6,7 +6,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { withRouter } from 'react-router-dom'
 import HelpDialog from '../HelpDialog';
-import SNT from  'Embark/contracts/SNT';
+import DappToken from  'Embark/contracts/DappToken';
 
 Date.prototype.DDMMYYYY = function () {
   var yyyy = this.getFullYear().toString();
@@ -41,6 +41,9 @@ class PollCreationCredits extends Component {
   };
 
 
+  redirectToConnect = () => {
+    this.props.history.push('/wallet/poll-creation');
+  }
 
   componentDidMount(){
     const {history} = this.props;
@@ -52,12 +55,13 @@ class PollCreationCredits extends Component {
     }
 
     EmbarkJS.onReady(async () => {
-      const tokenBalance = await SNT.methods.balanceOf(web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});
+      const tokenBalance = await DappToken.methods.balanceOf(web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});
       const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
 
       this.setState({tokenBalance, ethBalance});
 
-      if(web3.utils.fromWei(ethBalance.toString(), "ether") > 0 ||
+      if(web3.utils.fromWei(ethBalance.toString(), "ether") > 0 &&
+      // TODO: use decimals
         Math.floor(web3.utils.fromWei(tokenBalance.toString(), "ether")) >= 1
       ){
         history.push('/poll/title');
@@ -69,11 +73,12 @@ class PollCreationCredits extends Component {
 
   render(){
     let ethBalance = web3.utils.fromWei(this.state.ethBalance, "ether");
+    // TODO: use decimals
     let tokenBalance = this.state.tokenBalance != "-" ? Math.floor(web3.utils.fromWei(this.state.tokenBalance, "ether")) : "-";
 
     return <Fragment><div className="section">
         <Typography variant="headline">Create a Poll</Typography>
-      <Card className="card credits">
+      <Card className="card credits"  onClick={this.redirectToConnect}>
         <CardContent>
             <Typography component="div">
               <span className="title">Voting Credits</span>
@@ -82,22 +87,22 @@ class PollCreationCredits extends Component {
             { tokenBalance == 0 &&
               <div className="warning">
                 <Typography component="h2">
-                  No SNT in your wallet
+                  No {this.props.symbol} in your wallet
                 </Typography>
                 <Typography component="p">
-                To create a poll, you need to connect with a wallet that holds SNT tokens.
+                To create a poll, you need to connect with a wallet that holds {this.props.symbol} tokens.
                 </Typography>
               </div>
             }
           </CardContent>
       </Card>
       { ethBalance == 0 && <Card className="card credits">
-        <CardContent>
+        <CardContent  onClick={this.redirectToConnect}>
             <Typography component="div">
               <span className="title">ETH</span>
               <span className="value">{ethBalance}</span>
             </Typography>
-            <div className="warning">
+            <div className="warning" >
               <Typography component="h2">
                 Not enough ETH in your wallet
               </Typography>

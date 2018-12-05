@@ -130,7 +130,7 @@ class PollCreationResults extends Component {
         
         </div>
       }
-      <div class="section">
+      <div className="section">
       <div className="reviewDetails">
           <Typography variant="h3">{poll.title}<br /><br /></Typography>
           <Typography variant="body1">{poll.description}<br /><br /><br /></Typography>

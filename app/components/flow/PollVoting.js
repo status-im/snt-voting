@@ -110,14 +110,14 @@ class PollVoting extends Component {
       return null;
     }
 
-    const symbol = "SNT"; // TODO:
+    const symbol = this.props.symbol;
 
     const poll = polls.find(p => p.idPoll == idPoll);
     if(!poll) return null;
     
     const title = poll.content.title;
     const ballots = poll.content.ballots
-    
+    // TODO: use decimals
     const balance = fromWei(balances[idPoll].tokenBalance, "ether");
     const cantVote = balance == 0 || !poll._canVote;
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
@@ -130,17 +130,17 @@ class PollVoting extends Component {
     const maxVotes = Math.floor(Math.sqrt(balance));
 
     const maxValuesForBallots = [];
-    let votedSNT = 0;
+    let votedTokens = 0;
     for(let i = 0; i < poll._numBallots; i++){
       if(votes[i] == undefined){
         votes[i] = 0;
       } else {
-        votedSNT += votes[i]*votes[i];
+        votedTokens += votes[i]*votes[i];
       }
     }
     
     for(let i = 0; i < poll._numBallots; i++){
-      maxValuesForBallots[i]  = Math.floor(Math.sqrt(balance - votedSNT + votes[i]*votes[i]));
+      maxValuesForBallots[i]  = Math.floor(Math.sqrt(balance - votedTokens + votes[i]*votes[i]));
     }
 
     return <Fragment>

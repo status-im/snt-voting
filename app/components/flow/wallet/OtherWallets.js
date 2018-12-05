@@ -4,7 +4,7 @@ import React, {Component, Fragment} from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import HelpDialog from './HelpDialog';
+import HelpDialog from '../HelpDialog';
 
 // TODO: extract to utils
 Date.prototype.DDMMYYYYatHHMM = function () {
@@ -48,23 +48,27 @@ class OtherWallets extends Component {
 
   render() {
     const props = this.props;
+    
+    let poll = null;
 
     let d = new Date();
     if(!props.noWeb3Provider){
       if(!props.polls){
         return null;
       }
+      
 
-      
-      const poll = props.polls.find(p => p.idPoll == props.idPoll);
-      if(!poll) return null;
-      
-      d = new Date(poll.blockInfo.timestamp * 1000);
+      if(props.idPoll != "poll-creation"){
+        poll = props.polls.find(p => p.idPoll == props.idPoll);
+        if(!poll) return null;
+        d = new Date(poll.blockInfo.timestamp * 1000);
+      }
+
     }
     
     return <Fragment><div className="section">
-    <Typography variant="headline">Connect with a wallet with SNT in it.</Typography>
-    { !props.noWeb3Provider && 
+    <Typography variant="headline">Connect with a wallet with {this.props.symbol} in it.</Typography>
+    { !props.noWeb3Provider && poll && 
       <Typography variant="body1" className="pollTime">Poll creation date: <b>{d.DDMMYYYYatHHMM()}</b></Typography>
     }
     <Typography variant="body1">Using your desktop computer</Typography>
@@ -74,7 +78,7 @@ class OtherWallets extends Component {
         MetaMask
         </Typography>
         <Typography component="p">
-        If you keep your SNT in MetaMask, please open vote.status.im in Google Chrome and make sure you are connected to the account where you keep your SNT. 
+        If you keep your {this.props.symbol} in MetaMask, please open vote.status.im in Google Chrome and make sure you are connected to the account where you keep your {this.props.symbol}. 
         </Typography>
       </CardContent>
     </Card>
@@ -84,18 +88,18 @@ class OtherWallets extends Component {
         Ledger or Trezor
         </Typography>
         <Typography component="p">
-        If you keep your SNT in a Ledger or Trezor, please connect the device to MetaMask. Then open vote.status.im in Google Chrome with your hardware wallet’s account selected in metamask. 
+        If you keep your {this.props.symbol} in a Ledger or Trezor, please connect the device to MetaMask. Then open vote.status.im in Google Chrome with your hardware wallet’s account selected in metamask. 
         </Typography>
       </CardContent>
     </Card>
     <Card className="card">
       <CardContent>
         <Typography gutterBottom component="h2">
-          SNT on Exchanges
+        {this.props.symbol} on Exchanges
         </Typography>
         <Typography component="p">
-        We are sorry. SNT held on exchanges don’t qualify for voting. 
-        To vote in the next poll, move your SNT to a wallet where you control the private keys. 
+        We are sorry. {this.props.symbol} held on exchanges don’t qualify for voting. 
+        To vote in the next poll, move your {this.props.symbol} to a wallet where you control the private keys. 
         </Typography>
       </CardContent>
     </Card>
@@ -104,7 +108,7 @@ class OtherWallets extends Component {
     <div className="buttonNav back">
       <Link to={props.idPoll !== undefined ? "/wallet/" + props.idPoll : '/'}><Button variant="text">Back</Button></Link>
     </div>
-    <HelpDialog open={this.state.open} handleClose={this.handleClose} />
+    <HelpDialog open={this.state.open} symbol={this.props.symbol} handleClose={this.handleClose} />
   </Fragment>
   }
 }

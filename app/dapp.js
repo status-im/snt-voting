@@ -4,12 +4,12 @@ import web3 from "Embark/web3"
 import EmbarkJS from 'Embark/EmbarkJS';
 import PollManager from 'Embark/contracts/PollManager';
 import Voting from './components/Voting';
-import SNT from  'Embark/contracts/SNT';
+import DappToken from  'Embark/contracts/DappToken';
 import { VotingContext } from './context';
 import Web3Render from './components/standard/Web3Render';
 import { getPolls, omitPolls } from './utils/polls';
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
-import OtherWallets from './components/flow/OtherWallets';
+import OtherWallets from './components/flow/wallet/OtherWallets';
 import Typography from '@material-ui/core/Typography'
 
 import './dapp.css';
@@ -33,7 +33,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
   }
-  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, symbol: "SNT", networkName: "" , rawPolls: [], pollsRequested: [],    start: 0,
+  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, name: '----', symbol: "---", decimals: "18", networkName: "" , rawPolls: [], pollsRequested: [],    start: 0,
   end: pollsPerLoad};
 
   componentDidMount(){
@@ -44,13 +44,20 @@ class App extends React.Component {
           web3.eth.defaultAccount = "0x0000000000000000000000000000000000000000";
         }
 
-        this._getPolls();
-       /* this._setAccounts();
-
-        SNT.methods.symbol().call().then((symbol) => {
+        DappToken.methods.symbol().call().then(symbol => {
           this.setState({symbol});
-        })*/
+        });
 
+        DappToken.methods.decimals().call().then(decimals => {
+          this.setState({decimals});
+        });
+
+        DappToken.methods.name().call().then(name => {
+          this.setState({name});
+        })
+
+
+        this._getPolls();
       }
       web3.eth.net.getId((err, netId) => {
         if(EmbarkJS.environment == 'testnet' && netId !== TESTNET){
@@ -101,14 +108,6 @@ class App extends React.Component {
         });
     else 
       this.setState({ rawPolls: [], loading: false });
-  }
-
-  _setAccounts() {
-    const { fromWei } = web3.utils;
-    web3.eth.getAccounts(async (err, [address]) => {
-      const balance = await SNT.methods.balanceOf(address).call();
-      this.setState({ snt: { balance: fromWei(balance) }});
-    })
   }
 
   updatePoll = async (idPoll) => {
@@ -213,7 +212,7 @@ class App extends React.Component {
 
 
   render(){
-    let { web3Provider, networkName, } = this.state;
+    let { web3Provider, networkName, decimals, symbol, name} = this.state;
     const { _getPolls, updatePoll, setPollOrder, appendToPoll, replacePoll, loadPollContent, resetPollCounter, loadPollRange, loadMorePolls } = this;
     const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll,  setPollOrder, resetPollCounter, replacePoll, loadPollContent, loadPollRange, loadMorePolls, ...this.state };
 

@@ -91,6 +91,7 @@ class OtherPolls extends Component {
                         p._tokenSum = 0;
                         p._votesSum = 0;
                         for(let i = 0; i < p._numBallots; i++){
+                            // TODO: use decimals
                             p._tokenSum += parseInt(web3.utils.fromWei(p._tokenTotal[i], "ether"), 10);
                             p._votesSum += parseInt(p._quadraticVotes[i], 10);
                         }
@@ -103,7 +104,7 @@ class OtherPolls extends Component {
                                 <p className="stats">
                                 Voters: {p._voters}<br />
                                 Total votes: {p._votesSum}<br />
-                                Total SNT: {p._tokenSum}</p>
+                                Total {this.props.symbol}: {p._tokenSum}</p>
                                 { pollType == 'open' && <Link to={"/titleScreen/" + p.idPoll} className="arrowRightLink">VOTE NOW</Link> }
                                 { pollType != 'open' && <Link to={"/results/" + p.idPoll} className="arrowRightLink">See results</Link> }
 

@@ -70,6 +70,7 @@ class VotingCredits extends Component {
     let title = poll.content.title;
     let description = poll.content.description;
     let ethBalance = web3.utils.fromWei(balances[idPoll].ethBalance, "ether");
+    // TODO: use decimals
     let tokenBalance = Math.floor(web3.utils.fromWei(balances[idPoll].tokenBalance, "ether"));
   
 
@@ -87,15 +88,15 @@ class VotingCredits extends Component {
             </Typography>
             { tokenBalance >= 1 &&
             <Typography component="p" className="text" onClick={this.redirectToConnect}>
-            You get one credit for each SNT held in your wallet <b>at the time of poll was created ({d.DDMMYYYY()})</b>. They are usable only in this poll.
+            You get one credit for each {this.props.symbol} held in your wallet <b>at the time of poll was created ({d.DDMMYYYY()})</b>. They are usable only in this poll.
             </Typography> }
             { tokenBalance < 1 &&
               <div className="warning">
                 <Typography component="h2" onClick={this.redirectToConnect}>
-                  No SNT in your wallet
+                  No {this.props.symbol} in your wallet
                 </Typography>
                 <Typography component="p" onClick={this.redirectToConnect}>
-                  To vote, you need to connect with a wallet that holds SNT tokens <b>when the poll was created ({d.DDMMYYYY()})</b>.
+                  To vote, you need to connect with a wallet that holds {this.props.symbol} tokens <b>when the poll was created ({d.DDMMYYYY()})</b>.
                 </Typography>
               </div>
             }
@@ -123,7 +124,7 @@ class VotingCredits extends Component {
       { (ethBalance > 0 && tokenBalance > 0) && <Link to={"/voting/" + idPoll}><Button variant="text">Vote</Button></Link> }
     </div>
     <p className="helpLink">Need help? <a onClick={this.handleClickOpen}>Chat with us</a></p>
-    <HelpDialog open={this.state.open} handleClose={this.handleClose} />
+    <HelpDialog open={this.state.open} symbol={this.props.symbol} handleClose={this.handleClose} />
     </Fragment> : null);
   }
 }

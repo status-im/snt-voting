@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography'
-import SNT from  'Embark/contracts/SNT';
 import { withRouter } from 'react-router-dom';
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
 
@@ -9,8 +8,8 @@ const NoConnection = () => {
   return (
     <Route path="/" render={() => {
       return <div className="section center">
-      <Typography variant="headline">Status SNT voting</Typography>
-      <Typography variant="body1">To start voting, connect to a wallet where you hold your SNT</Typography>
+      <Typography variant="headline">Status {this.props.symbol} voting</Typography>
+      <Typography variant="body1">To start voting, connect to a wallet where you hold your {this.props.symbol}</Typography>
       <div className="action">
         <a href="https://get.status.im/browse/vote.status.im"><Button color="primary" variant="contained">CONNECT USING STATUS</Button></a>
       </div>

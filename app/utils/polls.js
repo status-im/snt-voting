@@ -1,7 +1,7 @@
 import web3 from "Embark/web3"
 import MiniMeTokenInterface from 'Embark/contracts/MiniMeTokenInterface';
 import PollManager from 'Embark/contracts/PollManager';
-import SNT from 'Embark/contracts/SNT';
+import DappToken from 'Embark/contracts/DappToken';
 
 const excluded = {
  // PROPER_LIGHT_CLIENT_SUPPORT : 3,
@@ -9,8 +9,9 @@ const excluded = {
 
 export const getBalance = async (startBlock) => {
   const { fromWei } = web3.utils;
-  const { balanceOfAt } = SNT.methods;
+  const { balanceOfAt } = DappToken.methods;
   const balance = await balanceOfAt(web3.eth.defaultAccount, startBlock - 1).call();
+  // TODO: use decimals
   return fromWei(balance);
 }
 export const getVote = async(idPoll) => {

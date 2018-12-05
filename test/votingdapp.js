@@ -5,9 +5,9 @@ var _ = require('lodash');
 var rlp = require('rlp');
 
 const PollManager = embark.require('Embark/contracts/PollManager');
-const SNT = embark.require('Embark/contracts/SNT');
+const DappToken = embark.require('Embark/contracts/DappToken');
 
-
+// TODO: use tokens decimals
 const decimals = (amount) => web3.utils.toWei(amount.toString(), "ether");
 
 config({
@@ -18,7 +18,7 @@ config({
     "MiniMeToken": {
         "deploy": false,
     },
-    "SNT":{
+    "DappToken":{
         "instanceOf": "MiniMeToken",
         "args": [
             "$MiniMeTokenFactory",
@@ -33,7 +33,7 @@ config({
     },
     "PollManager": {
         "deploy": true,
-        "args": ["$SNT"]
+        "args": ["$DappToken"]
     }
   }
 });
@@ -48,13 +48,13 @@ describe("VotingDapp", function () {
     before(function(done) {
         web3.eth.getAccounts().then((acc) => { 
             accounts = acc; 
-            return SNT.methods.generateTokens(accounts[0], decimals(12)).send();
+            return DappToken.methods.generateTokens(accounts[0], decimals(12)).send();
         }).then(() => { 
-            return SNT.methods.generateTokens(accounts[1], decimals(10)).send();
+            return DappToken.methods.generateTokens(accounts[1], decimals(10)).send();
         }).then(() => { 
-            return SNT.methods.generateTokens(accounts[2], decimals(12)).send();
+            return DappToken.methods.generateTokens(accounts[2], decimals(12)).send();
         }).then(() => { 
-            return SNT.methods.generateTokens(accounts[3], decimals(7)).send();
+            return DappToken.methods.generateTokens(accounts[3], decimals(7)).send();
         }).then(() => {
             return web3.eth.getBlockNumber();
         }).then((block) => {
@@ -69,7 +69,7 @@ describe("VotingDapp", function () {
 
     let pollId;
 
-    it("Creating a proposal without holding SNT should fail", async () => {
+    it("Creating a proposal without holding DappToken should fail", async () => {
         try {
             const receipt = await PollManager.methods.addPoll(
                 blockNumber,
@@ -83,7 +83,7 @@ describe("VotingDapp", function () {
         }
     });
 
-    it("A SNT holder can create polls", async () => {
+    it("A DappToken holder can create polls", async () => {
         const blockNumber = (await web3.eth.getBlockNumber()) + 1;
 
         const receipt = await PollManager.methods.addPoll(
@@ -105,7 +105,7 @@ describe("VotingDapp", function () {
         assert.equal(canVote, true, "User should be able to vote");
     });
 
-    it("A SNT holder cannot vote if ballots total is greater than current balance", async () => {
+    it("A DappToken holder cannot vote if ballots total is greater than current balance", async () => {
         try {
             const receipt = await PollManager.methods.vote(pollId, [decimals(11), decimals(12), decimals(12)]).send({from: accounts[0]});
             assert.fail('should have reverted before');
@@ -139,7 +139,7 @@ describe("VotingDapp", function () {
 
     });
 
-    it("Voting when you're not a SNT holder SHOULD FAIL!", async () => {
+    it("Voting when you're not a DappToken holder SHOULD FAIL!", async () => {
         try {
             const receipt = await PollManager.methods.vote(pollId, [decimals(1), decimals(2), decimals(3)])
                             .send({from: accounts[8]});

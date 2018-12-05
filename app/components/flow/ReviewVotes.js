@@ -29,6 +29,7 @@ class ReviewVotes extends Component {
     }
 
     const ballots = votes.map(el => {
+      // TODO: use token decimals
       let num = toBN(el);
       num = num.mul(num);
       return toWei(num, "ether");
@@ -86,6 +87,7 @@ class ReviewVotes extends Component {
     if(!poll) return null;
     
     const ballots = poll.content.ballots
+    // TODO: use decimals
     const balance = fromWei(balances[idPoll].tokenBalance, "ether");
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
     
