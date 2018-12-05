@@ -44,8 +44,26 @@ class LandingPage extends Component {
         this.props.history.push('/otherPolls/' + type);
     }
 
-    createPoll = () => {
-        this.props.history.push('/poll/create');
+    createPoll = async () => {
+            if(!window.web3){
+              this.props.history.push("/wallet/poll-creation");
+              return;
+            }
+        
+            let cont = true;
+            if (window.ethereum) {
+              try {
+                  await ethereum.enable();
+                  web3.setProvider(ethereum);
+                  const accounts = await web3.eth.getAccounts();
+                  web3.eth.defaultAccount = accounts[0];
+              } catch (error) {
+                cont = false;
+              }
+            }
+
+            if(cont)
+                this.props.history.push('/poll/create');
     }
    
 

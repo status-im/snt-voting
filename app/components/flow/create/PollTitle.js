@@ -15,6 +15,10 @@ class PollTitle extends Component {
     }
 
     componentDidMount(){
+        if(!web3.eth.defaultAccount){
+            this.props.history.push('/');
+        }
+
         if(this.props.poll.title !== undefined){
             this.setState({title: this.props.poll.title});
         } else {

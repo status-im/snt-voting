@@ -41,6 +41,9 @@ class PollCreationCredits extends Component {
   };
 
 
+  redirectToConnect = () => {
+    this.props.history.push('/wallet/poll-creation');
+  }
 
   componentDidMount(){
     const {history} = this.props;
@@ -75,7 +78,7 @@ class PollCreationCredits extends Component {
 
     return <Fragment><div className="section">
         <Typography variant="headline">Create a Poll</Typography>
-      <Card className="card credits">
+      <Card className="card credits"  onClick={this.redirectToConnect}>
         <CardContent>
             <Typography component="div">
               <span className="title">Voting Credits</span>
@@ -94,12 +97,12 @@ class PollCreationCredits extends Component {
           </CardContent>
       </Card>
       { ethBalance == 0 && <Card className="card credits">
-        <CardContent>
+        <CardContent  onClick={this.redirectToConnect}>
             <Typography component="div">
               <span className="title">ETH</span>
               <span className="value">{ethBalance}</span>
             </Typography>
-            <div className="warning">
+            <div className="warning" >
               <Typography component="h2">
                 Not enough ETH in your wallet
               </Typography>

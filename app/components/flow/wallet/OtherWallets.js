@@ -4,7 +4,7 @@ import React, {Component, Fragment} from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import HelpDialog from './HelpDialog';
+import HelpDialog from '../HelpDialog';
 
 // TODO: extract to utils
 Date.prototype.DDMMYYYYatHHMM = function () {
@@ -48,23 +48,27 @@ class OtherWallets extends Component {
 
   render() {
     const props = this.props;
+    
+    let poll = null;
 
     let d = new Date();
     if(!props.noWeb3Provider){
       if(!props.polls){
         return null;
       }
+      
 
-      
-      const poll = props.polls.find(p => p.idPoll == props.idPoll);
-      if(!poll) return null;
-      
-      d = new Date(poll.blockInfo.timestamp * 1000);
+      if(props.idPoll != "poll-creation"){
+        poll = props.polls.find(p => p.idPoll == props.idPoll);
+        if(!poll) return null;
+        d = new Date(poll.blockInfo.timestamp * 1000);
+      }
+
     }
     
     return <Fragment><div className="section">
     <Typography variant="headline">Connect with a wallet with {this.props.symbol} in it.</Typography>
-    { !props.noWeb3Provider && 
+    { !props.noWeb3Provider && poll && 
       <Typography variant="body1" className="pollTime">Poll creation date: <b>{d.DDMMYYYYatHHMM()}</b></Typography>
     }
     <Typography variant="body1">Using your desktop computer</Typography>

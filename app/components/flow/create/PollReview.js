@@ -54,8 +54,8 @@ class PollReview extends Component {
         const ipfsHash = await EmbarkJS.Storage.saveText(pollObjString);
         const encodedDesc = web3.utils.toHex(ipfsHash);
         const toSend = addPollOnlyEndTime(endTime, encodedDesc, pollObj.ballots.length || 0);
-        const gasEstimated = await toSend.estimateGas();
-        const transaction = toSend.send({gas: gasEstimated + 100000});
+        const gasEstimated = await toSend.estimateGas({from: web3.eth.defaultAccount});
+        const transaction = toSend.send({gas: gasEstimated + 100000, from: web3.eth.defaultAccount});
 
         transaction.on('transactionHash', hash => {
             this.props.setPollTransactionHash(hash);

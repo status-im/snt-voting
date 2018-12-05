@@ -9,7 +9,7 @@ import { VotingContext } from './context';
 import Web3Render from './components/standard/Web3Render';
 import { getPolls, omitPolls } from './utils/polls';
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
-import OtherWallets from './components/flow/OtherWallets';
+import OtherWallets from './components/flow/wallet/OtherWallets';
 import Typography from '@material-ui/core/Typography'
 
 import './dapp.css';
