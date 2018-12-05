@@ -6,7 +6,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { withRouter } from 'react-router-dom'
 import HelpDialog from '../HelpDialog';
-import SNT from  'Embark/contracts/SNT';
+import DappToken from  'Embark/contracts/DappToken';
 
 Date.prototype.DDMMYYYY = function () {
   var yyyy = this.getFullYear().toString();
@@ -52,12 +52,12 @@ class PollCreationCredits extends Component {
     }
 
     EmbarkJS.onReady(async () => {
-      const tokenBalance = await SNT.methods.balanceOf(web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});
+      const tokenBalance = await DappToken.methods.balanceOf(web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});
       const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
 
       this.setState({tokenBalance, ethBalance});
 
-      if(web3.utils.fromWei(ethBalance.toString(), "ether") > 0 ||
+      if(web3.utils.fromWei(ethBalance.toString(), "ether") > 0 &&
         Math.floor(web3.utils.fromWei(tokenBalance.toString(), "ether")) >= 1
       ){
         history.push('/poll/title');

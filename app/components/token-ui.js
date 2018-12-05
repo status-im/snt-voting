@@ -1,16 +1,16 @@
 import EmbarkJS from 'Embark/EmbarkJS';
-import SNT from 'Embark/contracts/SNT';
+import DappToken from 'Embark/contracts/DappToken';
 import React from 'react';
 import { Form, FormGroup, FormControl, HelpBlock, Button } from 'react-bootstrap';
 import web3 from "Embark/web3"
 
-class SNTUI extends React.Component {
+class TokenUI extends React.Component {
 
     constructor(props) {
       super(props);
       this.state = {
         address: "",
-        amountToMint: 100,
+        amountToMint: "100000000000000000000",
         accountBalance: 0,
         accountB: web3.eth.defaultAccount,
         balanceOf: 0,
@@ -34,27 +34,27 @@ class SNTUI extends React.Component {
       var value = parseInt(this.state.amountToMint, 10);
       var address = this.state.address;
 
-      SNT.methods.controller().call()
+      DappToken.methods.controller().call()
         .then((controller) => {
-          return SNT.methods.generateTokens(address, value.toString())
+          return DappToken.methods.generateTokens(address, value.toString())
             .send({from: controller, gasLimit: 1000000});
          })
         .then(console.log);
    
-      this._addToLog(SNT.options.address +".mint("+value+").send({from: " + web3.eth.defaultAccount + "})");
+      this._addToLog(DappToken.options.address +".mint("+value+").send({from: " + web3.eth.defaultAccount + "})");
     }
   
     getBalance(e){
       e.preventDefault();
       
       if (EmbarkJS.isNewWeb3()) {
-        SNT.methods.balanceOf(web3.eth.defaultAccount).call()
+        DappToken.methods.balanceOf(web3.eth.defaultAccount).call()
           .then(_value => this.setState({accountBalance: _value}))
       } else {
-        SNT.balanceOf(web3.eth.defaultAccount)
+        DappToken.balanceOf(web3.eth.defaultAccount)
           .then(_value => this.x({valueGet: _value}))
       }
-      this._addToLog(SNT.options.address + ".balanceOf(" + web3.eth.defaultAccount + ")");
+      this._addToLog(DappToken.options.address + ".balanceOf(" + web3.eth.defaultAccount + ")");
     }
   
     _addToLog(txt){
@@ -64,7 +64,7 @@ class SNTUI extends React.Component {
   
     render(){
       return (<React.Fragment>
-          <h3> 1. Mint SNT Token</h3>
+          <h3> 1. Mint your token</h3>
           <Form inline>
             <FormGroup>
               <FormControl
@@ -101,4 +101,4 @@ class SNTUI extends React.Component {
     }
   }
 
-  export default SNTUI;
+  export default TokenUI;

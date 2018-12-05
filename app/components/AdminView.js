@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
-import SNTUI from './snt-ui';
+import TokenUI from './token-ui';
 
 export default ({ setAccount }) => {
   return (
     <div class="container">
-      <SNTUI />
+      <TokenUI />
     </div>
   )
 }

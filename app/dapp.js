@@ -4,7 +4,7 @@ import web3 from "Embark/web3"
 import EmbarkJS from 'Embark/EmbarkJS';
 import PollManager from 'Embark/contracts/PollManager';
 import Voting from './components/Voting';
-import SNT from  'Embark/contracts/SNT';
+import DappToken from  'Embark/contracts/DappToken';
 import { VotingContext } from './context';
 import Web3Render from './components/standard/Web3Render';
 import { getPolls, omitPolls } from './utils/polls';
@@ -45,12 +45,6 @@ class App extends React.Component {
         }
 
         this._getPolls();
-       /* this._setAccounts();
-
-        SNT.methods.symbol().call().then((symbol) => {
-          this.setState({symbol});
-        })*/
-
       }
       web3.eth.net.getId((err, netId) => {
         if(EmbarkJS.environment == 'testnet' && netId !== TESTNET){
@@ -101,14 +95,6 @@ class App extends React.Component {
         });
     else 
       this.setState({ rawPolls: [], loading: false });
-  }
-
-  _setAccounts() {
-    const { fromWei } = web3.utils;
-    web3.eth.getAccounts(async (err, [address]) => {
-      const balance = await SNT.methods.balanceOf(address).call();
-      this.setState({ snt: { balance: fromWei(balance) }});
-    })
   }
 
   updatePoll = async (idPoll) => {

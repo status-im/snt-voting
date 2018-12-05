@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom'
-import SNT from  'Embark/contracts/SNT';
+import DappToken from  'Embark/contracts/DappToken';
 import PollManager from  'Embark/contracts/PollManager';
 
 class ExternalWallet extends Component {
@@ -39,7 +39,7 @@ class ExternalWallet extends Component {
             // TODO: extract this code to utils. It's repeated in ConnectYourWallt, ExternalWallet and HowVotingWorks
             const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});  
             const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));            
-            const tokenBalance = await SNT.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call({from: web3.eth.defaultAccount});
+            const tokenBalance = await DappToken.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call({from: web3.eth.defaultAccount});
             const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
             updateBalances(idPoll, tokenBalance, ethBalance, votes);
             

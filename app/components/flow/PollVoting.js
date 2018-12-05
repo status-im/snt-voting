@@ -130,17 +130,17 @@ class PollVoting extends Component {
     const maxVotes = Math.floor(Math.sqrt(balance));
 
     const maxValuesForBallots = [];
-    let votedSNT = 0;
+    let votedTokens = 0;
     for(let i = 0; i < poll._numBallots; i++){
       if(votes[i] == undefined){
         votes[i] = 0;
       } else {
-        votedSNT += votes[i]*votes[i];
+        votedTokens += votes[i]*votes[i];
       }
     }
     
     for(let i = 0; i < poll._numBallots; i++){
-      maxValuesForBallots[i]  = Math.floor(Math.sqrt(balance - votedSNT + votes[i]*votes[i]));
+      maxValuesForBallots[i]  = Math.floor(Math.sqrt(balance - votedTokens + votes[i]*votes[i]));
     }
 
     return <Fragment>

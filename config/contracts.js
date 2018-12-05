@@ -40,7 +40,7 @@ module.exports = {
       "MiniMeTokenFactory": {
 
       },
-      "SNT": {
+      "DappToken": {
         "instanceOf": "MiniMeToken",
         "args": [
           "$MiniMeTokenFactory",
@@ -53,7 +53,7 @@ module.exports = {
         ]
       },
       "PollManager": {
-        "args": ["$SNT"]
+        "args": ["$DappToken"]
       },
       "RLPHelper": {
         "deploy": false
@@ -97,7 +97,7 @@ module.exports = {
       "MiniMeTokenFactory": {
         address: "0x6bfa86a71a7dbc68566d5c741f416e3009804279"
       },
-      "SNT": {
+      "DappToken": {
         instanceOf: "MiniMeToken",
         address: "0xc55cf4b03948d7ebc8b9e8bad92643703811d162"
       },
@@ -124,7 +124,7 @@ module.exports = {
       "MiniMeTokenFactory": {
         address: "0x6bfa86a71a7dbc68566d5c741f416e3009804279"
       },
-      "SNT": {
+      "DappToken": {
         instanceOf: "MiniMeToken",
         args: [
           "$MiniMeTokenFactory",
@@ -139,7 +139,7 @@ module.exports = {
         from: "0x00000...."
       },
       "PollManager": {
-        args: ["$SNT"],
+        args: ["$DappToken"],
         gasPrice: 5000000000,
         from: "0x00000...."
       }
@@ -152,7 +152,7 @@ module.exports = {
       "MiniMeTokenFactory": {
         "address": "0xa1c957C0210397D2d0296341627B74411756d476"
       },
-      "SNT": {
+      "DappToken": {
         "instanceOf": "MiniMeToken",
         "address": "0x744d70fdbe2ba4cf95131626614a1763df805b9e"
       },
@@ -170,7 +170,7 @@ module.exports = {
       "MiniMeTokenFactory": {
         "address": "0xa1c957C0210397D2d0296341627B74411756d476"
       },
-      "SNT": {
+      "DappToken": {
         "instanceOf": "MiniMeToken",
         "address": "0x744d70fdbe2ba4cf95131626614a1763df805b9e"
       },
@@ -198,7 +198,7 @@ module.exports = {
       "MiniMeTokenFactory": {
         "address": "0xa1c957C0210397D2d0296341627B74411756d476"
       },
-      "SNT": {
+      "DappToken": {
         "address": "0x05fD4a5c96c54a17D845D62C6cB00E39D39BeaF4"
       },
       "PollManager": {

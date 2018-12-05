@@ -35,9 +35,9 @@ contract PollManager is Controlled {
         rlpHelper = new RLPHelper();
     }
 
-    /// @notice Only allow addresses that have > 0 SNT to perform an operation
-    modifier onlySNTHolder {
-        require(token.balanceOf(msg.sender) > 0, "SNT Balance is required to perform this operation"); 
+    /// @notice Only allow addresses that have > 0 Tokens to perform an operation
+    modifier onlyTokenHolder {
+        require(token.balanceOf(msg.sender) > 0, "Token balance is required to perform this operation"); 
         _; 
     }
 
@@ -50,7 +50,7 @@ contract PollManager is Controlled {
         bytes _description,
         uint8 _numBallots)
         public
-        onlySNTHolder
+        onlyTokenHolder
         returns (uint _idPoll)
     {
         _idPoll = addPoll(block.number, _endTime, _description, _numBallots);
@@ -67,7 +67,7 @@ contract PollManager is Controlled {
         bytes _description,
         uint8 _numBallots)
         public
-        onlySNTHolder
+        onlyTokenHolder
         returns (uint _idPoll)
     {
         require(_endTime > block.timestamp, "End time must be greater than current timestamp");
@@ -174,7 +174,7 @@ contract PollManager is Controlled {
         unvote(_idPoll);
 
         uint amount = token.balanceOfAt(msg.sender, p.startBlock);
-        require(amount != 0, "No SNT balance available at start block of poll");
+        require(amount != 0, "No Token balance available at start block of poll");
 
         p.voters++;
 
@@ -191,7 +191,7 @@ contract PollManager is Controlled {
             }
         }
 
-        require(totalBallots <= amount, "Total ballots must be less than the SNT balance at poll start block");
+        require(totalBallots <= amount, "Total ballots must be less than the Token balance at poll start block");
 
         emit Vote(_idPoll, msg.sender, _ballots);
     }

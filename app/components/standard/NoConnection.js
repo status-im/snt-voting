@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography'
-import SNT from  'Embark/contracts/SNT';
 import { withRouter } from 'react-router-dom';
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
 
