@@ -57,7 +57,7 @@ class Voting extends PureComponent {
     const stHash = this.state.transactionHash;
     stHash[idPoll] = transactionHash;
     
-    this.setState({transactionHash: stHash[idPoll]});
+    this.setState({transactionHash: stHash});
   }
 
   setTransactionPromise = (idPoll, transaction) => {
