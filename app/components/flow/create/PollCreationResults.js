@@ -120,7 +120,7 @@ class PollCreationResults extends Component {
         </div>
         }
         { !isPending && pollTransaction && <div className="confirmed">
-        <img src="../images/confirmed.svg" width="40" />
+        <img src="images/confirmed.svg" width="40" />
         <Typography variant="headline">The poll was created and it’s now live!</Typography>
       </div>}
         { pollTransactionHash && etherscanURL && <Typography variant="body1"><a target="_blank" href={ etherscanURL + pollTransactionHash}>View details on Etherscan</a></Typography> }

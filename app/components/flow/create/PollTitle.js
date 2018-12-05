@@ -17,6 +17,8 @@ class PollTitle extends Component {
     componentDidMount(){
         if(this.props.poll.title !== undefined){
             this.setState({title: this.props.poll.title});
+        } else {
+            this.props.assignToPoll({title: ''});
         }
     }
 

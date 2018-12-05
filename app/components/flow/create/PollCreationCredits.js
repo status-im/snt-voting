@@ -28,8 +28,8 @@ class PollCreationCredits extends Component {
 
   state = {
     open: false,
-    tokenBalance: '0',
-    ethBalance: '0'
+    tokenBalance: '-',
+    ethBalance: '1'
   };
 
   handleClickOpen = () => {
@@ -69,7 +69,7 @@ class PollCreationCredits extends Component {
 
   render(){
     let ethBalance = web3.utils.fromWei(this.state.ethBalance, "ether");
-    let tokenBalance = Math.floor(web3.utils.fromWei(this.state.tokenBalance, "ether"));
+    let tokenBalance = this.state.tokenBalance != "-" ? Math.floor(web3.utils.fromWei(this.state.tokenBalance, "ether")) : "-";
 
     return <Fragment><div className="section">
         <Typography variant="headline">Create a Poll</Typography>
