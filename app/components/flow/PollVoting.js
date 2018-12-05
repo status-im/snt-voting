@@ -117,7 +117,7 @@ class PollVoting extends Component {
     
     const title = poll.content.title;
     const ballots = poll.content.ballots
-    
+    // TODO: use decimals
     const balance = fromWei(balances[idPoll].tokenBalance, "ether");
     const cantVote = balance == 0 || !poll._canVote;
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);

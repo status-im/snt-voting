@@ -91,6 +91,7 @@ class OtherPolls extends Component {
                         p._tokenSum = 0;
                         p._votesSum = 0;
                         for(let i = 0; i < p._numBallots; i++){
+                            // TODO: use decimals
                             p._tokenSum += parseInt(web3.utils.fromWei(p._tokenTotal[i], "ether"), 10);
                             p._votesSum += parseInt(p._quadraticVotes[i], 10);
                         }

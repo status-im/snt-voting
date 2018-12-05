@@ -85,6 +85,7 @@ class LandingPage extends Component {
             openPoll._tokenSum = 0;
             openPoll._votesSum = 0;
             for(let i = 0; i < openPoll._numBallots; i++){
+                // TODO: use decimals
                 openPoll._tokenSum += parseInt(web3.utils.fromWei(openPoll._tokenTotal[i], "ether"), 10);
                 openPoll._votesSum += parseInt(web3.utils.fromWei(openPoll._quadraticVotes[i], "ether"), 10);
             }
@@ -94,6 +95,7 @@ class LandingPage extends Component {
             closedPoll._tokenSum = 0;
             closedPoll._votesSum = 0;
             for(let i = 0; i < closedPoll._numBallots; i++){
+                // TODO: use decimals
                 closedPoll._tokenSum += parseInt(web3.utils.fromWei(closedPoll._tokenTotal[i], "ether"), 10);
                 closedPoll._votesSum += parseInt(closedPoll._quadraticVotes[i], 10);
             }

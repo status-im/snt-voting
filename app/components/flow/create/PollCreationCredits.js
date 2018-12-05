@@ -58,6 +58,7 @@ class PollCreationCredits extends Component {
       this.setState({tokenBalance, ethBalance});
 
       if(web3.utils.fromWei(ethBalance.toString(), "ether") > 0 &&
+      // TODO: use decimals
         Math.floor(web3.utils.fromWei(tokenBalance.toString(), "ether")) >= 1
       ){
         history.push('/poll/title');
@@ -69,6 +70,7 @@ class PollCreationCredits extends Component {
 
   render(){
     let ethBalance = web3.utils.fromWei(this.state.ethBalance, "ether");
+    // TODO: use decimals
     let tokenBalance = this.state.tokenBalance != "-" ? Math.floor(web3.utils.fromWei(this.state.tokenBalance, "ether")) : "-";
 
     return <Fragment><div className="section">

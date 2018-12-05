@@ -173,7 +173,7 @@ class BallotResult extends Component {
     </ul>}
     </Fragment>);
   }
-
+// TODO: use decimals
 }
 
 export default Results;

@@ -70,6 +70,7 @@ class VotingCredits extends Component {
     let title = poll.content.title;
     let description = poll.content.description;
     let ethBalance = web3.utils.fromWei(balances[idPoll].ethBalance, "ether");
+    // TODO: use decimals
     let tokenBalance = Math.floor(web3.utils.fromWei(balances[idPoll].tokenBalance, "ether"));
   
 

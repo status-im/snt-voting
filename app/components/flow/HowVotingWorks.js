@@ -66,6 +66,7 @@ class HowVotingWorks extends Component {
       const poll = polls.find(p => p.idPoll == idPoll);
       if(!poll) return null;
       
+      // TODO: use decimals
       const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});  
       const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));            
       const tokenBalance = await DappToken.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call({from: web3.eth.defaultAccount});

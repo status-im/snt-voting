@@ -7,7 +7,7 @@ var rlp = require('rlp');
 const PollManager = embark.require('Embark/contracts/PollManager');
 const DappToken = embark.require('Embark/contracts/DappToken');
 
-
+// TODO: use tokens decimals
 const decimals = (amount) => web3.utils.toWei(amount.toString(), "ether");
 
 config({

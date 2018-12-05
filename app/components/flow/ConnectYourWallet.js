@@ -28,6 +28,8 @@ class ConnectYourWallet extends Component {
 
     if(cont){
       const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});  
+      
+      // TODO: use decimals
       const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));
 
       if(web3.currentProvider.isStatus){
