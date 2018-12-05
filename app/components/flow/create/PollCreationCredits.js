@@ -82,10 +82,10 @@ class PollCreationCredits extends Component {
             { tokenBalance == 0 &&
               <div className="warning">
                 <Typography component="h2">
-                  No SNT in your wallet
+                  No {this.props.symbol} in your wallet
                 </Typography>
                 <Typography component="p">
-                To create a poll, you need to connect with a wallet that holds SNT tokens.
+                To create a poll, you need to connect with a wallet that holds {this.props.symbol} tokens.
                 </Typography>
               </div>
             }

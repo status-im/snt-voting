@@ -33,7 +33,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
   }
-  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, symbol: "SNT", networkName: "" , rawPolls: [], pollsRequested: [],    start: 0,
+  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, name: '----', symbol: "---", decimals: "18", networkName: "" , rawPolls: [], pollsRequested: [],    start: 0,
   end: pollsPerLoad};
 
   componentDidMount(){
@@ -43,6 +43,19 @@ class App extends React.Component {
         if(!web3.eth.defaultAccount){
           web3.eth.defaultAccount = "0x0000000000000000000000000000000000000000";
         }
+
+        DappToken.methods.symbol().call().then(symbol => {
+          this.setState({symbol});
+        });
+
+        DappToken.methods.decimals().call().then(decimals => {
+          this.setState({decimals});
+        });
+
+        DappToken.methods.name().call().then(name => {
+          this.setState({name});
+        })
+
 
         this._getPolls();
       }
@@ -199,7 +212,7 @@ class App extends React.Component {
 
 
   render(){
-    let { web3Provider, networkName, } = this.state;
+    let { web3Provider, networkName, decimals, symbol, name} = this.state;
     const { _getPolls, updatePoll, setPollOrder, appendToPoll, replacePoll, loadPollContent, resetPollCounter, loadPollRange, loadMorePolls } = this;
     const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll,  setPollOrder, resetPollCounter, replacePoll, loadPollContent, loadPollRange, loadMorePolls, ...this.state };
 

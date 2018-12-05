@@ -42,11 +42,11 @@ class ConnectYourWallet extends Component {
   }
 
   render(){
-    const {idPoll} = this.props;
+    const {idPoll, symbol} = this.props;
 
     return <div className="section center">
     <Typography variant="headline">Connect your wallet</Typography>
-    <Typography variant="body1">To start voting, connect to a wallet where you hold your SNT assets.</Typography>
+    <Typography variant="body1">To start voting, connect to a wallet where you hold your {symbol} assets.</Typography>
     <div className="action">
       <Button color="primary" onClick={this.connectWallet} variant="contained">CONNECT USING STATUS</Button>
     </div>

@@ -110,7 +110,7 @@ class PollVoting extends Component {
       return null;
     }
 
-    const symbol = "SNT"; // TODO:
+    const symbol = this.props.symbol;
 
     const poll = polls.find(p => p.idPoll == idPoll);
     if(!poll) return null;

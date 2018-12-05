@@ -132,7 +132,7 @@ class Results extends Component {
     <div className="section">
       { !isError && <Fragment>
         <Typography variant="headline" gutterBottom>{title}</Typography>
-        { ballots.map((item, i) => <BallotResult title={item.title} totalVotes={totalVotes} quadraticVotes={poll._quadraticVotes[i]} tokenTotal={poll._tokenTotal[i]} totalVoters={poll._votersByBallot[i]} key={i} />) }
+        { ballots.map((item, i) => <BallotResult title={item.title} symbol={this.props.symbol} totalVotes={totalVotes} quadraticVotes={poll._quadraticVotes[i]} tokenTotal={poll._tokenTotal[i]} totalVoters={poll._votersByBallot[i]} key={i} />) }
         </Fragment>
       }
     </div>
@@ -169,7 +169,7 @@ class BallotResult extends Component {
     {show && <ul className="ballotResultData">
       <Typography component="li">Voters: <span>{totalVoters}</span></Typography>
       <Typography component="li">Total votes: <span>{quadraticVotes}</span></Typography>
-      <Typography component="li" className="noBorder">Total SNT: <span>{web3.utils.fromWei(tokenTotal, "ether")}</span></Typography>
+      <Typography component="li" className="noBorder">Total {this.props.symbol}: <span>{web3.utils.fromWei(tokenTotal, "ether")}</span></Typography>
     </ul>}
     </Fragment>);
   }

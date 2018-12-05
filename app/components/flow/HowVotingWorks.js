@@ -82,8 +82,8 @@ class HowVotingWorks extends Component {
   <Typography variant="headline">How voting works</Typography>
   <InfoDialog
   text={<Fragment>
-    <p>When a vote is created, the Voting Dapp uses smart contracts to take a snapshot of all the wallets addresses which hold SNT and their SNT balances. These SNT balances are used to inform the number of voting credits a wallet address has. No SNT needs to be staked or committed, all that is required is to connect to the voting app with a wallet that had SNT in it before the "snapshot" was taken.</p>
-    <p>Voting credits are a representation of the SNT in the wallet address at the time the vote was created. When voting, the first ballot which is voted on will cost 1 voting credit. The second vote will cost an additional 3 voting credits to total 4 voting credits. Every additional vote will require its square in voting credits.</p>
+    <p>When a vote is created, the Voting Dapp uses smart contracts to take a snapshot of all the wallets addresses which hold {this.props.symbol} and their {this.props.symbol} balances. These {this.props.symbol} balances are used to inform the number of voting credits a wallet address has. No {this.props.symbol} needs to be staked or committed, all that is required is to connect to the voting app with a wallet that had {this.props.symbol} in it before the "snapshot" was taken.</p>
+    <p>Voting credits are a representation of the {this.props.symbol} in the wallet address at the time the vote was created. When voting, the first ballot which is voted on will cost 1 voting credit. The second vote will cost an additional 3 voting credits to total 4 voting credits. Every additional vote will require its square in voting credits.</p>
     <p>This voting process is called quadratic voting. It minimizes the effect that large token holders can have on the vote, measures the intensity of opinion and encourages a spread of voting amongst the ballots.</p></Fragment>}
   open={this.state.open}
   onClose={this.handleClose}
@@ -95,10 +95,10 @@ class HowVotingWorks extends Component {
       </div>
       <div className="right">
         <Typography gutterBottom component="h2" onClick={this.handleClickOpen}>
-          Any wallet with SNT can vote
+          Any wallet with {this.props.symbol} can vote
         </Typography>
         <Typography component="p" onClick={this.handleClickOpen}>
-          When a poll is created a snapshot is taken of every wallet that holds Status Network Tokens (SNT).
+          When a poll is created a snapshot is taken of every wallet that holds {this.props.name} ({this.props.symbol}).
         </Typography>
       </div>
     </CardContent>
@@ -110,10 +110,10 @@ class HowVotingWorks extends Component {
       </div>
       <div className="right">
         <Typography gutterBottom component="h2" onClick={this.handleClickOpen}>
-          You don't spend your SNT!
+          You don't spend your {this.props.symbol}!
         </Typography>
         <Typography component="p" onClick={this.handleClickOpen}>
-          Your wallet gets one voting credit for every SNT it holds. To cast your vote, you sign a transaction, but you only spend a small amount of ETH for the transaction fee.
+          Your wallet gets one voting credit for every {this.props.symbol} it holds. To cast your vote, you sign a transaction, but you only spend a small amount of ETH for the transaction fee.
         </Typography>
       </div>
     </CardContent>

@@ -90,33 +90,33 @@ class Voting extends PureComponent {
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <VotingContext.Consumer>
-        {({ getPolls, rawPolls, loading, symbol, replacePoll, loadPollContent, loadPollRange, loadMorePolls, start, resetPollCounter,  end }) =>
+        {({ getPolls, rawPolls, loading, symbol, decimals, name, replacePoll, loadPollContent, loadPollRange, loadMorePolls, start, resetPollCounter,  end }) =>
           <div>
             <CssBaseline />
             {loading && <LinearProgress />}
             <div id="votingDapp">
               <Switch>
-                <Route exact path="/" render={props => <LandingPage polls={rawPolls} replacePoll={replacePoll} resetPollCounter={resetPollCounter}  />} />
-                <Route path="/titleScreen/:id" render={props => <TitleScreen polls={rawPolls} idPoll={props.match.params.id} loadPollContent={loadPollContent} />} />
-                <Route path="/otherPolls/:pollType?" render={props => <OtherPolls polls={rawPolls} pollType={props.match.params.pollType} loadPollContent={loadPollContent} loadMorePolls={loadMorePolls} start={start} end={end} addHandlerKey={true} loadPollRange={loadPollRange} />} />
-                <Route path="/learn/:id" render={props => <LearnAboutBallots polls={rawPolls} idPoll={props.match.params.id} loadPollContent={loadPollContent} />} />
-                <Route path="/votingHelp/:id" render={props => <HowVotingWorks idPoll={props.match.params.id} polls={rawPolls} updateBalances={this.updatePollBalance} loadPollContent={loadPollContent}  />} />
-                <Route path="/votingCredits/:id" render={props => <VotingCredits polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} loadPollContent={loadPollContent} />} />
-                <Route path="/wallet/:id" render={props => <ConnectYourWallet polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} />} />
-                <Route path="/otherWallets/:id" render={props => <OtherWallets idPoll={props.match.params.id} polls={rawPolls} />}  />
-                <Route path="/results/:id" render={props => <Results polls={rawPolls} idPoll={props.match.params.id} transaction={transaction} transactionHash={transactionHash}  loadPollContent={loadPollContent} />} />
-                <Route path="/externalWallet/:id" render={props => <ExternalWallet  polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} />} />
-                <Route path="/voting/:id/:back?" render={props => <PollVoting polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} originalVotes={votes} back={!!props.match.params.back} setVotesToReview={this.setVotesToReview} />} />
-                <Route path="/review/:id" render={props => <ReviewVotes polls={rawPolls} idPoll={props.match.params.id} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} setTransactionHash={this.setTransactionHash} />} />
-                <Route path="/admin" render={() => <AdminView />} />
+                <Route exact path="/" render={props => <LandingPage polls={rawPolls} replacePoll={replacePoll} resetPollCounter={resetPollCounter} symbol={symbol} decimals={decimals}  />} />
+                <Route path="/titleScreen/:id" render={props => <TitleScreen polls={rawPolls} idPoll={props.match.params.id} loadPollContent={loadPollContent} symbol={symbol} decimals={decimals} />} />
+                <Route path="/otherPolls/:pollType?" render={props => <OtherPolls polls={rawPolls} pollType={props.match.params.pollType} loadPollContent={loadPollContent} loadMorePolls={loadMorePolls} start={start} end={end} addHandlerKey={true} loadPollRange={loadPollRange} symbol={symbol} decimals={decimals} />} />
+                <Route path="/learn/:id" render={props => <LearnAboutBallots polls={rawPolls} idPoll={props.match.params.id} loadPollContent={loadPollContent} symbol={symbol} decimals={decimals} />} />
+                <Route path="/votingHelp/:id" render={props => <HowVotingWorks idPoll={props.match.params.id} polls={rawPolls} updateBalances={this.updatePollBalance} loadPollContent={loadPollContent} symbol={symbol} decimals={decimals} name={name}  />} />
+                <Route path="/votingCredits/:id" render={props => <VotingCredits polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} loadPollContent={loadPollContent} symbol={symbol} decimals={decimals} />} />
+                <Route path="/wallet/:id" render={props => <ConnectYourWallet polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} symbol={symbol} decimals={decimals} />} />
+                <Route path="/otherWallets/:id" render={props => <OtherWallets idPoll={props.match.params.id} polls={rawPolls} symbol={symbol} decimals={decimals} />}  />
+                <Route path="/results/:id" render={props => <Results polls={rawPolls} idPoll={props.match.params.id} transaction={transaction} transactionHash={transactionHash}  loadPollContent={loadPollContent} symbol={symbol} decimals={decimals} />} />
+                <Route path="/externalWallet/:id" render={props => <ExternalWallet  polls={rawPolls} idPoll={props.match.params.id} updateBalances={this.updatePollBalance} symbol={symbol} decimals={decimals} />} />
+                <Route path="/voting/:id/:back?" render={props => <PollVoting polls={rawPolls} idPoll={props.match.params.id} balances={pollTokenBalances} originalVotes={votes} back={!!props.match.params.back} setVotesToReview={this.setVotesToReview} symbol={symbol} decimals={decimals} />} />
+                <Route path="/review/:id" render={props => <ReviewVotes polls={rawPolls} idPoll={props.match.params.id} votes={votes} balances={pollTokenBalances} setTransactionPromise={this.setTransactionPromise} setTransactionHash={this.setTransactionHash} symbol={symbol} decimals={decimals} />} />
+                <Route path="/admin" render={() => <AdminView symbol={symbol} decimals={decimals} />} />
 
-                <Route path="/poll/create" render={() => <PollCreationCredits poll={this.state.pollCr} resetPoll={this.resetPoll} />} />
-                <Route path="/poll/title" render={() => <PollTitle assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
-                <Route path="/poll/description" render={() => <PollDescription assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
-                <Route path="/poll/options" render={() => <PollOptions assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
-                <Route path="/poll/schedule" render={() => <PollSchedule assignToPoll={this.assignToPoll} poll={this.state.pollCr} />} />
-                <Route path="/poll/review" render={() => <PollReview poll={this.state.pollCr} setPollTransactionHash={this.setPollTransactionHash} setPollTransactionPromise={this.setPollTransactionPromise} />} />
-                <Route path="/poll/results" render={() => <PollCreationResults loadPollContent={loadPollContent} getPolls={getPolls} resetPoll={this.resetPoll} poll={this.state.pollCr} pollTransactionHash={this.state.pollTransactionHash} pollTransaction={this.state.pollTransaction} />} />
+                <Route path="/poll/create" render={() => <PollCreationCredits poll={this.state.pollCr} resetPoll={this.resetPoll} symbol={symbol} decimals={decimals} />} />
+                <Route path="/poll/title" render={() => <PollTitle assignToPoll={this.assignToPoll} poll={this.state.pollCr} symbol={symbol} decimals={decimals} />} />
+                <Route path="/poll/description" render={() => <PollDescription assignToPoll={this.assignToPoll} poll={this.state.pollCr} symbol={symbol} decimals={decimals} />} />
+                <Route path="/poll/options" render={() => <PollOptions assignToPoll={this.assignToPoll} poll={this.state.pollCr} symbol={symbol} decimals={decimals} />} />
+                <Route path="/poll/schedule" render={() => <PollSchedule assignToPoll={this.assignToPoll} poll={this.state.pollCr} symbol={symbol} decimals={decimals} />} />
+                <Route path="/poll/review" render={() => <PollReview poll={this.state.pollCr} setPollTransactionHash={this.setPollTransactionHash} setPollTransactionPromise={this.setPollTransactionPromise} symbol={symbol} decimals={decimals} />} />
+                <Route path="/poll/results" render={() => <PollCreationResults loadPollContent={loadPollContent} getPolls={getPolls} resetPoll={this.resetPoll} poll={this.state.pollCr} pollTransactionHash={this.state.pollTransactionHash} pollTransaction={this.state.pollTransaction} symbol={symbol} decimals={decimals} />} />
               </Switch>
             </div>
           </div>

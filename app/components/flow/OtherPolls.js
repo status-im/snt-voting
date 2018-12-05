@@ -103,7 +103,7 @@ class OtherPolls extends Component {
                                 <p className="stats">
                                 Voters: {p._voters}<br />
                                 Total votes: {p._votesSum}<br />
-                                Total SNT: {p._tokenSum}</p>
+                                Total {this.props.symbol}: {p._tokenSum}</p>
                                 { pollType == 'open' && <Link to={"/titleScreen/" + p.idPoll} className="arrowRightLink">VOTE NOW</Link> }
                                 { pollType != 'open' && <Link to={"/results/" + p.idPoll} className="arrowRightLink">See results</Link> }
 

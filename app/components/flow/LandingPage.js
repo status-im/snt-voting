@@ -104,7 +104,7 @@ class LandingPage extends Component {
             <div className="section" style={{marginBottom: 0}}>
                 <img src="images/status-logo.svg" width="36" />
                 <Button className="createPollBtn" onClick={this.createPoll}><img src="images/create-poll.svg" width="23" /></Button>
-                <Typography variant="headline">Status SNT Voting</Typography>
+                <Typography variant="headline">Status {this.props.symbol} Voting</Typography>
                 <Typography variant="body1" component="div">Create a poll or vote in one. Your vote helps us decide our product and community direction.</Typography>
             </div>
 
@@ -118,7 +118,7 @@ class LandingPage extends Component {
                         <p className="stats">
                         Voters: {openPoll._voters}<br />
                         Total votes: {openPoll._votesSum}<br />
-                        Total SNT: {openPoll._tokenSum}<br />
+                        Total {this.props.symbol}: {openPoll._tokenSum}<br />
                         </p>
                         <Link to={"/titleScreen/" + openPoll.idPoll} className="arrowRightLink">VOTE NOW</Link>
                     </CardContent>
@@ -139,7 +139,7 @@ class LandingPage extends Component {
                         <p className="stats">
                         Voters: {closedPoll._voters}<br />
                         Total votes: {closedPoll._votesSum}<br />
-                        Total SNT: {closedPoll._tokenSum}<br />
+                        Total {this.props.symbol}: {closedPoll._tokenSum}<br />
                         </p>
                         <Link to={"/results/" + closedPoll.idPoll} className="arrowRightLink">See results</Link>
                     </CardContent>
