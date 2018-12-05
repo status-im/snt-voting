@@ -1,6 +1,35 @@
 * {
-    font-family: 'Inter UI' !important;
+    font-family: 'Inter UI';
 }
+
+
+  /* fallback */
+  @font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+  }
+  
+  .material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+      background: #ffffff !important;
+  }
 
 #votingDapp p a,
 #votingDapp p a:visited {
@@ -674,3 +703,122 @@ button[disabled]{
     display: block;
     text-align: center;
   }
+
+
+  .pollCreation small {
+    float: right;
+    color: #939BA1;
+    font-size: .7rem;
+  }
+
+  .pollCreation .errorText {
+    margin: 0;
+    display: inline;
+    color: #f00;
+  }
+
+  .pollCreation .inputTxt label {
+    margin-bottom: 10px;
+  }
+
+  .pollCreation .inputTxt textarea,
+  .pollCreation .inputTxt input {
+    background: #EEF2F5;
+    border-radius: 10px;
+    padding: 8px;
+  }
+
+  .pollCreation .inputTxt div:after,
+  .pollCreation .inputTxt div:before,
+  .pollCreation .inputTxt:hover div:after,
+  .pollCreation .inputTxt:hover div:before {
+      border-bottom: 0;
+  }
+
+  .createPollBtn {
+      float: right;
+      margin-right: 20px;
+      margin-top: 20px;
+  }
+
+  .pollOption {
+    border: 1px solid #edf2f5;
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+
+  .pollOption h1 {
+      font-size: .8rem !important;
+      margin: 0 !important;
+      color: #000;
+  }
+
+  .pollOption p {
+      font-size: .7rem !important;
+      color: #939BA1 !important;
+  }
+
+  .pollOption button.edit {
+    position: absolute;
+    top: -10px;
+    right: 80px;
+}
+
+  .pollOption button.delete {
+      position: absolute;
+      top: -10px;
+      right: 10px;
+  }
+
+  .addOption {
+    margin: 10px 0px 30px 0px;
+    display: block;
+    cursor: pointer;
+    color: #4360DF;
+    padding: 0 10px 20px 10px;
+    border-radius: 10px;
+    width: 170px;
+  }
+
+  .addOption:hover {
+    background: #EEF2F5;
+  }
+
+  .addOption:active {
+      background: #939BA1;
+  }
+
+  .addOption img {
+    position: relative;
+    margin-right: 15px;
+    top: 10px;
+  }
+
+  .reviewDetails {
+      margin-top: 30px;
+  }
+
+  .reviewDetails h3 {
+      font-size: .95rem;
+      font-weight: bold;
+  }
+
+  .reviewDetails h3.grayHeader {
+    color: #939BA1;
+    font-size: .875rem;
+    font-weight: normal;
+  }
+
+  .reviewDetails .detail {
+    font-size: .9rem !important;
+    color: #000 !important;
+    font-weight: bold !important;  
+  }
+
+
+
+
+

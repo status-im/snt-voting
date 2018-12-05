@@ -43,6 +43,10 @@ class LandingPage extends Component {
         this.props.resetPollCounter();
         this.props.history.push('/otherPolls/' + type);
     }
+
+    createPoll = () => {
+        this.props.history.push('/poll/create');
+    }
    
 
     loadLatestPolls = () => {
@@ -99,6 +103,7 @@ class LandingPage extends Component {
         <div>
             <div className="section" style={{marginBottom: 0}}>
                 <img src="images/status-logo.svg" width="36" />
+                <Button className="createPollBtn" onClick={this.createPoll}><img src="images/create-poll.svg" width="23" /></Button>
                 <Typography variant="headline">Status SNT Voting</Typography>
                 <Typography variant="body1" component="div">Create a poll or vote in one. Your vote helps us decide our product and community direction.</Typography>
             </div>
