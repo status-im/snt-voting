@@ -44,15 +44,15 @@ class App extends React.Component {
           web3.eth.defaultAccount = "0x0000000000000000000000000000000000000000";
         }
 
-        DappToken.methods.symbol().call().then(symbol => {
+        DappToken.methods.symbol().call({from: web3.eth.defaultAccount}).then(symbol => {
           this.setState({symbol});
         });
 
-        DappToken.methods.decimals().call().then(decimals => {
+        DappToken.methods.decimals().call({from: web3.eth.defaultAccount}).then(decimals => {
           this.setState({decimals});
         });
 
-        DappToken.methods.name().call().then(name => {
+        DappToken.methods.name().call({from: web3.eth.defaultAccount}).then(name => {
           this.setState({name});
         })
 

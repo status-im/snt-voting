@@ -65,16 +65,19 @@ class Results extends Component {
           if(req || !transactionHash[idPoll]) return;
 
           req = true;
-          const receipt = await web3.eth.getTransactionReceipt(transactionHash[idPoll]);
-          if(receipt){
-            clearInterval(interval);
-            
-            if(receipt.status || receipt.status == "0x1"){
-              this.setState({isPending: false});
-              this.updatePoll();
-            } else {
-              this.setState({isError: true});
+          try {
+            const receipt = await web3.eth.getTransactionReceipt(transactionHash[idPoll]);
+            if(receipt){
+              clearInterval(interval);
+              
+              if(receipt.status || receipt.status == "0x1"){
+                this.setState({isPending: false});
+                this.updatePoll();
+              } else {
+                this.setState({isError: true});
+              }
             }
+          } catch(e){
           }
           req = false;
         }, 100);
