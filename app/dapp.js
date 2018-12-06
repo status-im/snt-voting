@@ -11,8 +11,14 @@ import { getPolls, omitPolls } from './utils/polls';
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
 import OtherWallets from './components/flow/wallet/OtherWallets';
 import Typography from '@material-ui/core/Typography'
-
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import './dapp.css';
+
+const muiTheme = createMuiTheme({
+  typography: {
+    fontFamily: 'Inter UI'
+  }
+});
 
 window.PollManager = PollManager;
 
@@ -217,20 +223,24 @@ class App extends React.Component {
     const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll,  setPollOrder, resetPollCounter, replacePoll, loadPollContent, loadPollRange, loadMorePolls, ...this.state };
 
     if(web3Provider){
-      return <Router>
+      return   <MuiThemeProvider theme={muiTheme}>
+      <Router>
           <Web3Render ready={web3Provider}>
             <VotingContext.Provider value={votingContext}>
               <Voting />
             </VotingContext.Provider>
           </Web3Render>
         </Router>
+        </MuiThemeProvider>
     } else {
         if(networkName){
-          return <div>
+          return   <MuiThemeProvider theme={muiTheme}>
+          <div>
           <Typography variant="body1" style={{marginTop: "40vh", textAlign:"center"}}><img src="images/warning.svg" width="24" /><br /><br />Please connect to {networkName} to continue.</Typography>
-        </div>
+        </div></MuiThemeProvider>
         } else {
-          return <Router>
+          return   <MuiThemeProvider theme={muiTheme}>
+          <Router>
           <Fragment>
             <Switch>
               <Route exact path="/" render={() => {
@@ -245,6 +255,8 @@ class App extends React.Component {
             </Switch>
           </Fragment>
         </Router>
+        </MuiThemeProvider>
+
         }
     }
     
