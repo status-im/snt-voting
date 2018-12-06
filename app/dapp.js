@@ -43,7 +43,7 @@ class App extends React.Component {
         if(!web3.eth.defaultAccount){
           web3.eth.defaultAccount = "0x0000000000000000000000000000000000000000";
         }
-
+ 
         DappToken.methods.symbol().call({from: web3.eth.defaultAccount}).then(symbol => {
           this.setState({symbol});
         });

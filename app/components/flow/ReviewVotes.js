@@ -32,10 +32,10 @@ class ReviewVotes extends Component {
       // TODO: use token decimals
       let num = toBN(el);
       num = num.mul(num);
-      return toWei(num, "ether");
+      return web3.utils.toWei(num.toString(), "ether");
     });
 
-    const balance4Voting = ballots.reduce((prev, curr) => prev.add(curr), toBN("0"));
+    const balance4Voting = ballots.reduce((prev, curr) => toBN(prev).add(toBN(curr)), toBN("0"));
 
     const toSend = balance4Voting == 0 ? unvote(idPoll) : vote(idPoll, ballots.map(x => x.toString()));
 
