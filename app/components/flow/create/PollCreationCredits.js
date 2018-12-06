@@ -76,6 +76,8 @@ class PollCreationCredits extends Component {
     // TODO: use decimals
     let tokenBalance = this.state.tokenBalance != "-" ? Math.floor(web3.utils.fromWei(this.state.tokenBalance, "ether")) : "-";
 
+    if(this.state.tokenBalance === "-") return null;
+
     return <Fragment><div className="section">
         <Typography variant="headline">Create a Poll</Typography>
       <Card className="card credits"  onClick={this.redirectToConnect}>
