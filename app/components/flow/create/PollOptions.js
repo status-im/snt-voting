@@ -12,11 +12,10 @@ import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc'
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 
-const SortableItem = SortableElement(({value, removeOption, editOption}) =>
+const SortableItem = SortableElement(({value, editOption}) =>
     <div className="pollOption" onDoubleClick={editOption}>
         <Typography variant="display1">{value.title}</Typography>
         <Typography variant="body2">{value.content}</Typography>
-        <Button onClick={removeOption} className="delete">X</Button>
     </div>
 );
 
@@ -24,7 +23,7 @@ const SortableList = SortableContainer(({items, removeOption, editOption}) => {
   return (
     <div>
       {items.map((value, index) => (
-        <SortableItem key={`item-${index}`} index={index} value={value} editOption={editOption(index)} removeOption={removeOption(index)} />
+        <SortableItem key={`item-${index}`} index={index} value={value} editOption={editOption(index)} />
       ))}
     </div>
   );
@@ -81,7 +80,13 @@ class PollOptions extends Component {
     }
 
     removeOption = i => () => {
-        this.setState({options: this.state.options.splice(i, 1)});
+        if(i != null){
+            if(confirm("Are you sure you want to delete this option?")){
+                this.state.options.splice(i, 1);
+                this.setState({options: this.state.options});
+                this.handleClose();
+            }
+        }        
     }
 
     editOption = i => () => {
@@ -136,9 +141,12 @@ class PollOptions extends Component {
         className="pollCreation"
         >
             <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-                X
+            <Button onClick={this.handleClose} color="primary" style={{position:"absolute", left: "0px"}}>
+                <img src="images/x-close.svg" />
             </Button>
+            { this.state.edit !== null && <Button onClick={this.removeOption(this.state.edit)}>
+                <img src="images/trash-icon.svg" />
+            </Button> }
             <Button onClick={this.addOption} color="primary">
                 Save
             </Button>

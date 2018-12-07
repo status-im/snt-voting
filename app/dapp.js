@@ -39,7 +39,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
   }
-  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, name: '----', symbol: "---", decimals: "18", networkName: "" , rawPolls: [], pollsRequested: [],    start: 0,
+  state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, name: '----', symbol: "", decimals: "18", networkName: "" , rawPolls: [], pollsRequested: [],    start: 0,
   end: pollsPerLoad};
 
   componentDidMount(){
