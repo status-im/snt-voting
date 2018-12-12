@@ -2,6 +2,7 @@ import Button from '@material-ui/core/Button';
 import React, {Component, Fragment} from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router-dom';
 import DappToken from  'Embark/contracts/DappToken';
@@ -15,13 +16,15 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 class HowVotingWorks extends Component {
 
   state = {
-    open: false
+    open: false,
+    tip: 0
   }
 
 
-  handleClickOpen = () => {
+  handleClickOpen = tip => () => {
     this.setState({
       open: true,
+      tip
     });
   };
 
@@ -80,59 +83,76 @@ class HowVotingWorks extends Component {
   render() {
     const props = this.props;
     return <Fragment><div className="section">
-  <Typography variant="headline">How voting works</Typography>
+    <Typography variant="headline">How voting works</Typography>
   <InfoDialog
   text={<Fragment>
-    <p>When a vote is created, the Voting Dapp uses smart contracts to take a snapshot of all the wallets addresses which hold {this.props.symbol} and their {this.props.symbol} balances. These {this.props.symbol} balances are used to inform the number of voting credits a wallet address has. No {this.props.symbol} needs to be staked or committed, all that is required is to connect to the voting app with a wallet that had {this.props.symbol} in it before the "snapshot" was taken.</p>
-    <p>Voting credits are a representation of the {this.props.symbol} in the wallet address at the time the vote was created. When voting, the first ballot which is voted on will cost 1 voting credit. The second vote will cost an additional 3 voting credits to total 4 voting credits. Every additional vote will require its square in voting credits.</p>
-    <p>This voting process is called quadratic voting. It minimizes the effect that large token holders can have on the vote, measures the intensity of opinion and encourages a spread of voting amongst the ballots.</p></Fragment>}
+    { this.state.tip == 1 && <p>When a vote is created, the Voting Dapp uses smart contracts to take a snapshot of all the wallets addresses which hold {this.props.symbol} and their {this.props.symbol} balances. These {this.props.symbol} balances are used to inform the number of voting credits a wallet address has. No {this.props.symbol} needs to be staked or committed, all that is required is to connect to the voting app with a wallet that had {this.props.symbol} in it before the "snapshot" was taken.</p> }
+    { this.state.tip == 2 && <p>Voting credits are a representation of the {this.props.symbol} in the wallet address at the time the vote was created. When voting, the first ballot which is voted on will cost 1 voting credit. The second vote will cost an additional 3 voting credits to total 4 voting credits. Every additional vote will require its square in voting credits.</p> }
+    { this.state.tip == 3 && <p>This voting process is called quadratic voting. It minimizes the effect that large token holders can have on the vote, measures the intensity of opinion and encourages a spread of voting amongst the ballots.</p> }
+    </Fragment>}
+  title={
+    <Fragment>
+    { this.state.tip == 1 && <span>Any wallet with {this.props.symbol} can vote</span> }
+    { this.state.tip == 2 && <span>You don't spend your {this.props.symbol}!</span> }
+    { this.state.tip == 3 && <span>Your vote counts</span> }
+    </Fragment>
+  }
   open={this.state.open}
   onClose={this.handleClose}
 />
-  <Card className="card" onClick={this.handleClickOpen}>
+  <Card className="card">
     <CardContent>
       <div className="left">
-        <span><img src="images/wallet.svg" width="23" onClick={this.handleClickOpen} /></span>
+        <span><img src="images/wallet.svg" width="23" /></span>
       </div>
       <div className="right">
-        <Typography gutterBottom component="h2" onClick={this.handleClickOpen}>
+        <Typography gutterBottom component="h2">
           Any wallet with {this.props.symbol} can vote
         </Typography>
-        <Typography component="p" onClick={this.handleClickOpen}>
+        <Typography component="p">
           When a poll is created a snapshot is taken of every wallet that holds {this.props.name} ({this.props.symbol}).
         </Typography>
       </div>
     </CardContent>
+    <CardActions className="actionArea" style={{clear: "both", paddingLeft: "70px"}}>
+      <Button size="small" color="primary" onClick={this.handleClickOpen(1)}>Learn more</Button>
+    </CardActions>
   </Card>
-  <Card className="card" onClick={this.handleClickOpen}>
+  <Card className="card">
     <CardContent>
       <div className="left">
-        <span><img src="images/happy-face.svg" width="23" onClick={this.handleClickOpen} /></span>
+        <span><img src="images/happy-face.svg" width="23" /></span>
       </div>
       <div className="right">
-        <Typography gutterBottom component="h2" onClick={this.handleClickOpen}>
+        <Typography gutterBottom component="h2">
           You don't spend your {this.props.symbol}!
         </Typography>
-        <Typography component="p" onClick={this.handleClickOpen}>
+        <Typography component="p">
           Your wallet gets one voting credit for every {this.props.symbol} it holds. To cast your vote, you sign a transaction, but you only spend a small amount of ETH for the transaction fee.
         </Typography>
       </div>
     </CardContent>
+    <CardActions className="actionArea" style={{clear: "both", paddingLeft: "70px"}}>
+      <Button size="small" color="primary" onClick={this.handleClickOpen(2)}>Learn more</Button>
+    </CardActions>
   </Card>
-  <Card className="card" onClick={this.handleClickOpen}>
+  <Card className="card">
     <CardContent>
       <div className="left">
-        <span><img src="images/envelope.svg" width="23" onClick={this.handleClickOpen} /></span>
+        <span><img src="images/envelope.svg" width="23" /></span>
       </div>
       <div className="right">
-        <Typography gutterBottom component="h2" onClick={this.handleClickOpen}>
+        <Typography gutterBottom component="h2">
         Your vote counts
         </Typography>
-        <Typography component="p" onClick={this.handleClickOpen}>
+        <Typography component="p">
           Most votes when poll ends wins! Multiple votes cost more to prevent whales from controlling the vote
         </Typography>
       </div>
     </CardContent>
+    <CardActions className="actionArea" style={{clear: "both", paddingLeft: "70px"}}>
+      <Button size="small" color="primary" onClick={this.handleClickOpen(3)}>Learn more</Button>
+    </CardActions>
   </Card>
 </div>
 <div className="buttonNav">
@@ -156,11 +176,11 @@ class InfoDialog extends Component {
   };
   
   render() {
-    const { onClose, text, ...other } = this.props;
+    const { onClose, text, title, ...other } = this.props;
    
     return (
     <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" {...other}>
-      <DialogTitle>How voting works</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Typography variant="body1" component="div">{text}</Typography>
       </DialogContent>
