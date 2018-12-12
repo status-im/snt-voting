@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { withRouter } from 'react-router-dom'
+import utils from '../../utils/utils';
 
 // TODO: extract to utils
 
@@ -98,14 +99,14 @@ class LandingPage extends Component {
 
     render(){
         const { openPoll, closedPoll } = this.state;
+        const { decimals } = this.props;
 
         if(openPoll){
             openPoll._tokenSum = 0;
             openPoll._votesSum = 0;
             for(let i = 0; i < openPoll._numBallots; i++){
-                // TODO: use decimals
-                openPoll._tokenSum += parseInt(web3.utils.fromWei(openPoll._tokenTotal[i], "ether"), 10);
-                openPoll._votesSum += parseInt(web3.utils.fromWei(openPoll._quadraticVotes[i], "ether"), 10);
+                openPoll._tokenSum += parseInt(utils.fromTokenDecimals(openPoll._tokenTotal[i], decimals), 10);
+                openPoll._votesSum += parseInt(openPoll._quadraticVotes[i], 10);
             }
         }
 
@@ -113,8 +114,7 @@ class LandingPage extends Component {
             closedPoll._tokenSum = 0;
             closedPoll._votesSum = 0;
             for(let i = 0; i < closedPoll._numBallots; i++){
-                // TODO: use decimals
-                closedPoll._tokenSum += parseInt(web3.utils.fromWei(closedPoll._tokenTotal[i], "ether"), 10);
+                closedPoll._tokenSum += parseInt(utils.fromTokenDecimals(closedPoll._tokenTotal[i], decimals), 10);
                 closedPoll._votesSum += parseInt(closedPoll._quadraticVotes[i], 10);
             }
         }

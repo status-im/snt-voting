@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import React, {Component, Fragment} from 'react';
 import Typography from '@material-ui/core/Typography'
 import PollManager from 'Embark/contracts/PollManager';
+import utils from '../../utils/utils';
 
 class Results extends Component {
 
@@ -135,7 +136,7 @@ class Results extends Component {
     <div className="section">
       { !isError && <Fragment>
         <Typography variant="headline" gutterBottom>{title}</Typography>
-        { ballots.map((item, i) => <BallotResult title={item.title} symbol={this.props.symbol} totalVotes={totalVotes} quadraticVotes={poll._quadraticVotes[i]} tokenTotal={poll._tokenTotal[i]} totalVoters={poll._votersByBallot[i]} key={i} />) }
+        { ballots.map((item, i) => <BallotResult title={item.title} symbol={this.props.symbol} decimals={this.props.decimals} totalVotes={totalVotes} quadraticVotes={poll._quadraticVotes[i]} tokenTotal={poll._tokenTotal[i]} totalVoters={poll._votersByBallot[i]} key={i} />) }
         </Fragment>
       }
     </div>
@@ -156,10 +157,13 @@ class BallotResult extends Component {
   }
 
   render(){
-    const {title, quadraticVotes, tokenTotal, totalVotes, totalVoters} = this.props;
+    const {title, quadraticVotes, tokenTotal, totalVotes, totalVoters, decimals} = this.props;
     const {show} = this.state;
 
     const votePercentage = totalVotes > 0 ? parseInt(quadraticVotes) / totalVotes * 100 : 0;
+    const totalInUnits = utils.fromTokenDecimals(tokenTotal, decimals);
+
+
 
     return (<Fragment>
       <Typography gutterBottom component="h2" className="ballotResultTitle" onClick={this.showDetails}>{title}</Typography>
@@ -172,11 +176,10 @@ class BallotResult extends Component {
     {show && <ul className="ballotResultData">
       <Typography component="li">Voters: <span>{totalVoters}</span></Typography>
       <Typography component="li">Total votes: <span>{quadraticVotes}</span></Typography>
-      <Typography component="li" className="noBorder">Total {this.props.symbol}: <span>{web3.utils.fromWei(tokenTotal, "ether")}</span></Typography>
+      <Typography component="li" className="noBorder">Total {this.props.symbol}: <span>{totalInUnits}</span></Typography>
     </ul>}
     </Fragment>);
   }
-// TODO: use decimals
 }
 
 export default Results;

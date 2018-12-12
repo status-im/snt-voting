@@ -5,12 +5,13 @@ import Typography from '@material-ui/core/Typography'
 import DappToken from  'Embark/contracts/DappToken';
 import { withRouter } from 'react-router-dom'
 import PollManager from 'Embark/contracts/PollManager';
+import utils from '../../../utils/utils';
 
 class ConnectYourWallet extends Component {
   connectWallet = async () => {
     // TODO: extract this to utils, this code is repeated here, in other wallets and in How voting works
 
-    const {history, polls, updateBalances, idPoll} = this.props;
+    const {history, polls, updateBalances, idPoll, decimals} = this.props;
 
     const poll = polls[idPoll];
 
@@ -28,9 +29,7 @@ class ConnectYourWallet extends Component {
 
     if(cont){
       const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});  
-      
-      // TODO: use decimals
-      const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));
+      const votes = tknVotes.map(x => Math.sqrt(parseInt(utils.fromTokenDecimals(x, decimals))));
 
       if(web3.currentProvider.isStatus){
         if(idPoll == 'poll-creation'){

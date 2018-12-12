@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import { withRouter } from 'react-router-dom'
 import HelpDialog from '../HelpDialog';
 import DappToken from  'Embark/contracts/DappToken';
+import utils from '../../../utils/utils';
 
 Date.prototype.DDMMYYYY = function () {
   var yyyy = this.getFullYear().toString();
@@ -46,7 +47,7 @@ class PollCreationCredits extends Component {
   }
 
   componentDidMount(){
-    const {history} = this.props;
+    const {history, decimals} = this.props;
 
     if(this.props.poll.title !== undefined){
       this.props.resetPoll();
@@ -61,8 +62,7 @@ class PollCreationCredits extends Component {
       this.setState({tokenBalance, ethBalance});
 
       if(web3.utils.fromWei(ethBalance.toString(), "ether") > 0 &&
-      // TODO: use decimals
-        Math.floor(web3.utils.fromWei(tokenBalance.toString(), "ether")) >= 1
+        Math.floor(utils.fromTokenDecimals(tokenBalance.toString(), decimals)) >= 1
       ){
         history.push('/poll/title');
         return;
@@ -73,8 +73,7 @@ class PollCreationCredits extends Component {
 
   render(){
     let ethBalance = web3.utils.fromWei(this.state.ethBalance, "ether");
-    // TODO: use decimals
-    let tokenBalance = this.state.tokenBalance != "-" ? Math.floor(web3.utils.fromWei(this.state.tokenBalance, "ether")) : "-";
+    let tokenBalance = this.state.tokenBalance != "-" ? Math.floor(utils.fromTokenDecimals(this.state.tokenBalance, this.props.decimals)) : "-";
 
     if(this.state.tokenBalance === "-") return null;
 

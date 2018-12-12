@@ -6,6 +6,7 @@ import Slider from '@material-ui/lab/Slider';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { withRouter } from 'react-router-dom'
+import utils from '../../utils/utils';
 
 const styles = {
   card: {
@@ -102,7 +103,7 @@ class PollVoting extends Component {
   }
 
   render(){
-    const {polls, classes, balances, idPoll, back} = this.props;
+    const {polls, classes, balances, idPoll, back, decimals} = this.props;
     const {originalVotes, votes, voteOrder} = this.state;
     const {fromWei} = web3.utils;
 
@@ -117,8 +118,7 @@ class PollVoting extends Component {
     
     const title = poll.content.title;
     const ballots = poll.content.ballots
-    // TODO: use decimals
-    const balance = fromWei(balances[idPoll].tokenBalance, "ether");
+    const balance = utils.fromTokenDecimals(balances[idPoll].tokenBalance, decimals);
     const cantVote = balance == 0 || !poll._canVote;
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
     const disableVote = cantVote || votes.reduce((x,y) => x+y, 0) == 0;
