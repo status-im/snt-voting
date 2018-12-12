@@ -11,13 +11,7 @@ export const getBalance = async (startBlock) => {
   const { fromWei } = web3.utils;
   const { balanceOfAt } = DappToken.methods;
   const balance = await balanceOfAt(web3.eth.defaultAccount, startBlock - 1).call();
-  // TODO: use decimals
   return fromWei(balance);
-}
-export const getVote = async(idPoll) => {
-  const { fromWei } = web3.utils;
-  const votes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call();
-  return votes.map(el => Math.floor(Math.sqrt(parseInt(fromWei(el)))));
 }
 
 const fetchPollData = async (index, pollMethod) => {

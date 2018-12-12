@@ -1,10 +1,14 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import TokenUI from './token-ui';
 
-export default ({ setAccount }) => {
+const AdminView = () => {
   return (
-    <div class="container">
+    <div className="container">
       <TokenUI />
     </div>
-  )
-}
+  );
+};
+
+AdminView.displayName = "AdminView";
+
+export default AdminView;
