@@ -11,7 +11,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+import utils from '../../utils/utils';
 
 class HowVotingWorks extends Component {
 
@@ -49,7 +49,7 @@ class HowVotingWorks extends Component {
       return;
     }
 
-    const {history, polls, updateBalances, idPoll} = this.props;
+    const {history, polls, updateBalances, idPoll, decimals} = this.props;
     if(!polls) return;
 
     let cont = true;
@@ -69,9 +69,8 @@ class HowVotingWorks extends Component {
       const poll = polls.find(p => p.idPoll == idPoll);
       if(!poll) return null;
       
-      // TODO: use decimals
       const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});  
-      const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));            
+      const votes = tknVotes.map(x => Math.sqrt(parseInt( utils.fromTokenDecimals(x, decimals))));            
       const tokenBalance = await DappToken.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call({from: web3.eth.defaultAccount});
       const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
       updateBalances(idPoll, tokenBalance, ethBalance, votes);

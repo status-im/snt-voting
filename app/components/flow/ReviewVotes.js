@@ -6,6 +6,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import PollManager from 'Embark/contracts/PollManager';
 import { withRouter } from 'react-router-dom'
+import utils from '../../utils/utils';
 
 class ReviewVotes extends Component {
 
@@ -17,7 +18,7 @@ class ReviewVotes extends Component {
     this.setState({isSubmitting: true});
 
     const { vote, unvote } = PollManager.methods;
-    const { votes, history, idPoll} = this.props;
+    const { votes, history, idPoll, decimals} = this.props;
     const { toWei, toBN } = web3.utils;
     
 
@@ -29,10 +30,9 @@ class ReviewVotes extends Component {
     }
 
     const ballots = votes.map(el => {
-      // TODO: use token decimals
       let num = toBN(el);
       num = num.mul(num);
-      return web3.utils.toWei(num.toString(), "ether");
+      return utils.toTokenDecimals(num.toString(), decimals);
     });
 
     const balance4Voting = ballots.reduce((prev, curr) => toBN(prev).add(toBN(curr)), toBN("0"));
@@ -75,7 +75,7 @@ class ReviewVotes extends Component {
   }
 
   render(){
-    const {polls, balances, votes, idPoll} = this.props;
+    const {polls, balances, votes, idPoll, decimals} = this.props;
     const {isSubmitting} = this.state;
     const {fromWei} = web3.utils;
 
@@ -87,8 +87,7 @@ class ReviewVotes extends Component {
     if(!poll) return null;
     
     const ballots = poll.content.ballots
-    // TODO: use decimals
-    const balance = fromWei(balances[idPoll].tokenBalance, "ether");
+    const balance = utils.fromTokenDecimals(balances[idPoll].tokenBalance, decimals);
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
     
     return (polls ? <Fragment><div className="section">

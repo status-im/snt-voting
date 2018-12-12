@@ -6,6 +6,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { withRouter } from 'react-router-dom'
 import HelpDialog from './HelpDialog';
+import utils from '../../utils/utils';
 
 
 Date.prototype.DDMMYYYY = function () {
@@ -60,7 +61,7 @@ class VotingCredits extends Component {
   }
 
   render(){
-    const {polls, balances, idPoll} = this.props;
+    const {polls, balances, idPoll, decimals} = this.props;
 
     if(!polls || !balances) return null;
 
@@ -70,10 +71,8 @@ class VotingCredits extends Component {
     let title = poll.content.title;
     let description = poll.content.description;
     let ethBalance = web3.utils.fromWei(balances[idPoll].ethBalance, "ether");
-    // TODO: use decimals
-    let tokenBalance = Math.floor(web3.utils.fromWei(balances[idPoll].tokenBalance, "ether"));
+    let tokenBalance = Math.floor(utils.fromTokenDecimals(balances[idPoll].tokenBalance, decimals));
   
-
    const d = new Date(poll.blockInfo.timestamp * 1000);
 
 

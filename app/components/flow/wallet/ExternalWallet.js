@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom'
 import DappToken from  'Embark/contracts/DappToken';
 import PollManager from  'Embark/contracts/PollManager';
+import utils from '../../../utils/utils';
 
 class ExternalWallet extends Component {
     
@@ -16,7 +17,7 @@ class ExternalWallet extends Component {
     }
 
     connectWallet = async () => {
-        const {history, polls, updateBalances, idPoll} = this.props;
+        const {history, polls, updateBalances, idPoll, decimals} = this.props;
         if(!polls) return;
 
         const poll = polls.find(p => p.idPoll == idPoll);
@@ -40,7 +41,7 @@ class ExternalWallet extends Component {
             const tknVotes = await PollManager.methods.getVote(idPoll, web3.eth.defaultAccount).call({from: web3.eth.defaultAccount});  
             
             // TODO: use decimals
-            const votes = tknVotes.map(x => Math.sqrt(parseInt(web3.utils.fromWei(x, "ether"))));            
+            const votes = tknVotes.map(x => Math.sqrt(parseInt( utils.fromTokenDecimals(x, decimals))));            
             const tokenBalance = await DappToken.methods.balanceOfAt(web3.eth.defaultAccount, poll._startBlock).call({from: web3.eth.defaultAccount});
             const ethBalance = await web3.eth.getBalance(web3.eth.defaultAccount);
             updateBalances(idPoll, tokenBalance, ethBalance, votes);
