@@ -828,6 +828,28 @@ button[disabled]{
   }
 
 
+.endDateTime {
+    display: flex;
+}
+
+.endDate {
+    font-weight: bold;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.scheduleNav {
+    display: flex;
+    justify-content: space-between;
+}
 
 
+.Cal__Weekdays__root {
+    background-color: white !important;
+    color: #939BA1 !important;
+    border-bottom: 3px solid #EEF2F5;
+}
 
+.endTime {
+    color: #939BA1;
+}

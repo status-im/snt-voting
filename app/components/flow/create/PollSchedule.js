@@ -1,9 +1,17 @@
 import React, {Component, Fragment} from 'react';
 import { withRouter } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
+import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { InlineDateTimePicker } from 'material-ui-pickers';
+import InfiniteCalendar, {
+    Calendar,
+    withRange,
+  } from 'react-infinite-calendar';
+import 'react-infinite-calendar/styles.css';
+
+const CalendarWithRange = withRange(Calendar);
 
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
@@ -11,11 +19,21 @@ Date.prototype.addDays = function(days) {
     return date;
 }
 
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
 
 class PollSchedule extends Component {
 
+    static propTypes = {
+        poll: PropTypes.object,
+        assignToPoll: PropTypes.func,
+
+    }
+
     state = {
-        endDate: null,
+        startDate: false,
+        endDate: false,
         error: '',
     }
 
@@ -23,7 +41,7 @@ class PollSchedule extends Component {
         if(this.props.poll.endDate !== undefined){
             this.setState({endDate: this.props.poll.endDate});
         } else {
-            this.setState({endDate: (new Date()).addDays(90) });
+            this.setState({endDate: (new Date()).addDays(15) });
         }
 
         if(!this.props.poll.options){
@@ -33,9 +51,9 @@ class PollSchedule extends Component {
     }
 
     handleDateChange = date => {
-        this.props.assignToPoll({endDate: date});
-        this.setState({ endDate: date });
-    };
+        this.props.assignToPoll({endDate: date.end});
+        this.setState({ startDate: date.start, endDate: date.end });
+    }
 
     continue = () => {
         const {endDate} = this.state;
@@ -48,25 +66,61 @@ class PollSchedule extends Component {
         }
     }
 
+    formatAMPM = (date) => {
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        let strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+
     render() {
-        const { endDate } = this.state;
+        const { startDate, endDate } = this.state;
+        const today = new Date();
+
 
         return <Fragment>
         <LinearProgress variant="determinate" value={77} id="p" />
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
             <Typography variant="body1" style={{marginTop: '20px'}}>Set the end date and time for the poll.</Typography>
-            <InlineDateTimePicker
-                value={endDate}
-                disablePast
-                autoOk
-                minDate={new Date()}
-                ampm={false}
-                format="dd/MM/yyyy HH:mm"
-                onChange={this.handleDateChange}
-            />
+              <InfiniteCalendar
+                height={450}
+                className="schedule-calendar"
+                Component={CalendarWithRange}
+                min={today}
+                minDate={today}
+                onSelect={this.handleDateChange}
+                selected={{
+                    start: startDate || today,
+                    end: endDate
+                }}
+                theme={{
+                    selectionColor: '#4360DF',
+                    accentColor: '#4360DF',
+                    todayColor: '#4360DF',
+                }}
+                displayOptions={{
+                    showHeader: false,
+                }}
+                locale={{
+                    headerFormat: 'MMM Do',
+                }}
+              />
         </div>
-        <div className="buttonNav">
+        <div className="buttonNav scheduleNav">
+            <div className="endDateTime">
+                Ends:
+                <div className="endDate">
+                    { endDate && `${monthNames[endDate.getMonth()]} ${endDate.getDate()} ` }
+                </div>
+                <div className="endTime">
+                    { endDate && `at ${this.formatAMPM(endDate)}`}
+                </div>
+            </div>
             <Button onClick={this.continue}>Next</Button>
         </div>
         </Fragment>;
