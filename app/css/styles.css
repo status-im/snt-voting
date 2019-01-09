@@ -45,7 +45,8 @@
 }
 
 #votingDapp div.section h1 {
-    font-size: 1.2rem;
+    font-size: 22px;
+    line-height: 28px;
     font-weight: bold;
     margin-top: 1em;
 }
@@ -209,7 +210,7 @@
     background: url(../images/medium-arrow.svg) center right no-repeat;
     padding-right: 15px;
     text-decoration: none;
-    text-transform: capitalize;
+    text-transform: none;
     color: #4360DF;
     font-size: 0.75rem;
 }
@@ -752,7 +753,7 @@ button[disabled]{
   }
 
   .pollOption {
-    border: 1px solid #edf2f5;
+    border: 1px solid #eef2f5;
     border-radius: 3px;
     padding: 10px;
     margin-bottom: 10px;
@@ -770,13 +771,15 @@ button[disabled]{
 
 
   .pollOption h1 {
-      font-size: .8rem !important;
+      font-size: 15px !important;
+      line-height: 22px !important;
+      font-weight: 600 !important;
       margin: 0 !important;
       color: #000;
   }
 
   .pollOption p {
-      font-size: .7rem !important;
+      font-size: 13px !important;
       color: #939BA1 !important;
   }
 
@@ -820,24 +823,27 @@ button[disabled]{
       margin-top: 30px;
   }
 
+  .reviewDetails p {
+    font-size: 15px;
+    line-height: 22px;
+  }
+
   .reviewDetails h3 {
-      font-size: .95rem;
+      font-size: 17px;
+      line-height: 24px;
       font-weight: bold;
   }
 
   .reviewDetails h3.grayHeader {
     color: #939BA1;
-    font-size: .875rem;
+    font-size: 15px;
+    line-height: 22px;
     font-weight: normal;
   }
 
   .reviewDetails .detail {
-    font-size: .9rem !important;
+    font-weight: 600 !important;
+    line-height: 22px !important;
+    font-size: 15px !important;
     color: #000 !important;
-    font-weight: bold !important;  
   }
-
-
-
-
-
