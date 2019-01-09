@@ -14,7 +14,8 @@ const styles = () => ({
     marginLeft: '1rem',
     marginBottom: '1rem'
   },
-  mlu: {
+  adminButton: {
+    width: '10rem',
     marginLeft: '1rem',
     marginTop: '1rem'
   }
@@ -99,7 +100,7 @@ class TokenUI extends React.Component {
                 onChange={(e) => this.handleMintAmountChange(e)}
                 variant="outlined"
               />
-              <Button variant="contained" onClick={(e) => this.mint(e)} className={classes.mlb}>
+              <Button variant="contained" onClick={(e) => this.mint(e)} className={classes.adminButton}>
                 Mint
               </Button>
             </FormGroup>
@@ -112,7 +113,7 @@ class TokenUI extends React.Component {
                 You text token balance is <span className="accountBalance">{this.state.accountBalance}</span>
               </div>
              
-              <Button className={classes.mlu} variant="contained" onClick={(e) => this.getBalance(e)}>
+              <Button className={classes.adminButton} variant="contained" onClick={(e) => this.getBalance(e)}>
                 Get Balance
               </Button>
             </FormGroup>
