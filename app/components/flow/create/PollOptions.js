@@ -147,7 +147,7 @@ class PollOptions extends Component {
             { this.state.edit !== null && <Button onClick={this.removeOption(this.state.edit)}>
                 <img src="images/trash-icon.svg" />
             </Button> }
-            <Button onClick={this.addOption} color="primary">
+            <Button onClick={this.addOption} color="primary" style={{fontSize:"15px", lineHeight:"22px"}} disabled={this.state.optionTitle.trim().length == 0 || this.state.optionContent.length == 0}>
                 Save
             </Button>
             </DialogActions>
