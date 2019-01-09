@@ -10,7 +10,11 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Slide from '@material-ui/core/Slide';
 
+function Transition(props) {
+  return <Slide direction="up" {...props} />;
+}
 
 const SortableItem = SortableElement(({value, editOption}) =>
     <div className="pollOption" onDoubleClick={editOption}>
@@ -139,6 +143,7 @@ class PollOptions extends Component {
         open={this.state.open}
         onClose={this.handleClose}
         className="pollCreation"
+        TransitionComponent={Transition}
         >
             <DialogActions>
             <Button onClick={this.handleClose} color="primary" style={{position:"absolute", left: "0px", align:"left"}}>
