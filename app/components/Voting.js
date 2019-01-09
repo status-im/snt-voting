@@ -3,8 +3,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import 'typeface-roboto';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { VotingContext } from '../context';
-import { Route, Switch } from "react-router-dom";
-import { withRouter } from 'react-router-dom'
+import { Route, Switch, withRouter } from "react-router-dom";
 import AdminView from '../components/AdminView';
 import TitleScreen from './flow/TitleScreen';
 import LearnAboutBallots from './flow/LearnAboutBallots';
