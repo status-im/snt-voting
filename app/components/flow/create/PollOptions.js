@@ -22,7 +22,7 @@ const SortableItem = SortableElement(({value, editOption}) =>
 const SortableList = SortableContainer(({items, removeOption, editOption}) => {
   return (
     <div>
-      {items.map((value, index) => (
+      {items.reverse().map((value, index) => (
         <SortableItem key={`item-${index}`} index={index} value={value} editOption={editOption(index)} />
       ))}
     </div>
@@ -141,7 +141,7 @@ class PollOptions extends Component {
         className="pollCreation"
         >
             <DialogActions>
-            <Button onClick={this.handleClose} color="primary" style={{position:"absolute", left: "0px"}}>
+            <Button onClick={this.handleClose} color="primary" style={{position:"absolute", left: "0px", align:"left"}}>
                 <img src="images/x-close.svg" />
             </Button>
             { this.state.edit !== null && <Button onClick={this.removeOption(this.state.edit)}>
@@ -170,7 +170,7 @@ class PollOptions extends Component {
 
                 <TextField
                     id="standard-multiline-flexible"
-                    label="Poll Description"
+                    label="Option description"
                     multiline
                     fullWidth
                     className="inputTxt"
