@@ -29,6 +29,8 @@
 
   body {
       background: #ffffff !important;
+      padding-left: 24px;
+      padding-right: 24px;
   }
 
 #votingDapp p a,
