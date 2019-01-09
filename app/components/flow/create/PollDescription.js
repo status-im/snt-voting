@@ -52,7 +52,7 @@ class PollDescription extends Component {
             <Typography variant="headline">Create a Poll</Typography>
             <TextField
                 id="standard-multiline-flexible"
-                label="Option Description"
+                label="Poll description"
                 multiline
                 error={this.state.error != ''}
                 fullWidth
