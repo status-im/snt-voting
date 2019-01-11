@@ -32,7 +32,6 @@ If you have any questions or queries the whole team is on Status on the status-s
 ```
 git clone https://github.com/status-im/snt-voting.git
 cd snt-voting
-git checkout new-ui
 npm install
 embark simulator
 ```

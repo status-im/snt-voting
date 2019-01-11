@@ -827,7 +827,6 @@ button[disabled]{
     font-weight: bold !important;  
   }
 
-
 .endDateTime {
     display: flex;
 }
@@ -853,3 +852,4 @@ button[disabled]{
 .endTime {
     color: #939BA1;
 }
+

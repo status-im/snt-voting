@@ -1,8 +1,25 @@
+import React from 'react';
+import web3 from "Embark/web3"
 import EmbarkJS from 'Embark/EmbarkJS';
 import DappToken from 'Embark/contracts/DappToken';
-import React from 'react';
-import { Form, FormGroup, FormControl, HelpBlock, Button } from 'react-bootstrap';
-import web3 from "Embark/web3"
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+
+
+const styles = () => ({
+  mlb: {
+    marginLeft: '1rem',
+    marginBottom: '1rem'
+  },
+  adminButton: {
+    width: '10rem',
+    marginLeft: '1rem',
+    marginTop: '1rem'
+  }
+});
 
 class TokenUI extends React.Component {
 
@@ -63,31 +80,44 @@ class TokenUI extends React.Component {
     }
   
     render(){
+      const { classes } = this.props;
+
       return (<React.Fragment>
           <h3> 1. Mint your token</h3>
-          <Form inline>
+          <FormControl>
             <FormGroup>
-              <FormControl
-                type="text"
+              <TextField
+                label="Address"
                 value={this.state.address}
-                onChange={(e) => this.setState({address: e.target.value}) } />
-            </FormGroup>
-            <FormGroup>
-              <FormControl
-                type="text"
+                className={classes.mlb}
+                onChange={(e) => this.setState({address: e.target.value}) }
+                variant="outlined"
+              />
+              <TextField
+                label="Amount to Mint"
                 defaultValue={this.state.amountToMint}
-                onChange={(e) => this.handleMintAmountChange(e)} />
-              <Button bsStyle="primary" onClick={(e) => this.mint(e)}>Mint</Button>
+                className={classes.mlb}
+                onChange={(e) => this.handleMintAmountChange(e)}
+                variant="outlined"
+              />
+              <Button variant="contained" onClick={(e) => this.mint(e)} className={classes.adminButton}>
+                Mint
+              </Button>
             </FormGroup>
-          </Form>
+          </FormControl>
           
           <h3> 2. Read your account token balance </h3>
-          <Form inline>
+          <FormControl>
             <FormGroup>
-              <HelpBlock>Your test token balance is <span className="accountBalance">{this.state.accountBalance}</span></HelpBlock>
-              <Button bsStyle="primary" onClick={(e) => this.getBalance(e)}>Get Balance</Button>
+              <div>
+                You text token balance is <span className="accountBalance">{this.state.accountBalance}</span>
+              </div>
+             
+              <Button className={classes.adminButton} variant="contained" onClick={(e) => this.getBalance(e)}>
+                Get Balance
+              </Button>
             </FormGroup>
-          </Form>
+          </FormControl>
      
           <h3> 3. Contract Calls </h3>
           <p>Javascript calls being made: </p>
@@ -101,4 +131,5 @@ class TokenUI extends React.Component {
     }
   }
 
-  export default TokenUI;
+export default withStyles(styles)(TokenUI);
+  
