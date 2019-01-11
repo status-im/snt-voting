@@ -88,14 +88,14 @@ class PollSchedule extends Component {
             <Typography variant="headline">Create a Poll</Typography>
             <Typography variant="body1" style={{marginTop: '20px'}}>Set the end date and time for the poll.</Typography>
               <InfiniteCalendar
-                height={450}
+                height={475}
                 className="schedule-calendar"
                 Component={CalendarWithRange}
                 min={today}
                 minDate={today}
                 onSelect={this.handleDateChange}
                 selected={{
-                    start: startDate || today,
+                    start: today,
                     end: endDate
                 }}
                 theme={{
