@@ -41,7 +41,8 @@ class PollOptions extends Component {
         options: [],
         optionTitle: '',
         optionContent: '',
-        edit: null
+        edit: null,
+        stickyBarClass: 'stickyBar'
     }
 
     onSortEnd = ({oldIndex, newIndex}) => {
@@ -58,9 +59,9 @@ class PollOptions extends Component {
     }
 
     handleClickOpen = () => {
-        this.setState({ open: true });
+        this.setState({ open: true, stickyBarClass: '' });
     };
-    
+
 
     addOption = () => {
         if(this.state.optionTitle.trim() == ''){
@@ -75,12 +76,12 @@ class PollOptions extends Component {
             }
             this.props.assignToPoll({options});
 
-            this.setState({ open: false, edit: null, optionTitle: '', optionContent: '', error: '' });
+            this.setState({ open: false, edit: null, optionTitle: '', optionContent: '', error: '', stickyBarClass: 'stickyBar' });
         }
     }
-    
+
     handleClose = () => {
-        this.setState({ open: false, edit: null, optionContent: '', optionTitle: '' });
+        this.setState({ open: false, edit: null, optionContent: '', optionTitle: '', stickyBarClass: 'stickyBar' });
     }
 
     removeOption = i => () => {
@@ -99,6 +100,7 @@ class PollOptions extends Component {
         state.optionContent = this.state.options[i].content;
         state.optionTitle = this.state.options[i].title;
         state.edit = i;
+        state.stickyBarClass = '';
         this.setState(state);
     }
 
@@ -129,9 +131,11 @@ class PollOptions extends Component {
         return <Fragment>
         <LinearProgress variant="determinate" value={57} />
         <div className="section pollCreation">
+            <div className={this.state.stickyBarClass}>
             <Typography variant="headline">Create a Poll</Typography>
             <Typography variant="body1" style={{marginTop: '20px'}}>Add options to the poll</Typography>
             <a onClick={this.handleClickOpen} className="addOption"><img src="images/plus-button.svg" width="40" />Add option</a>
+            </div>
             <SortableList lockAxis={"y"} pressDelay={200} items={this.state.options} editOption={this.editOption} removeOption={this.removeOption} onSortEnd={this.onSortEnd} />
 
         </div>
@@ -145,6 +149,7 @@ class PollOptions extends Component {
         className="pollCreation"
         TransitionComponent={Transition}
         >
+            <div style={{marginRight:"24px"}}>
             <DialogActions>
             <Button onClick={this.handleClose} color="primary" style={{position:"absolute", left: "0px", align:"left"}}>
                 <img src="images/x-close.svg" />
@@ -187,6 +192,7 @@ class PollOptions extends Component {
                     }}
                 />
             </DialogContent>
+            </div>
         </Dialog>
         </Fragment>;
     }

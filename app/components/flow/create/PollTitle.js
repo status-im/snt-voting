@@ -51,6 +51,7 @@ class PollTitle extends Component {
         <LinearProgress variant="determinate" value={19} />
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
+            <div style={{marginRight:"24px"}}>
             <TextField
                 label="Poll name"
                 multiline
@@ -67,6 +68,7 @@ class PollTitle extends Component {
                   shrink: true,
                 }}      
             />
+            </div>
             {this.state.error && <FormHelperText className="errorText">{this.state.error}</FormHelperText>}
             <small>{this.state.title.length} of 70</small>
         </div>

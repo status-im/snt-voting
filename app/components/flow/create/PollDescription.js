@@ -50,6 +50,7 @@ class PollDescription extends Component {
         <LinearProgress variant="determinate" value={38} />
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
+            <div style={{marginRight:"24px"}}>
             <TextField
                 id="standard-multiline-flexible"
                 label="Poll description"
@@ -65,6 +66,7 @@ class PollDescription extends Component {
                 value={this.state.description}
                 onChange={this.handleChange}
             />
+            </div>
             {this.state.error && <FormHelperText className="errorText">{this.state.error}</FormHelperText>}
             <small>{this.state.description.length} of 500</small>
         </div>

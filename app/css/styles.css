@@ -29,8 +29,6 @@
 
   body {
       background: #ffffff !important;
-      padding-left: 24px;
-      padding-right: 24px;
   }
 
 #votingDapp p a,
@@ -43,7 +41,9 @@
 
 #votingDapp div.section {
     padding: 20px;
-    margin-bottom: 66px
+    margin-bottom: 66px;
+    margin-right: 24px;
+    margin-left: 24px;
 }
 
 #votingDapp div.section h1 {
@@ -709,6 +709,10 @@ button[disabled]{
     text-align: center;
   }
 
+  .section .pollCreation {
+    margin-right: 24px;
+  }
+
 
   .pollCreation small {
     float: right;
@@ -735,7 +739,6 @@ button[disabled]{
     height: 52px;
     background: #EEF2F5;
     border-radius: 8px;
-    margin-right: 24px;
     padding: 14px;
   }
 
@@ -806,7 +809,14 @@ button[disabled]{
     color: #4360DF;
     padding: 0 10px 20px 10px;
     border-radius: 10px;
-    width: 170px;
+  }
+
+  .stickyBar {
+    position: sticky;
+    position: -webkit-sticky; /* Safari */
+    top: 0;
+    z-index: 99999;
+    background-color: #FFFFFF;
   }
 
   .addOption:hover {
