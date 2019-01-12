@@ -830,6 +830,7 @@ button[disabled]{
 
 .endDateTime {
     display: flex;
+    align-items: center;
 }
 
 .endDate {
@@ -851,6 +852,8 @@ button[disabled]{
 }
 
 .endTime {
+    display: flex;
+    align-items: center;
     color: #939BA1;
 }
 

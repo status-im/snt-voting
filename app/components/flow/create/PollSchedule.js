@@ -10,6 +10,8 @@ import InfiniteCalendar, {
     withRange,
   } from 'react-infinite-calendar';
 import 'react-infinite-calendar/styles.css';
+import TextField from '@material-ui/core/TextField';
+import { setHours, setMinutes } from 'date-fns';
 
 const CalendarWithRange = withRange(Calendar);
 
@@ -53,6 +55,18 @@ class PollSchedule extends Component {
     handleDateChange = date => {
         this.props.assignToPoll({endDate: date.end});
         this.setState({ startDate: date.start, endDate: date.end });
+    }
+
+    handleTimeChange = time => {
+        if(time.target.value == '') {
+            return;
+        }
+        const newTime = time.target.value.split(':')
+        const updatedHour = setHours(this.state.endDate, newTime[0])
+        const updatedMinute = setMinutes(updatedHour, newTime[1])
+        console.log(updatedHour, updatedMinute)
+        this.setState({ endDate: updatedMinute })
+        // this.setState({ endDate: updatedHour })
     }
 
     continue = () => {
@@ -118,7 +132,17 @@ class PollSchedule extends Component {
                     { endDate && `${monthNames[endDate.getMonth()]} ${endDate.getDate()} ` }
                 </div>
                 <div className="endTime">
-                    { endDate && `at ${this.formatAMPM(endDate)}`}
+                    at 
+                    { endDate && 
+                    <TextField
+                        id="time"
+                        type="time"
+                        defaultValue="12:00"
+                        onChange={this.handleTimeChange}
+                            InputLabelProps={{
+                        shrink: true,
+                        }}
+                    />}
                 </div>
             </div>
             <Button onClick={this.continue}>Next</Button>
