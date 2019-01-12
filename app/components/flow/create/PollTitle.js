@@ -51,7 +51,7 @@ class PollTitle extends Component {
         <LinearProgress variant="determinate" value={19} />
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
-            <div style={{marginRight:"24px"}}>
+            <div style={{marginRight:"24px", marginTop:"8px"}}>
             <TextField
                 label="Poll name"
                 multiline

@@ -81,8 +81,8 @@ class PollReview extends Component {
 
             <div className="reviewDetails">
                 <Typography variant="h3">{poll.title}<br /><br /></Typography>
-                <Typography variant="body1">{poll.description}<br /><br /><br /></Typography>
-                <div className="pollOption" style={{height:"144px", marginTop:"32px"}}>
+                <Typography variant="body1">{poll.description}<br /><br /></Typography>
+                <div className="pollOption" style={{height:"144px", marginTop:"32px", border:"1px solid #EEF2F5"}}>
                     <Typography variant="h3" className="grayHeader">Poll starts:</Typography>
                     <Typography variant="body2" className="detail">Today (upon publishing)<br /><br /></Typography>
                     <Typography variant="h3" className="grayHeader">Poll ends:</Typography>

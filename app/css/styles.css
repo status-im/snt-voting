@@ -709,11 +709,6 @@ button[disabled]{
     text-align: center;
   }
 
-  .section .pollCreation {
-    margin-right: 24px;
-  }
-
-
   .pollCreation small {
     float: right;
     color: #939BA1;
@@ -760,7 +755,7 @@ button[disabled]{
   }
 
   .pollOption {
-    border: 1px solid #eef2f5;
+    border: 1px solid #edf2f5;
     border-radius: 3px;
     padding: 10px;
     margin-bottom: 12px;
