@@ -67,7 +67,7 @@ class PollSchedule extends Component {
             />
         </div>
         <div className="buttonNav">
-            <Button onClick={this.continue}>Next</Button>
+            <Button onClick={this.continue}>Review</Button>
         </div>
         </Fragment>;
     }
