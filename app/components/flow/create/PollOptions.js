@@ -149,7 +149,6 @@ class PollOptions extends Component {
         className="pollCreation"
         TransitionComponent={Transition}
         >
-            <div style={{marginRight:"24px"}}>
             <DialogActions>
             <Button onClick={this.handleClose} color="primary" style={{position:"absolute", left: "0px", align:"left"}}>
                 <img src="images/x-close.svg" />
@@ -177,7 +176,7 @@ class PollOptions extends Component {
                     }}      
                 />
                 {this.state.error && <FormHelperText className="errorText">{this.state.error}</FormHelperText>}
-
+                <div style={{marginRight:"24px"}}>
                 <TextField
                     id="standard-multiline-flexible"
                     label="Option description"
@@ -191,8 +190,8 @@ class PollOptions extends Component {
                     shrink: true,
                     }}
                 />
+                </div>
             </DialogContent>
-            </div>
         </Dialog>
         </Fragment>;
     }
