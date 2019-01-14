@@ -10,8 +10,9 @@ import InfiniteCalendar, {
     withRange,
   } from 'react-infinite-calendar';
 import 'react-infinite-calendar/styles.css';
-import TextField from '@material-ui/core/TextField';
-import { setHours, setMinutes } from 'date-fns';
+import { setHours, setMinutes, getHours, getMinutes } from 'date-fns';
+import { monthNames, timeValues, timeGroups } from '../../standard/constants';
+import TimePickerDialog from './TimePickerDialog';
 
 const CalendarWithRange = withRange(Calendar);
 
@@ -20,10 +21,6 @@ Date.prototype.addDays = function(days) {
     date.setDate(date.getDate() + days);
     return date;
 }
-
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-];
 
 class PollSchedule extends Component {
 
@@ -34,19 +31,37 @@ class PollSchedule extends Component {
     }
 
     state = {
-        startDate: false,
         endDate: false,
         error: '',
+        timeDialog: false,
+        timeValues: {
+            hour: '00',
+            minute: '00',
+            ampm: 'AM'
+        }
     }
 
     componentDidMount(){
-        if(this.props.poll.endDate !== undefined){
-            this.setState({endDate: this.props.poll.endDate});
+        const { endDate, options } = this.props.poll;
+        if(endDate !== undefined){
+            const minute = `${getMinutes(endDate)}`
+            const hour = `${getHours(endDate)}`
+            const ampm = hour > 12 ? 'PM' : 'AM'
+            const timeValues = { hour, minute, ampm }
+
+            this.setState({endDate: endDate, timeValues});
+
         } else {
-            this.setState({endDate: (new Date()).addDays(15) });
+            const currentDate = new Date();
+            const minute = `${getMinutes(currentDate)}`
+            const hour = `${getHours(currentDate)}`
+            const ampm = hour > 12 ? 'PM' : 'AM'
+            const timeValues = { hour, minute, ampm }
+            console.log(timeValues);
+            this.setState({endDate: (new Date()).addDays(15), timeValues });
         }
 
-        if(!this.props.poll.options){
+        if(!options){
             const {history} = this.props;
             history.push('/');
         }
@@ -54,19 +69,37 @@ class PollSchedule extends Component {
 
     handleDateChange = date => {
         this.props.assignToPoll({endDate: date.end});
-        this.setState({ startDate: date.start, endDate: date.end });
+        this.setState({ endDate: date.end });
     }
 
-    handleTimeChange = time => {
-        if(time.target.value == '') {
-            return;
+    handleTimeChange = (name, value) => {
+        const { endDate } = this.state; 
+        console.log(name, value)
+        this.setState(({timeValues}) => ({
+            timeValues: {
+              ...timeValues,
+              [name]: value
+            }
+          }));
+        if(name == 'hour') {
+            const updatedHour = setHours(endDate, value)
+            this.setState({ endDate: updatedHour})
+        } else if(name == 'minute') {
+            const updatedMinute = setMinutes(endDate, value)
+            this.setState({ endDate: updatedMinute})
+        } else {
+            let newHour;
+            if(value == 'AM') {
+                newHour = getHours(endDate) - 12
+                const updatedHour = setHours(endDate, newHour)
+                this.setState({ endDate: updatedHour })                
+            } else {
+                newHour = getHours(endDate) + 12
+                const updatedHour = setHours(endDate, newHour)
+                this.setState({ endDate: updatedHour })
+            }
         }
-        const newTime = time.target.value.split(':')
-        const updatedHour = setHours(this.state.endDate, newTime[0])
-        const updatedMinute = setMinutes(updatedHour, newTime[1])
-        console.log(updatedHour, updatedMinute)
-        this.setState({ endDate: updatedMinute })
-        // this.setState({ endDate: updatedHour })
+        
     }
 
     continue = () => {
@@ -91,8 +124,21 @@ class PollSchedule extends Component {
         return strTime;
     }
 
+    toggleTimeDialog = prevState => {
+        this.setState({
+            timeDialog: !prevState.timeDialog
+        });
+    };
+
+    closeTimeDialog = () => {
+        this.setState({
+            timeDialog: false
+        });
+    };
+
+
     render() {
-        const { startDate, endDate } = this.state;
+        const { endDate, timeDialog, timeValues } = this.state;
         const today = new Date();
 
 
@@ -126,24 +172,18 @@ class PollSchedule extends Component {
               />
         </div>
         <div className="buttonNav scheduleNav">
-            <div className="endDateTime">
-                Ends:
-                <div className="endDate">
-                    { endDate && `${monthNames[endDate.getMonth()]} ${endDate.getDate()} ` }
+            <div>
+                <div className="endDateTime">
+                    Ends:
+                    <div className="endDate">
+                        { endDate && `${monthNames[endDate.getMonth()]} ${endDate.getDate()} ` }
+                    </div>
+                    <div className="endTime">
+                        { endDate && `at ${this.formatAMPM(endDate)}`}
+                    </div>
                 </div>
-                <div className="endTime">
-                    at 
-                    { endDate && 
-                    <TextField
-                        id="time"
-                        type="time"
-                        defaultValue="12:00"
-                        onChange={this.handleTimeChange}
-                            InputLabelProps={{
-                        shrink: true,
-                        }}
-                    />}
-                </div>
+                <div className="editTimeText" onClick={this.toggleTimeDialog}>Edit Time</div>
+                <TimePickerDialog timeDialog={timeDialog} timeValues={timeValues} handleTimeChange={this.handleTimeChange} closeTimeDialog={this.closeTimeDialog} />
             </div>
             <Button onClick={this.continue}>Next</Button>
         </div>
