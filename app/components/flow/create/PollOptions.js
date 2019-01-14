@@ -26,7 +26,7 @@ const SortableItem = SortableElement(({value, editOption}) =>
 const SortableList = SortableContainer(({items, removeOption, editOption}) => {
   return (
     <div>
-      {items.reverse().map((value, index) => (
+      {items.map((value, index) => (
         <SortableItem key={`item-${index}`} index={index} value={value} editOption={editOption(index)} />
       ))}
     </div>
@@ -161,7 +161,7 @@ class PollOptions extends Component {
             </Button>
             </DialogActions>
             <DialogTitle id="responsive-dialog-title">{ this.state.edit !== null ? "Edit poll option" : "Add new poll option" }</DialogTitle>
-            <DialogContent>
+            <DialogContent className="optionDialog">
                 <TextField
                     label="Option title"
                     autoFocus

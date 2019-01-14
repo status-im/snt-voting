@@ -731,14 +731,18 @@ button[disabled]{
 
   .pollCreation .inputTxt textarea,
   .pollCreation .inputTxt input {
-    height: 52px;
     background: #EEF2F5;
     border-radius: 8px;
     padding: 14px;
+    padding-bottom: 0px;
+  }
+
+  .pollCreation .optionDialog .inputTxt input {
+      padding-bottom: 14px;
   }
 
   .pollCreation .inputTxt textarea::placeholder {
-    text-align: center;
+    text-align: left;
   }
 
   .pollCreation .inputTxt div:after,
