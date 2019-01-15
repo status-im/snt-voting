@@ -40,7 +40,7 @@
 }
 
 #votingDapp div.section {
-    padding: 20px;
+    padding: 24px;
     margin-bottom: 66px;
     margin-right: 4px;
     margin-left: 4px;
@@ -51,6 +51,7 @@
     line-height: 28px;
     font-weight: bold;
     margin-top: 1em;
+    margin-below: 24px;
 }
 
 #votingDapp div.votingTimer p {
@@ -653,7 +654,6 @@ button[disabled]{
       padding: 5px 20px;
   }
 
-
   .pollTypeTitle {
       text-transform: uppercase;
       color: #939BA1;
@@ -756,7 +756,7 @@ button[disabled]{
 
   .createPollBtn {
       float: right;
-      margin-right: 20px;
+      margin-right: 24px !important;
       margin-top: 20px;
   }
 
@@ -838,27 +838,32 @@ button[disabled]{
       margin-top: 30px;
   }
 
-  .reviewDetails p {
+.reviewDetails p {
     font-size: 15px;
     line-height: 22px;
-  }
+}
 
-  .reviewDetails h3 {
-      font-size: 17px;
-      line-height: 24px;
-      font-weight: bold;
-  }
+.reviewDetails h3 {
+    font-size: 17px;
+    line-height: 24px;
+    font-weight: bold;
+}
 
-  .reviewDetails h3.grayHeader {
+.reviewDetails h3.grayHeader {
     color: #939BA1;
     font-size: 15px;
     line-height: 22px;
     font-weight: normal;
-  }
+}
 
-  .reviewDetails .detail {
+.reviewDetails .detail {
     font-weight: 600 !important;
     line-height: 22px !important;
     font-size: 15px !important;
     color: #000 !important;
-  }
+}
+
+.org-description {
+    font-size: 15px;
+    line-height: 22px;                                                                              
+}
