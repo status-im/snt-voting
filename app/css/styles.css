@@ -131,7 +131,7 @@
 }
 
 #votingDapp div.card {
-    margin-top: 1em;
+    margin: 16px 16px 24px 16px;
     border: 1px solid #edf2f5;
     border-radius: 3px;
     box-shadow: none;
@@ -663,7 +663,8 @@ button[disabled]{
   }
 
   div.card.poll h2 {
-      font-size: 1rem;
+      font-size: 17px;
+      line-height: 24px;
   }
 
   div.card.poll p {
@@ -671,8 +672,10 @@ button[disabled]{
   }
 
   div.card.poll .stats {
-    font-size: .85rem;
+    font-size: 14px;
+    line-height: 22px;
     margin-top: 5px;
+    margin-bottom: 16px;
   }
 
   .otherPollsTitle small {
@@ -701,13 +704,15 @@ button[disabled]{
   div.poll span.pollClosingDate {
     background: #ECEFFC;
     text-transform: uppercase;
-    font-size: .7rem;
-    font-weight: normal;
-    padding: 5px 7px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
     border-radius: 15px;
-    margin: 10px 0px;
-    width: 150px;
+    margin: 10px 0px 16px 0px;
+    width: -moz-fit-content;
+    width: fit-content;
     display: block;
+    letter-spacing: 1px;
     text-align: center;
   }
 

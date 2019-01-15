@@ -138,7 +138,7 @@ class LandingPage extends Component {
                         <p className="stats">
                         Voters: {openPoll._voters}<br />
                         Total votes: {openPoll._votesSum}<br />
-                        Total {this.props.symbol}: {openPoll._tokenSum}<br />
+                        Total {this.props.symbol}: {openPoll._tokenSum}
                         </p>
                         <Link to={"/titleScreen/" + openPoll.idPoll} className="arrowRightLink">VOTE NOW</Link>
                     </CardContent>
