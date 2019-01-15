@@ -129,7 +129,7 @@ class LandingPage extends Component {
             </div>
 
             { openPoll && openPoll.content &&
-                <div className="section" style={{paddingTop: 0, marginBottom: "15px"}}> 
+                <div className="section" style={{paddingTop: 0, marginBottom: "26px"}}> 
                     <h2 className="pollTypeTitle">Open Polls</h2>
                     <Card className="card poll">
                     <CardContent>
