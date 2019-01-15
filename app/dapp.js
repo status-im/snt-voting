@@ -22,6 +22,10 @@ const muiTheme = createMuiTheme({
     MuiButton: {
       root: {
         height: '44px'
+      },
+      label: {
+        fontSize: '15px',
+        lineHeight: '22px',
       }
     }
   }
