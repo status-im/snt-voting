@@ -657,7 +657,8 @@ button[disabled]{
   .pollTypeTitle {
       text-transform: uppercase;
       color: #939BA1;
-      font-size: .8rem;
+      font-size: 12px;
+      letter-spacing: 1px;
       font-weight: normal;
   }
 
