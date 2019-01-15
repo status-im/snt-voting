@@ -184,7 +184,7 @@ class PollSchedule extends Component {
                 <div className="editTimeText" onClick={this.toggleTimeDialog}>Edit Time</div>
                 <TimePickerDialog timeDialog={timeDialog} timeValues={timeValues} handleTimeChange={this.handleTimeChange} closeTimeDialog={this.closeTimeDialog} />
             </div>
-            <Button onClick={this.continue}>Next</Button>
+            <Button onClick={this.continue}>Review</Button>
         </div>
         </Fragment>;
     }

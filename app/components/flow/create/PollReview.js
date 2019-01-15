@@ -81,18 +81,18 @@ class PollReview extends Component {
 
             <div className="reviewDetails">
                 <Typography variant="h3">{poll.title}<br /><br /></Typography>
-                <Typography variant="body1">{poll.description}<br /><br /><br /></Typography>
-                <div className="pollOption ">
+                <Typography variant="body1">{poll.description}</Typography>
+                <div className="pollOption" style={{height:"144px", marginTop:"32px", border:"1px solid #EEF2F5"}}>
                     <Typography variant="h3" className="grayHeader">Poll starts:</Typography>
                     <Typography variant="body2" className="detail">Today (upon publishing)<br /><br /></Typography>
                     <Typography variant="h3" className="grayHeader">Poll ends:</Typography>
                     <Typography  variant="body2"  className="detail">{poll.endDate.DDMMYYYYatHHMM()}</Typography>
                 </div>
 
-                <Typography variant="h3" className="grayHeader"><br /><br />Options</Typography>
+                <Typography variant="h3" className="grayHeader" style={{marginBottom:"8px"}}><br /><br />Options</Typography>
                 {
                     poll.options.map((item, i) => {
-                        return  <div className="pollOption" key={i}>
+                        return  <div className="pollOption" style={{padding:"16px", height:"72px"}} key={i}>
                             <Typography variant="display1">{item.title}</Typography>
                             <Typography variant="body2">{item.content}</Typography>
                         </div>
