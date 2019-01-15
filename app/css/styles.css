@@ -867,3 +867,27 @@ button[disabled]{
     width: fit-content;
     color: #4360DF;
 }
+
+.time-picker-title {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.time-picker-save {
+    display: flex;
+    justify-content: center;
+    margin: 1rem;
+}
+
+.time-picker-save:hover {
+    background: #EEF2F5;
+}
+
+.time-dialog {
+    width: 80vw;
+    max-width: 320px;
+}

@@ -74,7 +74,6 @@ class PollSchedule extends Component {
 
     handleTimeChange = (name, value) => {
         const { endDate } = this.state; 
-        console.log(name, value)
         this.setState(({timeValues}) => ({
             timeValues: {
               ...timeValues,
