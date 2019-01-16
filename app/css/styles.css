@@ -695,6 +695,7 @@ button[disabled]{
 
   .landingPageButton:hover {
     background: rgb(212, 216, 233);
+    cursor: pointer;
   }
 
   div.poll span.pollClosingDate {

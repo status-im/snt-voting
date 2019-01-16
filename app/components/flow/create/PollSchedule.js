@@ -164,6 +164,7 @@ class PollSchedule extends Component {
                 }}
                 displayOptions={{
                     showHeader: false,
+                    showTodayHelper: false,
                 }}
                 locale={{
                     headerFormat: 'MMM Do',
