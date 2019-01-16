@@ -125,7 +125,7 @@ class LandingPage extends Component {
                 <img src="images/status-logo.svg" width="36" />
                 <Button className="createPollBtn" onClick={this.createPoll}><img src="images/create-poll.svg" width="23" /></Button>
                 <Typography variant="headline">Status {this.props.symbol} Voting</Typography>
-                <Typography variant="body1" component="div" style={{fontSize: '15px', lineHeight: '22px'}}>Create a poll or vote in one. Your vote helps us decide our product and community direction.</Typography>
+                <Typography variant="body1" component="div" style={{marginTop: '24px', fontSize: '15px', lineHeight: '22px'}}>Create a poll or vote in one. Your vote helps us decide our product and community direction.</Typography>
             </div>
 
             { openPoll && openPoll.content &&

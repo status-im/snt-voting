@@ -115,7 +115,7 @@ class TitleScreen extends Component {
       <div className="section" style={{marginBottom: 0}}>
         <img src="images/status-logo.svg" width="36" />
         <Typography variant="headline">{title}</Typography>
-        <Typography variant="body1" component="div" dangerouslySetInnerHTML={{__html: description}}></Typography>
+        <Typography variant="body1" component="div" style={{marginTop: '24px'}} dangerouslySetInnerHTML={{__html: description}}></Typography>
       </div>
       <hr />
       { seconds > 0 && <div className="votingTimer">

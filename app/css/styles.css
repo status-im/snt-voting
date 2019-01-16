@@ -692,7 +692,8 @@ button[disabled]{
       border: none;
       text-decoration: none;
       padding: 14px 30px;
-      font-size: .8rem;
+      font-size: 15px;
+      line-height: 22px;
       border-radius: 5px;
   }
 
@@ -760,9 +761,9 @@ button[disabled]{
   }
 
   .createPollBtn {
-      float: right;
-      margin-right: 24px !important;
-      margin-top: 20px;
+    float: right;
+    margin-top: 20px;
+    margin-right: -4px !important;
   }
 
   .pollOption {

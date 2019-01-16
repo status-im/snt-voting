@@ -21,7 +21,9 @@ const muiTheme = createMuiTheme({
   overrides: {
     MuiButton: {
       root: {
-        height: '44px'
+        height: '44px',
+        fontSize: '15px',
+        lineHeight: '22px',
       },
       label: {
         fontSize: '15px',
