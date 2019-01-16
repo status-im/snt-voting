@@ -927,3 +927,11 @@ button[disabled]{
     width: 80vw;
     max-width: 320px;
 }
+
+.Cal__MonthList__root {
+    height: calc(100vh - 230px) !important;
+}
+
+.Cal__Month__rows {
+    background: none !important;
+}

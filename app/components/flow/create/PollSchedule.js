@@ -156,7 +156,7 @@ class PollSchedule extends Component {
             <Typography variant="body1" style={{marginTop: '20px'}}>Set the end date and time for the poll.</Typography>
             <div>
               <InfiniteCalendar
-                height={`calc(100vh - 230px)`}
+                height={200}
                 className="schedule-calendar"
                 Component={CalendarWithRange}
                 min={today}
