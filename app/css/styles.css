@@ -42,7 +42,6 @@
 #votingDapp div.section {
     padding: 20px;
     padding-botton: 0;
-    margin-bottom: 66px;
     margin-right: 4px;
     margin-left: 4px;
 }
@@ -894,7 +893,6 @@ button[disabled]{
 
 .schedule-calendar {
     width: 100% !important;
-    max-width: 400px;
 }
 
 .editTimeText {
@@ -902,6 +900,12 @@ button[disabled]{
     width: fit-content;
     color: #4360DF;
     font-size: 15px;
+}
+
+.end-time-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .time-picker-title {
@@ -917,10 +921,6 @@ button[disabled]{
     display: flex;
     justify-content: center;
     margin: 1rem;
-}
-
-.time-picker-save:hover {
-    background: #EEF2F5;
 }
 
 .time-dialog {

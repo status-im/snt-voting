@@ -53,9 +53,13 @@ class PollSchedule extends Component {
 
         } else {
             const currentDate = new Date();
-            const minute = `${getMinutes(currentDate)}`
-            const hour = `${getHours(currentDate)}`
-            const ampm = hour > 12 ? 'PM' : 'AM'
+            const hrs = getHours(currentDate)
+            const mins = getMinutes(currentDate)
+            const minute = mins < 10 ? '0' + mins : `${mins}`
+            let hour = hrs % 12
+            hour = hour ? `${hour}` : 12
+            hour = hour < 10 ? '0' + hour: `${hour}`
+            const ampm = hrs >= 12 ? 'PM' : 'AM'
             const timeValues = { hour, minute, ampm }
             console.log(timeValues);
             this.setState({endDate: (new Date()).addDays(15), timeValues });
@@ -89,13 +93,17 @@ class PollSchedule extends Component {
         } else {
             let newHour;
             if(value == 'AM') {
-                newHour = getHours(endDate) - 12
-                const updatedHour = setHours(endDate, newHour)
-                this.setState({ endDate: updatedHour })                
+                if(getHours(endDate) >= 12) {
+                    newHour = getHours(endDate) - 12
+                    const updatedHour = setHours(endDate, newHour)
+                    this.setState({ endDate: updatedHour })                
+                }
             } else {
-                newHour = getHours(endDate) + 12
-                const updatedHour = setHours(endDate, newHour)
-                this.setState({ endDate: updatedHour })
+                if(getHours(endDate) < 12) {
+                    newHour = getHours(endDate) + 12
+                    const updatedHour = setHours(endDate, newHour)
+                    this.setState({ endDate: updatedHour })
+                }
             }
         }
         
@@ -146,8 +154,9 @@ class PollSchedule extends Component {
         <div className="section pollCreation">
             <Typography variant="headline">Create a Poll</Typography>
             <Typography variant="body1" style={{marginTop: '20px'}}>Set the end date and time for the poll.</Typography>
+            <div>
               <InfiniteCalendar
-                height={475}
+                height={`calc(100vh - 230px)`}
                 className="schedule-calendar"
                 Component={CalendarWithRange}
                 min={today}
@@ -170,9 +179,10 @@ class PollSchedule extends Component {
                     headerFormat: 'MMM Do',
                 }}
               />
+            </div>
         </div>
         <div className="buttonNav scheduleNav">
-            <div>
+            <div className="end-time-container">
                 <div className="endDateTime">
                     Ends:
                     <div className="endDate">
