@@ -22,7 +22,7 @@ class ReviewVotes extends Component {
     const { toWei, toBN } = web3.utils;
     
 
-    const seconds = this.props.polls[this.props.idPoll]._endTime - (new Date()).getTime() / 1000;
+    const seconds = this.props.polls.find(p => p.idPoll == this.props.idPoll)._endTime - (new Date()).getTime() / 1000;
     if(seconds <= 0){
       alert("Poll is expired");
       this.props.history.push('/');

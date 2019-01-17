@@ -218,7 +218,11 @@
     color: #4360DF;
     font-size: 15px;
     line-height: 22px;
+    position: relative;
+    top: -5px;
 }
+
+
 
 .upperCase {
     text-transform: uppercase !important;
@@ -763,7 +767,7 @@ button[disabled]{
   .createPollBtn {
     float: right;
     margin-top: 20px;
-    margin-right: -4px !important;
+    margin-right: -22px !important;
   }
 
   .pollOption {
@@ -877,6 +881,7 @@ button[disabled]{
 .endDateTime {
     display: flex;
     align-items: center;
+    margin-bottom: 10px;
 }
 
 .endDate {

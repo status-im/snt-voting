@@ -61,7 +61,6 @@ class PollSchedule extends Component {
             hour = hour < 10 ? '0' + hour: `${hour}`
             const ampm = hrs >= 12 ? 'PM' : 'AM'
             const timeValues = { hour, minute, ampm }
-            console.log(timeValues);
             this.setState({endDate: (new Date()).addDays(15), timeValues });
         }
 
