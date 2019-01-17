@@ -40,8 +40,8 @@
 }
 
 #votingDapp div.section {
-    padding: 20px;
-    padding-botton: 0;
+    padding: 24px;
+    margin-bottom: 66px;
     margin-right: 4px;
     margin-left: 4px;
 }
@@ -51,6 +51,7 @@
     line-height: 28px;
     font-weight: bold;
     margin-top: 1em;
+    margin-bottom: 24px;
 }
 
 #votingDapp div.votingTimer p {
@@ -130,7 +131,7 @@
 }
 
 #votingDapp div.card {
-    margin-top: 1em;
+    margin: 16px 16px 24px 16px;
     border: 1px solid #edf2f5;
     border-radius: 3px;
     box-shadow: none;
@@ -653,16 +654,17 @@ button[disabled]{
       padding: 5px 20px;
   }
 
-
   .pollTypeTitle {
       text-transform: uppercase;
       color: #939BA1;
-      font-size: .8rem;
+      font-size: 12px;
+      letter-spacing: 1px;
       font-weight: normal;
   }
 
   div.card.poll h2 {
-      font-size: 1rem;
+      font-size: 17px;
+      line-height: 24px;
   }
 
   div.card.poll p {
@@ -670,8 +672,10 @@ button[disabled]{
   }
 
   div.card.poll .stats {
-    font-size: .85rem;
+    font-size: 14px;
+    line-height: 22px;
     margin-top: 5px;
+    margin-bottom: 16px;
   }
 
   .otherPollsTitle small {
@@ -687,8 +691,9 @@ button[disabled]{
       background: #ECEFFC;
       border: none;
       text-decoration: none;
-      padding: 10px 30px;
-      font-size: .8rem;
+      padding: 14px 30px;
+      font-size: 15px;
+      line-height: 22px;
       border-radius: 5px;
   }
 
@@ -700,13 +705,15 @@ button[disabled]{
   div.poll span.pollClosingDate {
     background: #ECEFFC;
     text-transform: uppercase;
-    font-size: .7rem;
-    font-weight: normal;
-    padding: 5px 7px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
     border-radius: 15px;
-    margin: 10px 0px;
-    width: 150px;
+    margin: 10px 0px 16px 0px;
+    width: -moz-fit-content;
+    width: fit-content;
     display: block;
+    letter-spacing: 1px;
     text-align: center;
   }
 
@@ -754,9 +761,9 @@ button[disabled]{
   }
 
   .createPollBtn {
-      float: right;
-      margin-right: 20px;
-      margin-top: 20px;
+    float: right;
+    margin-top: 20px;
+    margin-right: -4px !important;
   }
 
   .pollOption {
@@ -837,30 +844,35 @@ button[disabled]{
       margin-top: 30px;
   }
 
-  .reviewDetails p {
+.reviewDetails p {
     font-size: 15px;
     line-height: 22px;
-  }
+}
 
-  .reviewDetails h3 {
-      font-size: 17px;
-      line-height: 24px;
-      font-weight: bold;
-  }
+.reviewDetails h3 {
+    font-size: 17px;
+    line-height: 24px;
+    font-weight: bold;
+}
 
-  .reviewDetails h3.grayHeader {
+.reviewDetails h3.grayHeader {
     color: #939BA1;
     font-size: 15px;
     line-height: 22px;
     font-weight: normal;
-  }
+}
 
-  .reviewDetails .detail {
+.reviewDetails .detail {
     font-weight: 600 !important;
     line-height: 22px !important;
     font-size: 15px !important;
     color: #000 !important;
-  }
+}
+
+.org-description {
+    font-size: 15px;
+    line-height: 22px;                                                                              
+}
 
 .endDateTime {
     display: flex;

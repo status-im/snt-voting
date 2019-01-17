@@ -17,6 +17,19 @@ import './dapp.css';
 const muiTheme = createMuiTheme({
   typography: {
     fontFamily: 'Inter UI'
+  },
+  overrides: {
+    MuiButton: {
+      root: {
+        height: '44px',
+        fontSize: '15px',
+        lineHeight: '22px',
+      },
+      label: {
+        fontSize: '15px',
+        lineHeight: '22px',
+      }
+    }
   }
 });
 
@@ -223,15 +236,15 @@ class App extends React.Component {
     const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll,  setPollOrder, resetPollCounter, replacePoll, loadPollContent, loadPollRange, loadMorePolls, ...this.state };
 
     if(web3Provider){
-      return   <MuiThemeProvider theme={muiTheme}>
-      <Router>
+      return <MuiThemeProvider theme={muiTheme}>
+        <Router>
           <Web3Render ready={web3Provider}>
             <VotingContext.Provider value={votingContext}>
               <Voting />
             </VotingContext.Provider>
           </Web3Render>
         </Router>
-        </MuiThemeProvider>
+      </MuiThemeProvider>
     } else {
         if(networkName){
           return   <MuiThemeProvider theme={muiTheme}>
