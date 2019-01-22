@@ -72,7 +72,7 @@ class LandingPage extends Component {
         let polls = this.props.polls;
 
         if(polls && polls.length){
-            const openPoll = polls.find(x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000);
+            const openPoll = polls.find(x => !x._canceled && x._endTime > (new Date()).getTime() / 1000);
             if(openPoll)
             EmbarkJS.Storage.get(web3.utils.toAscii(openPoll._description)).then(content => {
                 openPoll.content = JSON.parse(content);
@@ -81,7 +81,7 @@ class LandingPage extends Component {
                 this.props.replacePoll(openPoll);
             })
 
-            const closedPoll = polls.find(x => x._cancelled || x._endTime < (new Date()).getTime() / 1000);
+            const closedPoll = polls.find(x => !x._canceled && x._endTime < (new Date()).getTime() / 1000);
             if(closedPoll)
             EmbarkJS.Storage.get(web3.utils.toAscii(closedPoll._description)).then(content => {
                 closedPoll.content = JSON.parse(content);

@@ -38,9 +38,9 @@ class OtherPolls extends Component {
     loadIPFSpollContent = async () => {
         let filterFn;
         if(this.props.pollType == 'open'){
-            filterFn = x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000;
+            filterFn = x => !x._canceled && x._endTime > (new Date()).getTime() / 1000;
         } else {
-            filterFn = x => x._cancelled || x._endTime < (new Date()).getTime() / 1000;
+            filterFn = x => !x._canceled && x._endTime < (new Date()).getTime() / 1000;
         }
         this.props.loadPollRange(filterFn, this.props.start, this.props.end);
     }
@@ -48,9 +48,9 @@ class OtherPolls extends Component {
     loadMorePollsHandle = async () => {
         let filterFn;
         if(this.props.pollType == 'open'){
-            filterFn = x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000;
+            filterFn = x => !x._canceled && x._endTime > (new Date()).getTime() / 1000;
         } else {
-            filterFn = x => x._cancelled || x._endTime < (new Date()).getTime() / 1000;
+            filterFn = x => !x._canceled && x._endTime < (new Date()).getTime() / 1000;
         }
 
         this.props.loadMorePolls(filterFn);
@@ -75,9 +75,9 @@ class OtherPolls extends Component {
 
         if(polls && polls.length){
             if(pollType == 'open'){
-                polls = polls.filter(x => !x._cancelled && x._endTime > (new Date()).getTime() / 1000);
+                polls = polls.filter(x => !x._canceled && x._endTime > (new Date()).getTime() / 1000);
             } else {
-                polls = polls.filter(x => x._cancelled || x._endTime < (new Date()).getTime() / 1000);
+                polls = polls.filter(x => !x._canceled && x._endTime < (new Date()).getTime() / 1000);
             }
         }
 
@@ -88,7 +88,8 @@ class OtherPolls extends Component {
                     polls.map((p, i) => {
 
                         if(i >= this.props.end) return null;
-
+                        if(p._canceled) return null;
+                        console.log(p);
                         p._tokenSum = 0;
                         p._votesSum = 0;
                         for(let i = 0; i < p._numBallots; i++){
