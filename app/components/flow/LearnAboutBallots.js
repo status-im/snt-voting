@@ -75,7 +75,7 @@ class LearnAboutBallots extends Component {
         }
     </div>
     <div className="buttonNav">
-      <Link to={"/votingHelp/" + idPoll}><Button className="nextAction">How voting works</Button></Link>
+      <Link to={"/votingHelp/" + idPoll}><Button className="nextAction">Next</Button></Link>
     </div>
     </Fragment>
     );
