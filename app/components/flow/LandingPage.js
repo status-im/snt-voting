@@ -155,7 +155,7 @@ class LandingPage extends Component {
                     <Card className="card poll">
                     <CardContent>
                         <Typography gutterBottom component="h2">{closedPoll.content.title}</Typography>
-                        <span className="pollClosingDate">Closed: {new Date(openPoll._endTime * 1000).DDMMYYYY()} </span>
+                        <span className="pollClosingDate">Closed: {new Date(closedPoll._endTime * 1000).DDMMYYYY()} </span>
                         <p className="stats">
                         Voters: {closedPoll._voters}<br />
                         Total votes: {closedPoll._votesSum}<br />
