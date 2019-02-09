@@ -89,7 +89,7 @@ class OtherPolls extends Component {
 
                         if(i >= this.props.end) return null;
                         if(p._canceled) return null;
-                        console.log(p);
+                        
                         p._tokenSum = 0;
                         p._votesSum = 0;
                         for(let i = 0; i < p._numBallots; i++){

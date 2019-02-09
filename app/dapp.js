@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
-import web3 from "Embark/web3"
+import web3 from "Embark/web3";
 import EmbarkJS from 'Embark/EmbarkJS';
 import PollManager from 'Embark/contracts/PollManager';
 import Voting from './components/Voting';
@@ -8,9 +8,9 @@ import DappToken from  'Embark/contracts/DappToken';
 import { VotingContext } from './context';
 import Web3Render from './components/standard/Web3Render';
 import { getPolls, omitPolls } from './utils/polls';
-import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import OtherWallets from './components/flow/wallet/OtherWallets';
-import Typography from '@material-ui/core/Typography'
+import Typography from '@material-ui/core/Typography';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import './dapp.css';
 
@@ -49,9 +49,6 @@ const pollsPerLoad = 3;
 
 class App extends React.Component {
 
-  constructor(props) {
-    super(props);
-  }
   state = { admin: false, pollOrder: 'NEWEST_ADDED', web3Provider: true, loading: true, name: '----', symbol: "", decimals: "18", networkName: "" , rawPolls: [], pollsRequested: [],    start: 0,
   end: pollsPerLoad};
 
@@ -79,9 +76,9 @@ class App extends React.Component {
         this._getPolls();
       }
       web3.eth.net.getId((err, netId) => {
-        if(EmbarkJS.environment == 'testnet' && netId !== TESTNET){
+        if(EmbarkJS.environment === 'testnet' && netId !== TESTNET){
           this.setState({web3Provider: false, networkName: "Ropsten"});
-        } else if(EmbarkJS.environment == 'livenet' && netId !== MAINNET){
+        } else if(EmbarkJS.environment === 'livenet' && netId !== MAINNET){
           this.setState({web3Provider: false, networkName: "Mainnet"});
         }
       })
@@ -112,21 +109,20 @@ class App extends React.Component {
   }
 
   _getPolls = async () => {
-    this.setState({ loading: true })
+    this.setState({ loading: true });
     const { nPolls, poll } = PollManager.methods;
     const polls = await nPolls().call({from: web3.eth.defaultAccount});
-    if (polls) 
-      getPolls(polls, poll)
-        .then(omitPolls)
-        .then(rawPolls => { 
-          // this._loadIPFSContent(rawPolls);
-          rawPolls = rawPolls.sort((a,b) => {
-            if(a.idPoll > b.idPoll) return -1; else if(a.idPoll < b.idPoll) return 1; else return 0;
-          });
-          this.setState({rawPolls, loading: false});          
-        });
-    else 
-      this.setState({ rawPolls: [], loading: false });
+    if (polls) getPolls(polls, poll)
+                .then(omitPolls)
+                .then(rawPolls => { 
+                  rawPolls = rawPolls.sort((a,b) => {
+                    if(a.idPoll > b.idPoll) return -1;
+                    if(a.idPoll < b.idPoll) return 1;
+                    return 0;
+                  });
+                  this.setState({rawPolls, loading: false});          
+                });
+    else this.setState({ rawPolls: [], loading: false });
   }
 
   updatePoll = async (idPoll) => {
@@ -144,11 +140,11 @@ class App extends React.Component {
   appendToPoll = (idPoll, data) => {
     const { rawPolls } = this.state;
     const newPolls = [...rawPolls];
-    newPolls[idPoll] = { ...newPolls[idPoll], ...data }
+    newPolls[idPoll] = { ...newPolls[idPoll], ...data };
     this.setState({ rawPolls: newPolls });
   }
 
-  setPollOrder = pollOrder => { this.setState({ pollOrder }) }
+  setPollOrder = pollOrder => { this.setState({ pollOrder }); }
 
   _renderStatus(title, available) {
     let className = available ? 'pull-right status-online' : 'pull-right status-offline';
@@ -162,7 +158,7 @@ class App extends React.Component {
   replacePoll = (poll) => {
     let rawPolls = this.state.rawPolls;
     for(let i = 0; i < rawPolls.length; i++){
-      if(rawPolls[i].idPoll == poll.idPoll){
+      if(rawPolls[i].idPoll === poll.idPoll){
         rawPolls[i] = poll;
         this.setState({rawPolls, t: new Date().getTime()});
         break;
@@ -206,7 +202,7 @@ class App extends React.Component {
 
     if(!pollsRequested) return;
 
-    for(let i = 0; i < polls.length; i++){11
+    for(let i = 0; i < polls.length; i++){
       if(pollsRequested.includes(polls[i].idPoll)) continue;
       
       pollsRequested.push(polls[i].idPoll);
@@ -228,15 +224,12 @@ class App extends React.Component {
   }
 
 
-
-
   render(){
-    let { web3Provider, networkName, decimals, symbol, name} = this.state;
+    let {web3Provider, networkName} = this.state;
     const { _getPolls, updatePoll, setPollOrder, appendToPoll, replacePoll, loadPollContent, resetPollCounter, loadPollRange, loadMorePolls } = this;
     const votingContext = { getPolls: _getPolls, updatePoll, appendToPoll,  setPollOrder, resetPollCounter, replacePoll, loadPollContent, loadPollRange, loadMorePolls, ...this.state };
 
-    if(web3Provider){
-      return <MuiThemeProvider theme={muiTheme}>
+    if(web3Provider) return <MuiThemeProvider theme={muiTheme}>
         <Router>
           <Web3Render ready={web3Provider}>
             <VotingContext.Provider value={votingContext}>
@@ -244,14 +237,14 @@ class App extends React.Component {
             </VotingContext.Provider>
           </Web3Render>
         </Router>
-      </MuiThemeProvider>
-    } else {
-        if(networkName){
-          return   <MuiThemeProvider theme={muiTheme}>
+      </MuiThemeProvider>;
+    
+    if(networkName) return <MuiThemeProvider theme={muiTheme}>
           <div>
           <Typography variant="body1" style={{marginTop: "40vh", textAlign:"center"}}><img src="images/warning.svg" width="24" /><br /><br />Please connect to {networkName} to continue.</Typography>
-        </div></MuiThemeProvider>
-        } else {
+          </div>
+        </MuiThemeProvider>;
+       
           return   <MuiThemeProvider theme={muiTheme}>
           <Router>
           <Fragment>
@@ -261,20 +254,14 @@ class App extends React.Component {
                   <VotingContext.Provider value={votingContext}>
                     <Voting />
                   </VotingContext.Provider>
-                  </Web3Render>
+                  </Web3Render>;
                 }
               } />
               <Route path="/connectOtherWallet" render={() => <div id="votingDapp"><OtherWallets noWeb3Provider={true}  /></div>} />
             </Switch>
           </Fragment>
         </Router>
-        </MuiThemeProvider>
-
-        }
-    }
-    
-    
-    
+        </MuiThemeProvider>;
   }
 }
 

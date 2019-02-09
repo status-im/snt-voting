@@ -86,7 +86,7 @@ class LandingPage extends Component {
             EmbarkJS.Storage.get(web3.utils.toAscii(closedPoll._description)).then(content => {
                 closedPoll.content = JSON.parse(content);
                 this.setState({closedPoll});
-                this.props.replacePoll(openPoll);
+                this.props.replacePoll(closedPoll);
             })
         }
     }
