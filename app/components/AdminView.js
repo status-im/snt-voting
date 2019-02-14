@@ -9,6 +9,6 @@ const AdminView = () => {
   );
 };
 
-AdminView.displayName = "AdminView";
+AdminView.displayName = 'AdminView';
 
 export default AdminView;

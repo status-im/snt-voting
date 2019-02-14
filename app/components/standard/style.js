@@ -1,9 +1,9 @@
 export default {
   NoEthereumSection: {
-  maxWidth: '980px',
-  margin: '0 auto',
-  textAlign: 'center',
-  fontSize: '24px'
+    maxWidth: '980px',
+    margin: '0 auto',
+    textAlign: 'center',
+    fontSize: '24px'
   },
   ImgHeaderLogo: {
     width: '264px',
@@ -15,7 +15,7 @@ export default {
     marginBottom: '40px'
   },
   PNotFound: {
-    opacity: 0.50,
+    opacity: 0.5,
     width: '925px',
     display: 'inline-block',
     marginTop: '50px',
@@ -66,6 +66,4 @@ export default {
     borderRadius: '4px',
     margin: '0 20px'
   }
-
-}
-
+};

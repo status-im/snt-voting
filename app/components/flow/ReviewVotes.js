@@ -1,30 +1,28 @@
-import {Link} from "react-router-dom";
+import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
-import React, {Component, Fragment} from 'react';
-import Typography from '@material-ui/core/Typography'
+import React, { Component, Fragment } from 'react';
+import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import PollManager from 'Embark/contracts/PollManager';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
 import utils from '../../utils/utils';
 
 class ReviewVotes extends Component {
-
   state = {
     isSubmitting: false
-  }
+  };
 
   vote = () => {
-    this.setState({isSubmitting: true});
+    this.setState({ isSubmitting: true });
 
     const { vote, unvote } = PollManager.methods;
-    const { votes, history, idPoll, decimals} = this.props;
+    const { votes, history, idPoll, decimals } = this.props;
     const { toWei, toBN } = web3.utils;
-    
 
-    const seconds = this.props.polls.find(p => p.idPoll == this.props.idPoll)._endTime - (new Date()).getTime() / 1000;
-    if(seconds <= 0){
-      alert("Poll is expired");
+    const seconds = this.props.polls.find(p => p.idPoll == this.props.idPoll)._endTime - new Date().getTime() / 1000;
+    if (seconds <= 0) {
+      alert('Poll is expired');
       this.props.history.push('/');
       return;
     }
@@ -35,94 +33,105 @@ class ReviewVotes extends Component {
       return utils.toTokenDecimals(num.toString(), decimals);
     });
 
-    const balance4Voting = ballots.reduce((prev, curr) => toBN(prev).add(toBN(curr)), toBN("0"));
+    const balance4Voting = ballots.reduce((prev, curr) => toBN(prev).add(toBN(curr)), toBN('0'));
 
     const toSend = balance4Voting == 0 ? unvote(idPoll) : vote(idPoll, ballots.map(x => x.toString()));
 
-    toSend.estimateGas()
-      .then(gasEstimated => {
-        console.log("voting gas estimated: " + gasEstimated);
+    toSend.estimateGas().then(gasEstimated => {
+      console.log('voting gas estimated: ' + gasEstimated);
 
-          const transaction = toSend.send({gas: gasEstimated + 100000});
+      const transaction = toSend.send({ gas: gasEstimated + 100000 });
 
-          transaction.on('transactionHash', hash => {
-            this.props.setTransactionHash(idPoll, hash);
-            this.props.setTransactionPromise(idPoll, transaction);
-            history.push('/results/' + idPoll);
-          });
-
-          transaction.catch(err => {
-            this.setState({isSubmitting: false});
-          })
-          
-
+      transaction.on('transactionHash', hash => {
+        this.props.setTransactionHash(idPoll, hash);
+        this.props.setTransactionPromise(idPoll, transaction);
+        history.push('/results/' + idPoll);
       });
-  }
 
-  componentDidMount(){
-    const {polls, originalVotes, idPoll, history} = this.props;
+      transaction.catch(error => {
+        this.setState({ isSubmitting: false });
+      });
+    });
+  };
 
-    if(!polls){
+  componentDidMount() {
+    const { polls, originalVotes, idPoll, history } = this.props;
+
+    if (!polls) {
       history.push('/');
       return;
     }
 
     const poll = polls.find(p => p.idPoll == idPoll);
-    if(!poll) {
+    if (!poll) {
       history.push('/');
       return;
-    };
+    }
   }
 
-  render(){
-    const {polls, balances, votes, idPoll, decimals} = this.props;
-    const {isSubmitting} = this.state;
-    const {fromWei} = web3.utils;
+  render() {
+    const { polls, balances, votes, idPoll, decimals } = this.props;
+    const { isSubmitting } = this.state;
+    const { fromWei } = web3.utils;
 
-    if(!polls|| !balances[idPoll]){
+    if (!polls || !balances[idPoll]) {
       return null;
     }
 
-    const poll = polls.find(p => p.idPoll == idPoll);;
-    if(!poll) return null;
-    
-    const ballots = poll.content.ballots
+    const poll = polls.find(p => p.idPoll == idPoll);
+    if (!poll) return null;
+
+    const ballots = poll.content.ballots;
     const balance = utils.fromTokenDecimals(balances[idPoll].tokenBalance, decimals);
     const availableCredits = parseInt(balance, 10) - votes.reduce((prev, curr) => prev + curr * curr, 0);
-    
-    return (polls ? <Fragment><div className="section">
-        <Typography variant="headline">Review your vote</Typography>
 
-        { ballots.map((item, i) => {
-          return votes[i] > 0 ? <Card className="card review" key={i}>
+    return polls ? (
+      <Fragment>
+        <div className="section">
+          <Typography variant="headline">Review your vote</Typography>
+
+          {ballots.map((item, i) => {
+            return votes[i] > 0 ? (
+              <Card className="card review" key={i}>
+                <CardContent>
+                  <Typography gutterBottom component="h2">
+                    {item.title}
+                  </Typography>
+                  <Typography component="p">{item.subtitle}</Typography>
+                  <div className="data">
+                    <div className="item">
+                      <span>{votes[i]}</span>
+                      votes
+                    </div>
+                    <div className="item noBorder">
+                      <span>{votes[i] * votes[i]}</span>
+                      credits
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null;
+          })}
+
+          <Card className="card creditsAvailable">
             <CardContent>
-              <Typography gutterBottom component="h2">{item.title}</Typography>
-              <Typography component="p">{item.subtitle}</Typography>
-              <div className="data">
-                <div className="item">
-                  <span>{votes[i]}</span>
-                  votes
-                </div>
-                <div className="item noBorder">
-                  <span>{votes[i] * votes[i]}</span>
-                  credits
-                </div>
-              </div>
+              <Typography gutterBottom component="p">
+                Unused voting power
+              </Typography>
+              <Typography gutterBottom component="h2">
+                {availableCredits} credits
+              </Typography>
+              <Link to={'/voting/' + idPoll + '/back'}>Add votes</Link>
             </CardContent>
-          </Card> : null;
-        })}
-
-        <Card className="card creditsAvailable">
-          <CardContent>
-              <Typography gutterBottom component="p">Unused voting power</Typography>
-              <Typography gutterBottom component="h2">{availableCredits} credits</Typography>
-              <Link to={"/voting/" + idPoll + "/back"}>Add votes</Link>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="buttonNav">
-        <Button variant="text" onClick={this.vote} disabled={isSubmitting}>Sign to confirm</Button>
-    </div></Fragment> : null);
+          </Card>
+        </div>
+        <div className="buttonNav">
+          <Button variant="text" onClick={this.vote} disabled={isSubmitting}>
+            Sign to confirm
+          </Button>
+        </div>
+      </Fragment>
+    ) : null;
   }
 }
 
