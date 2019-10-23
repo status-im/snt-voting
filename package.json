@@ -60,7 +60,7 @@
     "axios": "^0.18.0",
     "bignumber.js": "^5.0.0",
     "bn.js": "^4.11.8",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^3.4.1",
     "date-fns": "^2.0.0-alpha.25",
     "formik": "^0.11.11",
     "jquery": "^3.3.1",
