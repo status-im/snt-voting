@@ -328,7 +328,7 @@ contract PollManager is Controlled {
     {
       require(_idPoll < _polls.length, "Invalid _idPoll");
       Poll storage p = _polls[_idPoll];
-      require(block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
+      require(block.number >= p.startBlock && !p.canceled, "Poll is inactive");
       require(!p.paidClaims[msg.sender], "Claim already paid");
       uint claimerVotes = 0;
       uint totalVotes = 0;
@@ -351,7 +351,7 @@ contract PollManager is Controlled {
     {
       require(_idPoll < _polls.length, "Invalid _idPoll");
       Poll storage p = _polls[_idPoll];
-      require(block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
+      require(block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
       require(token.transferFrom(msg.sender, address(this), _amount), "Failed to transfer tokens in");
       p.rewards += _amount;
       emit RewardAdded(_idPoll, msg.sender, _amount);
