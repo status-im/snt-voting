@@ -257,6 +257,7 @@ contract PollManager is Controlled {
         bool _finalized,
         uint _voters,
         address _author,
+        uint _rewards,
         uint[100] _tokenTotal,
         uint[100] _quadraticVotes,
         uint[100] _votersByBallot
@@ -275,6 +276,7 @@ contract PollManager is Controlled {
         _author = p.author;
         _finalized = (!p.canceled) && (block.number >= _endTime);
         _voters = p.voters;
+        _rewards = p.rewards;
 
         for(uint8 i = 0; i < p.numBallots; i++){
             _tokenTotal[i] = p.results[i];
@@ -341,9 +343,24 @@ contract PollManager is Controlled {
       emit RewardClaimed(_idPoll, msg.sender, amount);
     }
 
+    /// @notice Add rewards to a poll
+    /// @param _idPoll Poll
+    /// @param _amount Amount
+    function addReward(uint _idPoll, uint _amount)
+      public
+    {
+      require(_idPoll < _polls.length, "Invalid _idPoll");
+      Poll storage p = _polls[_idPoll];
+      require(block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
+      require(token.transferFrom(msg.sender, address(this), _amount), "Failed to transfer tokens in");
+      p.rewards += amount;
+      emit RewardAdded(_idPoll, msg.sender, _amount);
+    }
+
     event Vote(uint indexed idPoll, address indexed _voter, uint[] ballots);
     event Unvote(uint indexed idPoll, address indexed _voter);
     event PollCanceled(uint indexed idPoll);
     event PollCreated(uint indexed idPoll);
     event RewardClaimed(uint indexed idPoll, address indexed _voter, uint amount);
+    event RewardAdded(uint indexed idPoll, address indexed sender, uint amount);
 }
