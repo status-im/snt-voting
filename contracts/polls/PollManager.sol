@@ -3,9 +3,11 @@ pragma solidity ^0.4.24;
 import "../common/Controlled.sol";
 import "../token/MiniMeToken.sol";
 import "../rlp/RLPHelper.sol";
+import "../math/SafeMath.sol";
 
 
 contract PollManager is Controlled {
+    using SafeMath for uint256;
 
     struct Poll {
         uint startBlock;
@@ -182,7 +184,7 @@ contract PollManager is Controlled {
 
         uint totalBallots = 0;
         for(uint8 i = 0; i < _ballots.length; i++){
-            totalBallots += _ballots[i]; // Use safe math here
+            totalBallots += totalBallots.add(_ballots[i]);
 
             p.ballots[i][msg.sender] = _ballots[i];
 
@@ -257,7 +259,6 @@ contract PollManager is Controlled {
         bool _finalized,
         uint _voters,
         address _author,
-        uint _rewards,
         uint[100] _tokenTotal,
         uint[100] _quadraticVotes,
         uint[100] _votersByBallot
@@ -276,7 +277,6 @@ contract PollManager is Controlled {
         _author = p.author;
         _finalized = (!p.canceled) && (block.number >= _endTime);
         _voters = p.voters;
-        _rewards = p.rewards;
 
         for(uint8 i = 0; i < p.numBallots; i++){
             _tokenTotal[i] = p.results[i];
@@ -337,7 +337,7 @@ contract PollManager is Controlled {
         totalVotes += p.results[i];
       }
       require(token.balanceOf(msg.sender) >= claimerVotes, "Can not claim with less tokens");
-      uint amount = (p.rewards * claimerVotes) / totalVotes;
+      uint amount = p.rewards.mul(claimerVotes).div(totalVotes);
       p.paidClaims[msg.sender] = true;
       require(token.transfer(msg.sender, amount), "Reward token transfer failed");
       emit RewardClaimed(_idPoll, msg.sender, amount);
@@ -353,7 +353,7 @@ contract PollManager is Controlled {
       Poll storage p = _polls[_idPoll];
       require(block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
       require(token.transferFrom(msg.sender, address(this), _amount), "Failed to transfer tokens in");
-      p.rewards += amount;
+      p.rewards += _amount;
       emit RewardAdded(_idPoll, msg.sender, _amount);
     }
 
