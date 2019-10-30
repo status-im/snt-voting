@@ -18,7 +18,9 @@ contract PollManager is Controlled {
         mapping(uint8 => uint) qvResults;
         mapping(uint8 => uint) results;
         mapping(uint8 => uint) votersByBallot;
+        mapping(address => bool) paidClaims;
         address author;
+        uint rewards;
     }
 
     Poll[] _polls;
@@ -180,7 +182,7 @@ contract PollManager is Controlled {
 
         uint totalBallots = 0;
         for(uint8 i = 0; i < _ballots.length; i++){
-            totalBallots += _ballots[i];
+            totalBallots += _ballots[i]; // Use safe math here
 
             p.ballots[i][msg.sender] = _ballots[i];
 
@@ -317,8 +319,31 @@ contract PollManager is Controlled {
         return votes;
     }
 
+    /// @notice Claim rewards for voting in poll
+    /// @param _idPoll Poll
+    function claimReward(uint _idPoll)
+      public
+    {
+      require(_idPoll < _polls.length, "Invalid _idPoll");
+      Poll storage p = _polls[_idPoll];
+      require(block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
+      require(!p.paidClaims[msg.sender], "Claim already paid");
+      uint claimerVotes = 0;
+      uint totalVotes = 0;
+      for(uint8 i = 0; i < p.numBallots; i++){
+        claimerVotes += p.ballots[i][msg.sender];
+        totalVotes += p.results[i];
+      }
+      require(token.balanceOf(msg.sender) >= claimerVotes, "Can not claim with less tokens");
+      uint amount = (p.rewards * claimerVotes) / totalVotes;
+      p.paidClaims[msg.sender] = true;
+      require(token.transfer(msg.sender, amount), "Reward token transfer failed");
+      emit RewardClaimed(_idPoll, msg.sender, amount);
+    }
+
     event Vote(uint indexed idPoll, address indexed _voter, uint[] ballots);
     event Unvote(uint indexed idPoll, address indexed _voter);
     event PollCanceled(uint indexed idPoll);
     event PollCreated(uint indexed idPoll);
+    event RewardClaimed(uint indexed idPoll, address indexed _voter, uint amount);
 }
