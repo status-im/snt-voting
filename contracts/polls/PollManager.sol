@@ -31,12 +31,18 @@ contract PollManager is Controlled {
 
     RLPHelper public rlpHelper;
 
+    uint public claimsPeriod;
+
+    uint public rewardsPool;
+
     /// @notice Contract constructor
     /// @param _token Address of the token used for governance
-    constructor(address _token)
+    /// @param _claimsPeriod time in which to claim rewards after poll close
+    constructor(address _token, uint _claimsPeriod)
         public {
         token = MiniMeToken(_token);
         rlpHelper = new RLPHelper();
+        claimsPeriod = _claimsPeriod > 0 ? _claimsPeriod : 2 weeks;
     }
 
     /// @notice Only allow addresses that have > 0 Tokens to perform an operation
@@ -135,6 +141,22 @@ contract PollManager is Controlled {
         p.canceled = true;
 
         emit PollCanceled(_idPoll);
+    }
+
+    /// @notice Makes rewards from a poll avaliable globally
+    /// @param _idPoll Poll
+    function recirculateRewards(uint _idPoll)
+      public {
+      require(_idPoll < _polls.length, "Invalid _idPoll");
+
+      Poll storage p = _polls[_idPoll];
+
+      require((block.timestamp - claimsPeriod) > p.endTime, "Claims period has not passed");
+      uint amount = p.rewards;
+      rewardsPool += amount;
+      delete p.rewards;
+
+      emit RewardsRecirculated(_idPoll, amount);
     }
 
     /// @notice Determine if user can bote for a poll
@@ -353,8 +375,17 @@ contract PollManager is Controlled {
       Poll storage p = _polls[_idPoll];
       require(block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
       require(token.transferFrom(msg.sender, address(this), _amount), "Failed to transfer tokens in");
-      p.rewards += _amount;
-      emit RewardAdded(_idPoll, msg.sender, _amount);
+      uint amount;
+      if (_amount >= rewardsPool) {
+        amount += rewardsPool;
+        amount += _amount;
+        delete rewardsPool;
+      } else {
+        amount += _amount * 2;
+        rewardsPool -= _amount;
+      }
+      p.rewards += amount;
+      emit RewardAdded(_idPoll, msg.sender, amount);
     }
 
     event Vote(uint indexed idPoll, address indexed _voter, uint[] ballots);
@@ -363,4 +394,5 @@ contract PollManager is Controlled {
     event PollCreated(uint indexed idPoll);
     event RewardClaimed(uint indexed idPoll, address indexed _voter, uint amount);
     event RewardAdded(uint indexed idPoll, address indexed sender, uint amount);
+    event RewardsRecirculated(uint indexed idPoll, uint amount);
 }
