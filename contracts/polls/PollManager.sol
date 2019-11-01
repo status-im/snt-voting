@@ -206,7 +206,7 @@ contract PollManager is Controlled {
 
         uint totalBallots = 0;
         for(uint8 i = 0; i < _ballots.length; i++){
-            totalBallots += totalBallots.add(_ballots[i]);
+            totalBallots = totalBallots.add(_ballots[i]);
 
             p.ballots[i][msg.sender] = _ballots[i];
 
