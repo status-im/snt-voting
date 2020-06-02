@@ -14,7 +14,7 @@ const NoConnection = () => {
             <Typography variant="headline">Status SNT Voting</Typography>
             <Typography variant="body1">To start voting, connect to a wallet where you hold your SNT</Typography>
             <div className="action">
-              <a href="https://get.status.im/browse/vote.status.im">
+              <a href="https://join.status.im/b/vote.status.im">
                 <Button color="primary" variant="contained">
                   CONNECT USING STATUS
                 </Button>

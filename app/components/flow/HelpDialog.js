@@ -39,8 +39,8 @@ const HelpDialog = props => (
     <Typography variant="display1">Chat to us on Status</Typography>
     <Typography variant="body1">
       Tap here:{' '}
-      <a href="https://get.status.im/chat/public/status-snt-voting-dapp">
-        get.status.im/chat/public/status-snt-voting-dapp
+      <a href="https://join.status.im/status-snt-voting-dapp">
+        join.status.im/status-snt-voting-dapp
       </a>{' '}
       to chat with us.{' '}
     </Typography>

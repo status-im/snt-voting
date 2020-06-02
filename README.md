@@ -22,7 +22,7 @@ That said, this Dapp is not game proof. If the outcome of your vote has financia
 The Dapp is live on mainnet and used by SNT holders at vote.status.im. If you interested in checking out the user flow and UI, head over there. If you are interested in the UI and UX of token voting dapp, checkout our blog post about the design process: https://our.status.im/designing-the-status-im-voting-dapp/
 
 ## Contact 
-If you have any questions or queries the whole team is on Status on the status-snt-voting-dapp public chat group which can be opened here on Status mobile: https://get.status.im/chat/public/status-snt-voting-dapp 
+If you have any questions or queries the whole team is on Status on the status-snt-voting-dapp public chat group which can be opened here on Status mobile: https://join.status.im/status-snt-voting-dapp
 
 ## Getting it running on your local machine
 

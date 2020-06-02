@@ -45,7 +45,7 @@ class ConnectYourWallet extends Component {
           history.push('/votingCredits/' + idPoll);
         }
       } else {
-        window.location.href = 'https://get.status.im/browse/' + location.href.replace(/^http(s?):\/\//, '');
+        window.location.href = 'https://join.status.im/b/' + location.href.replace(/^http(s?):\/\//, '');
       }
     }
   };
