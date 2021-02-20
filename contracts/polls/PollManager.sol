@@ -3,9 +3,11 @@ pragma solidity ^0.4.24;
 import "../common/Controlled.sol";
 import "../token/MiniMeToken.sol";
 import "../rlp/RLPHelper.sol";
+import "../math/SafeMath.sol";
 
 
 contract PollManager is Controlled {
+    using SafeMath for uint256;
 
     struct Poll {
         uint startBlock;
@@ -18,7 +20,9 @@ contract PollManager is Controlled {
         mapping(uint8 => uint) qvResults;
         mapping(uint8 => uint) results;
         mapping(uint8 => uint) votersByBallot;
+        mapping(address => bool) paidClaims;
         address author;
+        uint rewards;
     }
 
     Poll[] _polls;
@@ -27,18 +31,24 @@ contract PollManager is Controlled {
 
     RLPHelper public rlpHelper;
 
+    uint public claimsPeriod;
+
+    uint public rewardsPool;
+
     /// @notice Contract constructor
     /// @param _token Address of the token used for governance
-    constructor(address _token) 
+    /// @param _claimsPeriod time in which to claim rewards after poll close
+    constructor(address _token, uint _claimsPeriod)
         public {
         token = MiniMeToken(_token);
         rlpHelper = new RLPHelper();
+        claimsPeriod = _claimsPeriod > 0 ? _claimsPeriod : 2 weeks;
     }
 
     /// @notice Only allow addresses that have > 0 Tokens to perform an operation
     modifier onlyTokenHolder {
-        require(token.balanceOf(msg.sender) > 0, "Token balance is required to perform this operation"); 
-        _; 
+        require(token.balanceOf(msg.sender) > 0, "Token balance is required to perform this operation");
+        _;
     }
 
     /// @notice Create a Poll and enable it immediatly
@@ -93,7 +103,7 @@ contract PollManager is Controlled {
     /// @param _description IPFS hash with the description
     /// @param _numBallots Number of ballots
     function updatePollDescription(
-        uint _idPoll, 
+        uint _idPoll,
         bytes _description,
         uint8 _numBallots)
         public
@@ -113,12 +123,12 @@ contract PollManager is Controlled {
     /// @notice Cancel an existing poll
     /// @dev Can only be done by the controller (which should be a Multisig/DAO) at any time, or by the owner if the poll hasn't started
     /// @param _idPoll Poll to cancel
-    function cancelPoll(uint _idPoll) 
+    function cancelPoll(uint _idPoll)
         public {
         require(_idPoll < _polls.length, "Invalid _idPoll");
 
         Poll storage p = _polls[_idPoll];
-        
+
         require(!p.canceled, "Poll has been canceled already");
         require(block.timestamp <= p.endTime, "Only active polls can be canceled");
 
@@ -133,12 +143,28 @@ contract PollManager is Controlled {
         emit PollCanceled(_idPoll);
     }
 
+    /// @notice Makes rewards from a poll avaliable globally
+    /// @param _idPoll Poll
+    function recirculateRewards(uint _idPoll)
+      public {
+      require(_idPoll < _polls.length, "Invalid _idPoll");
+
+      Poll storage p = _polls[_idPoll];
+
+      require((block.timestamp - claimsPeriod) > p.endTime, "Claims period has not passed");
+      uint amount = p.rewards;
+      rewardsPool += amount;
+      delete p.rewards;
+
+      emit RewardsRecirculated(_idPoll, amount);
+    }
+
     /// @notice Determine if user can bote for a poll
     /// @param _idPoll Id of the poll
     /// @return bool Can vote or not
-    function canVote(uint _idPoll) 
-        public 
-        view 
+    function canVote(uint _idPoll)
+        public
+        view
         returns(bool)
     {
         if(_idPoll >= _polls.length) return false;
@@ -147,7 +173,7 @@ contract PollManager is Controlled {
         uint balance = token.balanceOfAt(msg.sender, p.startBlock);
         return block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled && balance != 0;
     }
-    
+
     /// @notice Calculate square root of a uint (It has some precision loss)
     /// @param x Number to calculate the square root
     /// @return Square root of x
@@ -180,7 +206,7 @@ contract PollManager is Controlled {
 
         uint totalBallots = 0;
         for(uint8 i = 0; i < _ballots.length; i++){
-            totalBallots += _ballots[i];
+            totalBallots = totalBallots.add(_ballots[i]);
 
             p.ballots[i][msg.sender] = _ballots[i];
 
@@ -197,12 +223,12 @@ contract PollManager is Controlled {
     }
 
     /// @notice Cancel or reset a vote
-    /// @param _idPoll Poll 
+    /// @param _idPoll Poll
     function unvote(uint _idPoll) public {
         require(_idPoll < _polls.length, "Invalid _idPoll");
 
         Poll storage p = _polls[_idPoll];
-        
+
         require(block.number >= p.startBlock && block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
 
         if(p.voters == 0) return;
@@ -234,17 +260,17 @@ contract PollManager is Controlled {
     /// @return Num of polls
     function nPolls()
         public
-        view 
+        view
         returns(uint)
     {
         return _polls.length;
     }
 
     /// @notice Get Poll info
-    /// @param _idPoll Poll 
+    /// @param _idPoll Poll
     function poll(uint _idPoll)
-        public 
-        view 
+        public
+        view
         returns(
         uint _startBlock,
         uint _endTime,
@@ -305,9 +331,9 @@ contract PollManager is Controlled {
     /// @notice Get votes for poll/ballot
     /// @param _idPoll Poll
     /// @param _voter Address of the voter
-    function getVote(uint _idPoll, address _voter) 
-        public 
-        view 
+    function getVote(uint _idPoll, address _voter)
+        public
+        view
         returns (uint[100] votes){
         require(_idPoll < _polls.length, "Invalid _idPoll");
         Poll storage p = _polls[_idPoll];
@@ -317,8 +343,56 @@ contract PollManager is Controlled {
         return votes;
     }
 
+    /// @notice Claim rewards for voting in poll
+    /// @param _idPoll Poll
+    function claimReward(uint _idPoll)
+      public
+    {
+      require(_idPoll < _polls.length, "Invalid _idPoll");
+      Poll storage p = _polls[_idPoll];
+      require(block.number >= p.startBlock && !p.canceled, "Poll is inactive");
+      require(!p.paidClaims[msg.sender], "Claim already paid");
+      uint claimerVotes = 0;
+      uint totalVotes = 0;
+      for(uint8 i = 0; i < p.numBallots; i++){
+        claimerVotes += p.ballots[i][msg.sender];
+        totalVotes += p.results[i];
+      }
+      require(token.balanceOf(msg.sender) >= claimerVotes, "Can not claim with less tokens");
+      uint amount = p.rewards.mul(claimerVotes).div(totalVotes);
+      p.paidClaims[msg.sender] = true;
+      require(token.transfer(msg.sender, amount), "Reward token transfer failed");
+      emit RewardClaimed(_idPoll, msg.sender, amount);
+    }
+
+    /// @notice Add rewards to a poll
+    /// @param _idPoll Poll
+    /// @param _amount Amount
+    function addReward(uint _idPoll, uint _amount)
+      public
+    {
+      require(_idPoll < _polls.length, "Invalid _idPoll");
+      Poll storage p = _polls[_idPoll];
+      require(block.timestamp < p.endTime && !p.canceled, "Poll is inactive");
+      require(token.transferFrom(msg.sender, address(this), _amount), "Failed to transfer tokens in");
+      uint amount;
+      if (_amount >= rewardsPool) {
+        amount += rewardsPool;
+        amount += _amount;
+        delete rewardsPool;
+      } else {
+        amount += _amount * 2;
+        rewardsPool -= _amount;
+      }
+      p.rewards += amount;
+      emit RewardAdded(_idPoll, msg.sender, amount);
+    }
+
     event Vote(uint indexed idPoll, address indexed _voter, uint[] ballots);
     event Unvote(uint indexed idPoll, address indexed _voter);
     event PollCanceled(uint indexed idPoll);
     event PollCreated(uint indexed idPoll);
+    event RewardClaimed(uint indexed idPoll, address indexed _voter, uint amount);
+    event RewardAdded(uint indexed idPoll, address indexed sender, uint amount);
+    event RewardsRecirculated(uint indexed idPoll, uint amount);
 }
